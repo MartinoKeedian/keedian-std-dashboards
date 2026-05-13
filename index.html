@@ -122,7 +122,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 
     <!-- EXECUTIVE SUMMARY -->
     <div class="content" id="tab-exec">
-      <div style="display:flex;align-items:center;justify-content:space-between">
+      <div class="k-section-hdr">
         <div class="slabel">Fleet status</div>
         <span class="k-badge k-badge-live" title="Current snapshot — does not respond to period selector">Live</span>
       </div>
@@ -154,24 +154,33 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
         <div class="fcard"><div class="fval" style="color:#2563eb"><span data-fmt-money-compact="1240000">$1.24M</span></div><div class="flbl">Accumulated savings — portfolio</div><div class="fsub arr-up">▲ <span data-fmt-money-compact="48000">$48k</span> vs March</div></div>
         <div class="fcard"><div class="fval"><span data-fmt-money-compact="312000">$312k</span></div><div class="flbl">Savings this year (2026)</div><div class="fsub arr-up">▲ 12% vs 2025 YTD</div></div>
       </div>
-      <div class="slabel">HVAC — % stores in compliance this month</div>
-      <div class="g4">
-        <div class="kcard"><div class="ktop"><div class="kttl">Runtime</div><span class="pill p-warn">Below target</span></div><div class="kval">81<span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">stores within 8–18 h/day · target 85%</div><div class="kchg arr-up">▲ 2pp vs March</div></div>
-        <div class="kcard"><div class="ktop"><div class="kttl">Cooling ΔT</div><span class="pill p-ok">On target</span></div><div class="kval">94<span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">stores within 16–22°F · target 85%</div><div class="kchg arr-up">▲ 1pp vs March</div></div>
-        <div class="kcard"><div class="ktop"><div class="kttl">Setpoint compliance</div><span class="pill p-err">Below target</span></div><div class="kval">72<span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">stores ≥ 98% compliance · target 85%</div><div class="kchg arr-dn">▼ 4pp vs March</div></div>
-        <div class="kcard"><div class="ktop"><div class="kttl">Temp compliance</div><span class="pill p-ok">On target</span></div><div class="kval">91<span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">stores ≥ 95% compliance · target 85%</div><div class="kchg arr-up">▲ 1pp vs March</div></div>
+      <div class="k-section-hdr">
+        <div class="slabel">HVAC — % stores in compliance</div>
+        <span class="k-badge k-badge-period">Period</span>
       </div>
-      <div class="slabel">Refrigeration — % stores in compliance this month</div>
+      <div class="g4">
+        <div class="kcard"><div class="ktop"><div class="kttl">Runtime</div><span class="pill p-warn">Below target</span></div><div class="kval"><span data-kpi="hvac.rt">81</span><span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">stores within 8–18 h/day · target 85%</div><div class="kchg arr-up">▲ 2pp vs March</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Cooling ΔT</div><span class="pill p-ok">On target</span></div><div class="kval"><span data-kpi="hvac.dt">94</span><span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">stores within 16–22°F · target 85%</div><div class="kchg arr-up">▲ 1pp vs March</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Setpoint compliance</div><span class="pill p-err">Below target</span></div><div class="kval"><span data-kpi="hvac.sp">72</span><span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">stores ≥ 98% compliance · target 85%</div><div class="kchg arr-dn">▼ 4pp vs March</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Temp compliance</div><span class="pill p-ok">On target</span></div><div class="kval"><span data-kpi="hvac.tc">91</span><span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">stores ≥ 95% compliance · target 85%</div><div class="kchg arr-up">▲ 1pp vs March</div></div>
+      </div>
+      <div class="k-section-hdr">
+        <div class="slabel">Refrigeration — % stores in compliance</div>
+        <span class="k-badge k-badge-period">Period</span>
+      </div>
       <div class="g2">
-        <div class="kcard"><div class="ktop"><div class="kttl">Walk-in coolers</div><span class="pill p-ok">On target</span></div><div class="kval">88<span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">stores with avg cooler compliance ≥ 98% · range 34–38°F · target 85%</div><div class="kchg arr-up">▲ 2pp vs March</div></div>
-        <div class="kcard"><div class="ktop"><div class="kttl">Freezers</div><span class="pill p-warn">Below target</span></div><div class="kval">81<span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">stores with avg freezer compliance ≥ 99% · range -10°F–0°F · target 85%</div><div class="kchg arr-dn">▼ 1pp vs March</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Walk-in coolers</div><span class="pill p-ok">On target</span></div><div class="kval"><span data-kpi="refrig.cooler">88</span><span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">stores with avg cooler compliance ≥ 98% · range <span data-fmt-temp-range-f="34-38">34–38°F</span> · target 85%</div><div class="kchg arr-up">▲ 2pp vs March</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Freezers</div><span class="pill p-warn">Below target</span></div><div class="kval"><span data-kpi="refrig.freezer">81</span><span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">stores with avg freezer compliance ≥ 99% · range <span data-fmt-temp-range-f="-10-0">-10°F–0°F</span> · target 85%</div><div class="kchg arr-dn">▼ 1pp vs March</div></div>
       </div>
 
-      <div class="slabel">Lighting — % stores in compliance this month</div>
+      <div class="k-section-hdr">
+        <div class="slabel">Lighting — % stores in compliance</div>
+        <span class="k-badge k-badge-period">Period</span>
+      </div>
       <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:10px">
-        <div class="kcard"><div class="ktop"><div class="kttl">Schedule compliance</div><span class="pill p-ok">On target</span></div><div class="kval">88<span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">stores avg ≥90% · target 85%</div><div class="kchg arr-up">▲ 3pp vs March</div></div>
-        <div class="kcard"><div class="ktop"><div class="kttl">Utilization compliance</div><span class="pill p-warn">Below target</span></div><div class="kval">81<span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">stores within range · target 85%</div><div class="kchg arr-dn">▼ 2pp vs March</div></div>
-        <div class="kcard"><div class="ktop"><div class="kttl">Burn hours compliance</div><span class="pill p-ok">On target</span></div><div class="kval">86<span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">stores within burn hours · target 85%</div><div class="kchg arr-up">▲ 1pp vs March</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Schedule compliance</div><span class="pill p-ok">On target</span></div><div class="kval"><span data-kpi="lighting.sched">88</span><span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">stores avg ≥90% · target 85%</div><div class="kchg arr-up">▲ 3pp vs March</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Utilization compliance</div><span class="pill p-warn">Below target</span></div><div class="kval"><span data-kpi="lighting.util">81</span><span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">stores within range · target 85%</div><div class="kchg arr-dn">▼ 2pp vs March</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Burn hours compliance</div><span class="pill p-ok">On target</span></div><div class="kval"><span data-kpi="lighting.burn">86</span><span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">stores within burn hours · target 85%</div><div class="kchg arr-up">▲ 1pp vs March</div></div>
       </div>
 
       <div class="chart-card">
@@ -361,11 +370,14 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
     <div class="content hidden" id="tab-alarms">
 
       <!-- ALARM → TICKET FUNNEL -->
-      <div class="slabel">Alarm to ticket funnel — April 2026 · portfolio</div>
+      <div class="k-section-hdr">
+        <div class="slabel">Alarm to ticket funnel · portfolio</div>
+        <span class="k-badge k-badge-period">Period</span>
+      </div>
       <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:10px">
         <div class="kcard">
           <div class="ktop"><div class="kttl">Total alarms received</div><span class="pill p-gray">This month</span></div>
-          <div class="kval">53,244</div>
+          <div class="kval"><span data-kpi="alarms.total">53,244</span></div>
           <div class="ksub">All alarms across 87 stores</div>
           <div style="display:flex;gap:14px;margin-top:6px;font-size:11px">
             <div><span style="color:#6b7280">BMS:</span> <b style="color:#374151">42,376</b></div>
@@ -1288,6 +1300,47 @@ window.showTab=function(name,el){
 document.addEventListener('DOMContentLoaded',()=>setTimeout(initLeafletMap,500));
 
 // ── Keedian UI module wiring ─────────────────────────────────────────────────
+// Period presets: MTD / lastMonth / YTD / lastYear / custom
+// Mock data — real implementation: aggregate per period from the API.
+const PORTFOLIO_KPI_BY_PERIOD = {
+  MTD: {
+    hvac:     { rt: '81', dt: '94', sp: '72', tc: '91' },
+    refrig:   { cooler: '88', freezer: '81' },
+    lighting: { sched: '88', util: '81', burn: '86' },
+    alarms:   { total: '53,244' }
+  },
+  lastMonth: {
+    hvac:     { rt: '79', dt: '93', sp: '76', tc: '90' },
+    refrig:   { cooler: '86', freezer: '82' },
+    lighting: { sched: '85', util: '83', burn: '85' },
+    alarms:   { total: '51,012' }
+  },
+  YTD: {
+    hvac:     { rt: '80', dt: '93', sp: '74', tc: '90' },
+    refrig:   { cooler: '87', freezer: '81' },
+    lighting: { sched: '86', util: '82', burn: '85' },
+    alarms:   { total: '212,488' }
+  },
+  lastYear: {
+    hvac:     { rt: '76', dt: '91', sp: '69', tc: '88' },
+    refrig:   { cooler: '84', freezer: '78' },
+    lighting: { sched: '82', util: '79', burn: '83' },
+    alarms:   { total: '628,950' }
+  },
+  custom: {
+    hvac:     { rt: '81', dt: '94', sp: '72', tc: '91' },
+    refrig:   { cooler: '88', freezer: '81' },
+    lighting: { sched: '88', util: '81', burn: '86' },
+    alarms:   { total: '53,244' }
+  }
+};
+
+function applyPortfolioPeriod(){
+  var key = (K && K.period && K.period.portfolio) || 'MTD';
+  var data = PORTFOLIO_KPI_BY_PERIOD[key] || PORTFOLIO_KPI_BY_PERIOD.MTD;
+  if (typeof K !== 'undefined' && K.applyKpiSwap) K.applyKpiSwap(data);
+}
+
 window.addEventListener('k-prefschange', function(){
   // Re-render anything that depends on fmtMoney (currently rendered tables)
   if (typeof renderRoi === 'function' && window.roiBuilt) try { renderRoi(); } catch(e){}
@@ -1295,11 +1348,13 @@ window.addEventListener('k-prefschange', function(){
   if (typeof renderDevices === 'function' && window.hvacBuilt) try { renderDevices(); } catch(e){}
 });
 window.addEventListener('k-periodchange', function(e){
-  // Period filter is mocked at the portfolio level — labels update; data stays as-is
+  if (e.detail && e.detail.scope === 'portfolio') applyPortfolioPeriod();
 });
 document.addEventListener('DOMContentLoaded', function(){
   if (typeof K !== 'undefined') {
     K.init({ scope: 'portfolio', crossHref: 'Site-Standard-Dashboard.html' });
+    K.ensureBadgeLegend(document.querySelector('.content:not(.hidden)'));
+    applyPortfolioPeriod();
   }
 });
 </script>

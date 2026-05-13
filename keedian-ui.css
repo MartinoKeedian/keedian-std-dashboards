@@ -33,10 +33,33 @@
 .k-site-opt.soon:hover{background:transparent}
 .k-site-soon{font-size:9px;background:#f3f4f6;color:#6b7280;padding:1px 5px;border-radius:3px;text-transform:uppercase;letter-spacing:0.04em}
 
-/* Live / Cumulative badge for KPIs that don't respond to the period */
-.k-badge{display:inline-flex;align-items:center;gap:3px;padding:1px 6px;border-radius:8px;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:0.04em}
+/* Section-level period-type badges
+ * Period   = responds to topbar selector
+ * Live     = current snapshot
+ * Cumulative = since installation
+ * Monthly  = always monthly grain (does not respond to selector)
+ */
+.k-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:8px;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;line-height:1.3;white-space:nowrap}
+.k-badge::before{content:'';width:5px;height:5px;border-radius:50%;display:inline-block}
+.k-badge-period{background:#dbeafe;color:#1e40af}
+.k-badge-period::before{background:#2563eb}
 .k-badge-live{background:#dcfce7;color:#15803d}
+.k-badge-live::before{background:#16a34a}
 .k-badge-cum{background:#ede9fe;color:#6b21a8}
+.k-badge-cum::before{background:#7c3aed}
+.k-badge-monthly{background:#ffedd5;color:#9a3412}
+.k-badge-monthly::before{background:#ea580c}
+
+/* Section header that combines slabel + badge */
+.k-section-hdr{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.k-section-hdr .slabel{margin:0}
+.k-section-hdr-badges{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+
+/* Optional: legend strip explaining the badges (small, dismissible) */
+.k-badge-legend{display:flex;gap:10px;align-items:center;padding:8px 12px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:10px;font-size:10px;color:#6b7280;flex-wrap:wrap}
+.k-badge-legend .k-bl-item{display:inline-flex;align-items:center;gap:4px}
+.k-badge-legend .k-bl-close{margin-left:auto;background:none;border:none;color:#9ca3af;cursor:pointer;font-size:14px;line-height:1;padding:0 2px}
+.k-badge-legend .k-bl-close:hover{color:#111827}
 
 /* Settings modal */
 .k-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px}
