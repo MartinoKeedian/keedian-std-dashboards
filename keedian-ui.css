@@ -49,6 +49,8 @@
 .k-badge-cum::before{background:#7c3aed}
 .k-badge-monthly{background:#ffedd5;color:#9a3412}
 .k-badge-monthly::before{background:#ea580c}
+.k-badge-trend{background:#ccfbf1;color:#0f766e}
+.k-badge-trend::before{background:#0d9488}
 
 /* Section header that combines slabel + badge */
 .k-section-hdr{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap}

@@ -184,7 +184,10 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
       </div>
 
       <div class="chart-card">
-        <div class="chart-ttl">HVAC trend — % stores in compliance</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div class="chart-ttl" style="margin-bottom:0">HVAC trend — % stores in compliance</div>
+          <span class="k-badge k-badge-trend" title="Rolling 13-month window — by design, does not respond to period selector">Trend · 13mo</span>
+        </div>
         <div class="legend">
           <div class="li"><span class="ls" style="background:#2563eb"></span>Runtime (target 85%)</div>
           <div class="li"><span class="ls" style="background:#0891b2"></span>Cooling ΔT (target 85%)</div>
@@ -194,7 +197,10 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
         <div style="position:relative;height:160px"><canvas id="hvacChart" role="img" aria-label="HVAC compliance trend">HVAC compliance trend 13 months.</canvas></div>
       </div>
       <div class="chart-card">
-        <div class="chart-ttl">Refrigeration trend — % stores in compliance</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div class="chart-ttl" style="margin-bottom:0">Refrigeration trend — % stores in compliance</div>
+          <span class="k-badge k-badge-trend" title="Rolling 13-month window — by design, does not respond to period selector">Trend · 13mo</span>
+        </div>
         <div class="legend">
           <div class="li"><span class="ls" style="background:#ea580c"></span>Coolers (target 85% · threshold ≥98%)</div>
           <div class="li"><span class="ls" style="background:#0284c7"></span>Freezers (target 85% · threshold ≥99%)</div>
@@ -352,7 +358,10 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
         <div class="kcard"><div class="ktop"><div class="kttl">Burn hours compliance</div><span class="pill p-ok">On target</span></div><div class="kval">86<span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">stores within burn hours · target 85%</div><div class="kchg arr-up">▲ 1pp vs March</div></div>
       </div>
       <div class="chart-card" style="margin-bottom:10px">
-        <div style="font-size:13px;font-weight:500;color:#111827;margin-bottom:6px">Lighting trend — % stores in compliance · last 13 months</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div style="font-size:13px;font-weight:500;color:#111827">Lighting trend — % stores in compliance</div>
+          <span class="k-badge k-badge-trend" title="Rolling 13-month window — by design">Trend · 13mo</span>
+        </div>
         <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:#6b7280;margin-bottom:8px">
           <div style="display:flex;align-items:center;gap:4px"><span style="width:16px;height:3px;background:#f59e0b;display:inline-block;border-radius:2px"></span>Schedule</div>
           <div style="display:flex;align-items:center;gap:4px"><span style="width:16px;height:3px;background:#8b5cf6;display:inline-block;border-radius:2px"></span>Utilization</div>
@@ -481,7 +490,10 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 
       <!-- ALARMS VS TICKETS -->
       <div class="chart-card" style="margin-bottom:10px">
-        <div style="font-size:13px;font-weight:500;color:#111827;margin-bottom:4px">Alarms vs tickets — monthly volume · portfolio</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div style="font-size:13px;font-weight:500;color:#111827">Alarms vs tickets — monthly volume · portfolio</div>
+          <span class="k-badge k-badge-trend">Trend · 13mo</span>
+        </div>
         <div style="font-size:10px;color:#6b7280;margin-bottom:8px">Bars: alarm volume (left axis) · Line: tickets generated (right axis) · last 13 months</div>
         <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:#6b7280;margin-bottom:8px">
           <div style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:#bfdbfe;display:inline-block;border-radius:2px"></span>Alarms (BMS + FDD)</div>
@@ -492,7 +504,10 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 
       <!-- AVG PER STORE TREND -->
       <div class="chart-card" style="margin-bottom:10px">
-        <div style="font-size:13px;font-weight:500;color:#111827;margin-bottom:4px">Average alarms and tickets per store — monthly trend</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div style="font-size:13px;font-weight:500;color:#111827">Average alarms and tickets per store — monthly trend</div>
+          <span class="k-badge k-badge-trend">Trend · 13mo</span>
+        </div>
         <div style="font-size:10px;color:#6b7280;margin-bottom:8px">Average values per store · helps identify portfolio-wide trends · last 13 months</div>
         <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:#6b7280;margin-bottom:8px">
           <div style="display:flex;align-items:center;gap:4px"><span style="width:16px;height:3px;background:#3b82f6;display:inline-block;border-radius:2px"></span>Avg alarms / store</div>
@@ -503,7 +518,10 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 
       <!-- PROACTIVE VS REACTIVE -->
       <div class="chart-card" style="margin-bottom:10px">
-        <div style="font-size:13px;font-weight:500;color:#111827;margin-bottom:4px">Proactive vs Reactive tickets — monthly · portfolio</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div style="font-size:13px;font-weight:500;color:#111827">Proactive vs Reactive tickets — monthly · portfolio</div>
+          <span class="k-badge k-badge-trend">Trend · 13mo</span>
+        </div>
         <div style="font-size:10px;color:#6b7280;margin-bottom:8px">Proactive: detected by platform · Reactive: reported by client (CMMS / phone)</div>
         <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:#6b7280;margin-bottom:8px">
           <div style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:#10b981;display:inline-block;border-radius:2px"></span>Proactive</div>
@@ -514,7 +532,10 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 
       <!-- RESOLUTION TREND -->
       <div class="chart-card" style="margin-bottom:10px">
-        <div style="font-size:13px;font-weight:500;color:#111827;margin-bottom:4px">Tickets by resolution — monthly · portfolio</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div style="font-size:13px;font-weight:500;color:#111827">Tickets by resolution — monthly · portfolio</div>
+          <span class="k-badge k-badge-trend">Trend · 13mo</span>
+        </div>
         <div style="font-size:10px;color:#6b7280;margin-bottom:8px">How tickets were closed during each month</div>
         <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:#6b7280;margin-bottom:8px">
           <div style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:#10b981;display:inline-block;border-radius:2px"></span>Avoided truck roll</div>
@@ -527,7 +548,10 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 
       <!-- CRITICALITY TREND -->
       <div class="chart-card" style="margin-bottom:10px">
-        <div style="font-size:13px;font-weight:500;color:#111827;margin-bottom:4px">Tickets by criticality — monthly · portfolio</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div style="font-size:13px;font-weight:500;color:#111827">Tickets by criticality — monthly · portfolio</div>
+          <span class="k-badge k-badge-trend">Trend · 13mo</span>
+        </div>
         <div style="font-size:10px;color:#6b7280;margin-bottom:8px">Distribution of tickets by criticality level over time</div>
         <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:#6b7280;margin-bottom:8px">
           <div style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:#ef4444;display:inline-block;border-radius:2px"></span>Critical</div>

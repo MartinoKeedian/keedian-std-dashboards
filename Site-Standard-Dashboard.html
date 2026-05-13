@@ -282,7 +282,10 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
         <div class="chart-card" style="margin-bottom:0">
-          <div class="chart-ttl">HVAC compliance trend — %</div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div class="chart-ttl">HVAC compliance trend — %</div>
+            <span class="k-badge k-badge-trend" title="Rolling 13-month window — by design, does not respond to period selector">Trend · 13mo</span>
+          </div>
           <div class="chart-sub">Setpoint and temperature compliance · last 13 months</div>
           <div class="legend">
             <div class="li"><span class="ls" style="background:#7c3aed"></span>Setpoint compl. (%)</div>
@@ -291,7 +294,10 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
           <div style="position:relative;height:160px"><canvas id="ovHvacComplChart"></canvas></div>
         </div>
         <div class="chart-card" style="margin-bottom:0">
-          <div class="chart-ttl">HVAC operational trend</div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div class="chart-ttl">HVAC operational trend</div>
+            <span class="k-badge k-badge-trend" title="Rolling 13-month window — by design">Trend · 13mo</span>
+          </div>
           <div class="chart-sub">Runtime (left axis) and cooling ΔT (right axis) · last 13 months</div>
           <div class="legend">
             <div class="li"><span class="ls" style="background:#2563eb"></span>Runtime (h/day)</div>
@@ -304,6 +310,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
       <div class="chart-card">
         <div class="sect-hdr">
           <div><div class="chart-ttl">Refrigeration trend — monthly averages</div><div class="chart-sub">Compliance per unit · last 13 months · tooltip shows target and threshold</div></div>
+          <span class="k-badge k-badge-trend" title="Rolling 13-month window — by design">Trend · 13mo</span>
         </div>
         <div class="legend">
           <div class="li"><span class="ls" style="background:#2563eb"></span>WIC-1 cooler (≥98%)</div>
@@ -568,7 +575,10 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
       </div>
 
       <div class="chart-card" style="margin-bottom:10px">
-        <div class="chart-ttl">Lighting trend — site averages · last 13 months</div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div class="chart-ttl">Lighting trend — site averages</div>
+          <span class="k-badge k-badge-trend" title="Rolling 13-month window — by design">Trend · 13mo</span>
+        </div>
         <div class="chart-sub">Schedule, utilization and burn hours over time</div>
         <div class="legend">
           <div class="li"><span class="ls" style="background:#f59e0b"></span>Schedule compl. (%)</div>
@@ -676,7 +686,10 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 
       <!-- ALARMS VS TICKETS TREND -->
       <div class="chart-card" style="margin-bottom:10px">
-        <div class="chart-ttl">Alarms vs tickets — monthly volume</div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div class="chart-ttl">Alarms vs tickets — monthly volume</div>
+          <span class="k-badge k-badge-trend" title="Rolling 13-month window — by design">Trend · 13mo</span>
+        </div>
         <div class="chart-sub">Bars show alarm volume (left axis), line shows tickets generated (right axis) · last 13 months</div>
         <div class="legend">
           <div class="li"><span class="ls" style="background:#bfdbfe"></span>Alarms (BMS + FDD)</div>
