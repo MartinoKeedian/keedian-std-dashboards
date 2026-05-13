@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Site Dashboard — Store #214</title>
+<link rel="stylesheet" href="keedian-ui.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#e5e7eb;padding:20px;font-family:sans-serif}
@@ -159,8 +160,14 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 
   <div class="main">
     <div class="topbar">
-      <div class="bc"><span class="bc-portfolio">Portfolio <div class="dot4" style="display:inline-block"></div> ACME Corp <div class="dot4" style="display:inline-block"></div> </span><b>Store #214 — San Diego</b></div>
-      <div style="margin-left:auto;font-size:11px;color:#6b7280">April 2026</div>
+      <div class="bc"><span class="bc-portfolio"><a id="k-cross-link" href="index.html" style="color:#2563eb;text-decoration:none">Portfolio</a> <div class="dot4" style="display:inline-block"></div> ACME Corp <div class="dot4" style="display:inline-block"></div> </span><span id="k-site-picker"></span></div>
+      <div class="k-topbar-extras">
+        <div id="k-period-bar"></div>
+        <span id="k-period-label">April 2026</span>
+        <button id="k-settings-btn" title="Display settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
     </div>
     <div class="alert-bar">
       <svg width="13" height="13" fill="none" stroke="#991b1b" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -200,17 +207,20 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
           </div>
         </div>
         <div class="card">
-          <div class="slabel" style="margin:0 0 10px">ROI & savings</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin:0 0 10px">
+            <div class="slabel" style="margin:0">ROI & savings</div>
+            <span class="k-badge k-badge-cum" title="Cumulative since installation — does not respond to period selector">Cumulative</span>
+          </div>
           <div style="display:flex;gap:10px">
             <div style="flex:1">
               <div style="font-size:10px;color:#6b7280">Accumulated savings</div>
-              <div style="font-size:20px;font-weight:500;color:#2563eb;margin-top:2px">$14,280</div>
-              <div style="font-size:10px;color:#10b981;margin-top:2px">▲ $480 vs March</div>
+              <div style="font-size:20px;font-weight:500;color:#2563eb;margin-top:2px"><span data-fmt-money="14280">$14,280</span></div>
+              <div style="font-size:10px;color:#10b981;margin-top:2px">▲ <span data-fmt-money="480">$480</span> vs March</div>
             </div>
             <div style="width:1px;background:#f3f4f6"></div>
             <div style="flex:1">
               <div style="font-size:10px;color:#6b7280">Investment</div>
-              <div style="font-size:20px;font-weight:500;color:#111827;margin-top:2px">$12,400</div>
+              <div style="font-size:20px;font-weight:500;color:#111827;margin-top:2px"><span data-fmt-money="12400">$12,400</span></div>
               <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:100%;background:#10b981"></div></div>
               <div style="font-size:10px;color:#065f46;margin-top:3px;font-weight:500">ROI achieved · 115%</div>
             </div>
@@ -224,27 +234,27 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
         </div>
       </div>
 
-      <div class="slabel">HVAC — site overview · April 2026</div>
+      <div class="slabel">HVAC — site overview</div>
       <div class="g4">
         <div class="kcard"><div class="ktop"><div class="kttl">Runtime</div><span class="pill p-warn">Watch</span></div><div class="kval">12.3 <span style="font-size:13px;color:#6b7280">h/day</span></div><div class="ksub">site avg · target 8–18 h</div><div class="kchg arr-dn">▼ RTU-3 above threshold</div></div>
-        <div class="kcard"><div class="ktop"><div class="kttl">Cooling ΔT</div><span class="pill p-warn">Watch</span></div><div class="kval">17.2 <span style="font-size:13px;color:#6b7280">°F</span></div><div class="ksub">site avg · target 16–22°F</div><div class="kchg arr-dn">▼ RTU-2 below 16°F</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Cooling ΔT</div><span class="pill p-warn">Watch</span></div><div class="kval"><span data-fmt-temp-f="17.2">17.2</span></div><div class="ksub">site avg · target <span data-fmt-temp-range-f="16-22">16–22°F</span></div><div class="kchg arr-dn">▼ RTU-2 below <span data-fmt-temp-f="16" data-fmt-decimals="0">16°F</span></div></div>
         <div class="kcard"><div class="ktop"><div class="kttl">Setpoint compliance</div><span class="pill p-err">Action needed</span></div><div class="kval">93.3 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">site avg · target ≥ 98%</div><div class="kchg arr-dn">▼ RTU-3 at 82.7%</div></div>
         <div class="kcard"><div class="ktop"><div class="kttl">Temp compliance</div><span class="pill p-warn">Watch</span></div><div class="kval">93.9 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">site avg · target ≥ 95%</div><div class="kchg arr-dn">▼ RTU-2 at 88.4%</div></div>
       </div>
 
-      <div class="slabel">Refrigeration — site overview · April 2026</div>
+      <div class="slabel">Refrigeration — site overview</div>
       <div class="g2" style="margin-bottom:10px">
-        <div class="kcard"><div class="ktop"><div class="kttl">Walk-in coolers</div><span class="pill p-ok">In compliance</span></div><div class="kval">99.1 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">avg compliance · target ≥ 98% · range 34–38°F</div><div class="kchg" style="color:#6b7280">Current: <b style="color:#065f46">35.8°F</b> · All units in range</div></div>
-        <div class="kcard"><div class="ktop"><div class="kttl">Freezers</div><span class="pill p-ok">In compliance</span></div><div class="kval">99.4 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">avg compliance · target ≥ 99% · range -10°F–0°F</div><div class="kchg" style="color:#6b7280">Current: <b style="color:#065f46">-4.2°F</b> · All units in range</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Walk-in coolers</div><span class="pill p-ok">In compliance</span></div><div class="kval">99.1 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">avg compliance · target ≥ 98% · range <span data-fmt-temp-range-f="34-38">34–38°F</span></div><div class="kchg" style="color:#6b7280">Current: <b style="color:#065f46"><span data-fmt-temp-f="35.8">35.8°F</span></b> · All units in range <span class="k-badge k-badge-live" style="margin-left:6px">Live</span></div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Freezers</div><span class="pill p-ok">In compliance</span></div><div class="kval">99.4 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">avg compliance · target ≥ 99% · range <span data-fmt-temp-range-f="-10-0">-10°F–0°F</span></div><div class="kchg" style="color:#6b7280">Current: <b style="color:#065f46"><span data-fmt-temp-f="-4.2">-4.2°F</span></b> · All units in range <span class="k-badge k-badge-live" style="margin-left:6px">Live</span></div></div>
       </div>
 
-      <div class="slabel">Energy — current month</div>
+      <div class="slabel">Energy</div>
       <div class="g3" style="margin-bottom:10px">
-        <div class="kcard"><div class="ktop"><div class="kttl">Consumption</div><span class="pill p-ok">Below baseline</span></div><div class="kval">2,847 <span style="font-size:13px;color:#6b7280">kWh</span></div><div class="ksub">April 2026</div><div class="kchg arr-up">▼ 6.2% vs baseline</div></div>
-        <div class="kcard"><div class="ktop"><div class="kttl">Peak demand</div><span class="pill p-ok">Normal</span></div><div class="kval">27.4 <span style="font-size:13px;color:#6b7280">kW</span></div><div class="ksub">April 2026</div><div class="kchg arr-up">▼ 3.1% vs March</div></div>
-        <div class="kcard"><div class="ktop"><div class="kttl">M&V savings</div><span class="pill p-blue">This month</span></div><div class="kval">$480 <span style="font-size:13px;color:#6b7280">/mo</span></div><div class="ksub">vs baseline period</div><div class="kchg arr-up">▲ 7.4% efficiency gain</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Consumption</div><span class="pill p-ok">Below baseline</span></div><div class="kval"><span data-fmt-number="2847">2,847</span> <span style="font-size:13px;color:#6b7280">kWh</span></div><div class="ksub">selected period</div><div class="kchg arr-up">▼ 6.2% vs baseline</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Peak demand</div><span class="pill p-ok">Normal</span></div><div class="kval">27.4 <span style="font-size:13px;color:#6b7280">kW</span></div><div class="ksub">selected period</div><div class="kchg arr-up">▼ 3.1% vs prior period</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">M&V savings</div><span class="pill p-blue">Selected period</span></div><div class="kval"><span data-fmt-money="480">$480</span> <span style="font-size:13px;color:#6b7280">/mo</span></div><div class="ksub">vs baseline period</div><div class="kchg arr-up">▲ 7.4% efficiency gain</div></div>
       </div>
-      <div class="slabel">Lighting — site averages · April 2026</div>
+      <div class="slabel">Lighting — site averages</div>
       <div class="g3" style="margin-bottom:10px">
         <div class="kcard"><div class="ktop"><div class="kttl">Schedule compliance</div><span class="pill p-ok">In compliance</span></div><div class="kval">93.4 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">avg across all circuits · target ≥ 90%</div><div class="kchg arr-up">▲ 1.2pp vs March</div></div>
         <div class="kcard"><div class="ktop"><div class="kttl">Utilization</div><span class="pill p-ok">Within range</span></div><div class="kval">76.8 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">avg time on across all spaces</div><div class="kchg arr-fl" style="color:#6b7280">All spaces in range</div></div>
@@ -287,10 +297,10 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 
     <!-- HVAC TAB -->
     <div class="content hidden" id="tab-hvac">
-      <div class="slabel">HVAC KPIs — site averages · April 2026</div>
+      <div class="slabel">HVAC KPIs — site averages</div>
       <div class="g4">
         <div class="kcard"><div class="ktop"><div class="kttl">Runtime</div><span class="pill p-warn">Watch</span></div><div class="kval">12.3 <span style="font-size:13px;color:#6b7280">h/day</span></div><div class="ksub">site avg · 3 devices · target 8–18 h</div><div class="kchg arr-dn">▼ RTU-3 above threshold</div></div>
-        <div class="kcard"><div class="ktop"><div class="kttl">Cooling ΔT</div><span class="pill p-warn">Watch</span></div><div class="kval">17.2 <span style="font-size:13px;color:#6b7280">°F</span></div><div class="ksub">site avg · compressor-on only</div><div class="kchg arr-dn">▼ RTU-2 below 16°F</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Cooling ΔT</div><span class="pill p-warn">Watch</span></div><div class="kval"><span data-fmt-temp-f="17.2">17.2</span></div><div class="ksub">site avg · compressor-on only</div><div class="kchg arr-dn">▼ RTU-2 below <span data-fmt-temp-f="16" data-fmt-decimals="0">16°F</span></div></div>
         <div class="kcard"><div class="ktop"><div class="kttl">Setpoint compliance</div><span class="pill p-err">Action needed</span></div><div class="kval">93.3 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">site avg · policy day 76°F / night 78°F</div><div class="kchg arr-dn">▼ RTU-3 at 82.7%</div></div>
         <div class="kcard"><div class="ktop"><div class="kttl">Temp compliance</div><span class="pill p-warn">Watch</span></div><div class="kval">93.9 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">site avg · band 72–79°F daytime</div><div class="kchg arr-dn">▼ RTU-2 at 88.4%</div></div>
       </div>
@@ -343,20 +353,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
         <div class="dev-btn" onclick="selectDevHvac('RTU-3',this)"><span class="chip c-blue" style="font-size:9px">RTU</span> RTU-3</div>
       </div>
 
-      <div class="slabel">Select period</div>
-      <div class="date-bar">
-        <div class="date-preset active" onclick="setPeriodHvac('today',this)">Today</div>
-        <div class="date-preset" onclick="setPeriodHvac('yesterday',this)">Yesterday</div>
-        <div class="date-preset" onclick="setPeriodHvac('7d',this)">Last 7 days</div>
-        <div class="date-preset" onclick="setPeriodHvac('30d',this)">Last 30 days</div>
-        <div class="date-preset" onclick="setPeriodHvac('custom',this)">Custom range</div>
-        <div id="customDateRangeHvac" style="display:none;align-items:center;gap:6px">
-          <input type="date" class="date-input" id="dateFromHvac" value="2026-04-01">
-          <span style="font-size:11px;color:#6b7280">to</span>
-          <input type="date" class="date-input" id="dateToHvac" value="2026-04-24">
-          <button class="sel-btn active" onclick="applyCustomDateHvac()" style="font-size:11px">Apply</button>
-        </div>
-      </div>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:10px">Period controlled by topbar selector. Showing: <span id="k-hvac-period-echo" style="color:#374151;font-weight:500">Day</span></div>
 
       <div id="devPanel">
         <div class="g4" id="devKpiCards" style="margin-bottom:10px"></div>
@@ -373,10 +370,10 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 
     <!-- REFRIGERATION TAB -->
     <div class="content hidden" id="tab-refrig">
-      <div class="slabel">Refrigeration KPIs — site averages · April 2026</div>
+      <div class="slabel">Refrigeration KPIs — site averages</div>
       <div class="g2">
-        <div class="kcard"><div class="ktop"><div class="kttl">Walk-in coolers</div><span class="pill p-ok">In compliance</span></div><div class="kval">99.1 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">avg compliance · 1 unit · target ≥ 98% · range 34–38°F</div><div class="kchg" style="color:#6b7280">Current: <b style="color:#065f46">35.8°F</b> · All units in range</div></div>
-        <div class="kcard"><div class="ktop"><div class="kttl">Freezers</div><span class="pill p-ok">In compliance</span></div><div class="kval">99.4 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">avg compliance · 1 unit · target ≥ 99% · range -10°F–0°F</div><div class="kchg" style="color:#6b7280">Current: <b style="color:#065f46">-4.2°F</b> · All units in range</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Walk-in coolers</div><span class="pill p-ok">In compliance</span></div><div class="kval">99.1 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">avg compliance · 1 unit · target ≥ 98% · range <span data-fmt-temp-range-f="34-38">34–38°F</span></div><div class="kchg" style="color:#6b7280">Current: <b style="color:#065f46"><span data-fmt-temp-f="35.8">35.8°F</span></b> · All units in range <span class="k-badge k-badge-live" style="margin-left:6px">Live</span></div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Freezers</div><span class="pill p-ok">In compliance</span></div><div class="kval">99.4 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">avg compliance · 1 unit · target ≥ 99% · range <span data-fmt-temp-range-f="-10-0">-10°F–0°F</span></div><div class="kchg" style="color:#6b7280">Current: <b style="color:#065f46"><span data-fmt-temp-f="-4.2">-4.2°F</span></b> · All units in range <span class="k-badge k-badge-live" style="margin-left:6px">Live</span></div></div>
       </div>
       <div class="slabel">Per device — Refrigeration</div>
       <div class="tbl-wrap">
@@ -390,8 +387,8 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
                 <td><span class="chip c-blue">Walk-in cooler</span></td>
                 <td><div class="badge-conn"><span class="cdot cdot-ok"></span><span style="color:#065f46;font-weight:500">Online</span></div><div class="sub">6 min ago · Full availability</div></td>
                 <td style="font-weight:500;color:#065f46">100%</td>
-                <td><span style="font-size:14px;font-weight:500;color:#065f46">35.8°F</span></td>
-                <td style="color:#6b7280;font-size:11px">34–38°F</td>
+                <td><span style="font-size:14px;font-weight:500;color:#065f46"><span data-fmt-temp-f="35.8">35.8°F</span></span></td>
+                <td style="color:#6b7280;font-size:11px"><span data-fmt-temp-range-f="34-38">34–38°F</span></td>
                 <td><span class="chip c-ok">99.1%</span><div class="sub">threshold ≥ 98%</div></td>
                 <td><span class="chip c-ok">In compliance</span></td>
               </tr>
@@ -400,8 +397,8 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
                 <td><span class="chip c-teal">Freezer</span></td>
                 <td><div class="badge-conn"><span class="cdot cdot-ok"></span><span style="color:#065f46;font-weight:500">Online</span></div><div class="sub">3 min ago · Full availability</div></td>
                 <td style="font-weight:500;color:#065f46">100%</td>
-                <td><span style="font-size:14px;font-weight:500;color:#065f46">-4.2°F</span></td>
-                <td style="color:#6b7280;font-size:11px">-10°F – 0°F</td>
+                <td><span style="font-size:14px;font-weight:500;color:#065f46"><span data-fmt-temp-f="-4.2">-4.2°F</span></span></td>
+                <td style="color:#6b7280;font-size:11px"><span data-fmt-temp-range-f="-10-0">-10°F – 0°F</span></td>
                 <td><span class="chip c-ok">99.4%</span><div class="sub">threshold ≥ 99%</div></td>
                 <td><span class="chip c-ok">In compliance</span></td>
               </tr>
@@ -416,20 +413,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
         <div class="dev-btn" onclick="selectDevRef('FRZ-1',this)"><span class="chip c-teal" style="font-size:9px">FRZ</span> FRZ-1</div>
       </div>
 
-      <div class="slabel">Select period</div>
-      <div class="date-bar">
-        <div class="date-preset active" onclick="setPeriodRef('today',this)">Today</div>
-        <div class="date-preset" onclick="setPeriodRef('yesterday',this)">Yesterday</div>
-        <div class="date-preset" onclick="setPeriodRef('7d',this)">Last 7 days</div>
-        <div class="date-preset" onclick="setPeriodRef('30d',this)">Last 30 days</div>
-        <div class="date-preset" onclick="setPeriodRef('custom',this)">Custom range</div>
-        <div id="customDateRangeRef" style="display:none;align-items:center;gap:6px">
-          <input type="date" class="date-input" id="dateFromRef" value="2026-04-01">
-          <span style="font-size:11px;color:#6b7280">to</span>
-          <input type="date" class="date-input" id="dateToRef" value="2026-04-24">
-          <button class="sel-btn active" onclick="applyCustomDateRef()" style="font-size:11px">Apply</button>
-        </div>
-      </div>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:10px">Period controlled by topbar selector. Showing: <span id="k-ref-period-echo" style="color:#374151;font-weight:500">Day</span></div>
 
       <div id="refDevPanel">
         <div class="g4" id="refDevKpiCards" style="margin-bottom:10px"></div>
@@ -445,34 +429,37 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
     <!-- DEVICE DETAIL TAB -->
     <!-- ROI & SAVINGS TAB -->
     <div class="content hidden" id="tab-roi">
-      <div class="slabel">ROI summary — Store #214</div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div class="slabel">ROI summary — Store #214</div>
+        <span class="k-badge k-badge-cum" title="Cumulative since installation — does not respond to period selector">Cumulative since installation</span>
+      </div>
       <div class="g4 single-col">
-        <div class="kcard"><div class="ktop"><div class="kttl">Total investment</div><span class="pill p-gray">Feb 2024</span></div><div class="kval">$12,400</div><div class="ksub">Installation + onboarding</div></div>
-        <div class="kcard"><div class="ktop"><div class="kttl">Accumulated savings</div><span class="pill p-ok">All sources</span></div><div class="kval" style="color:#2563eb">$14,280</div><div class="ksub">Since installation · 26 months</div><div class="kchg arr-up">▲ $480 this month</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Total investment</div><span class="pill p-gray">Feb 2024</span></div><div class="kval"><span data-fmt-money="12400">$12,400</span></div><div class="ksub">Installation + onboarding</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Accumulated savings</div><span class="pill p-ok">All sources</span></div><div class="kval" style="color:#2563eb"><span data-fmt-money="14280">$14,280</span></div><div class="ksub">Since installation · 26 months</div><div class="kchg arr-up">▲ <span data-fmt-money="480">$480</span> this month</div></div>
         <div class="kcard"><div class="ktop"><div class="kttl">Payback period</div><span class="pill p-ok">Achieved</span></div><div class="kval">26 <span style="font-size:13px;color:#6b7280">mo</span></div><div class="ksub">Investment recovered month 26</div></div>
         <div class="kcard"><div class="ktop"><div class="kttl">ROI</div><span class="pill p-ok">Positive</span></div><div class="kval" style="color:#10b981">115<span style="font-size:13px">%</span></div><div class="ksub">Accumulated savings / investment</div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:100%;background:#10b981"></div></div></div>
       </div>
 
-      <div class="slabel">Savings breakdown — April 2026</div>
+      <div class="slabel">Savings breakdown — selected period</div>
       <div class="roi-impact-grid">
         <div class="roi-impact-card">
           <div class="ktop"><div class="kttl">Energy savings</div><span class="pill p-ok">Calculated</span></div>
-          <div class="kval" style="color:#2563eb">$312 <span style="font-size:12px;color:#6b7280">/mo</span></div>
+          <div class="kval" style="color:#2563eb"><span data-fmt-money="312">$312</span> <span style="font-size:12px;color:#6b7280">/mo</span></div>
           <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
             <div style="display:flex;justify-content:space-between;font-size:11px">
               <span style="color:#6b7280">Consumption savings</span>
-              <span style="font-weight:500;color:#111827">247 kWh · $198</span>
+              <span style="font-weight:500;color:#111827">247 kWh · <span data-fmt-money="198">$198</span></span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:11px">
               <span style="color:#6b7280">Peak demand reduction</span>
-              <span style="font-weight:500;color:#111827">2.8 kW · $114</span>
+              <span style="font-weight:500;color:#111827">2.8 kW · <span data-fmt-money="114">$114</span></span>
             </div>
           </div>
           <div class="ksub" style="margin-top:6px">vs M&V baseline · Apr 2023</div>
         </div>
         <div class="roi-impact-card">
           <div class="ktop"><div class="kttl">Avoided truck rolls</div><span class="pill p-ok">Calculated</span></div>
-          <div class="kval" style="color:#2563eb">$168 <span style="font-size:12px;color:#6b7280">/mo</span></div>
+          <div class="kval" style="color:#2563eb"><span data-fmt-money="168">$168</span> <span style="font-size:12px;color:#6b7280">/mo</span></div>
           <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
             <div style="display:flex;justify-content:space-between;font-size:11px">
               <span style="color:#6b7280">Events avoided</span>
@@ -480,7 +467,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
             </div>
             <div style="display:flex;justify-content:space-between;font-size:11px">
               <span style="color:#6b7280">Value per event</span>
-              <span style="font-weight:500;color:#111827">$84 (pre-agreed)</span>
+              <span style="font-weight:500;color:#111827"><span data-fmt-money="84">$84</span> (pre-agreed)</span>
             </div>
           </div>
           <div class="ksub" style="margin-top:6px">Source: ticket platform · remote resolution</div>
@@ -743,6 +730,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
   </div>
 </div>
 
+<script src="keedian-ui.js"></script>
 <script>
 // Core navigation — runs independently of Chart.js
 function showTab(name,el){
@@ -1440,6 +1428,40 @@ function setPeriodRef(p, btn){
 function applyCustomDateHvac(){applyCustomDate && applyCustomDate();}
 function applyCustomDateRef(){applyCustomDate && applyCustomDate();}
 
+// ── Keedian UI module wiring ─────────────────────────────────────────────────
+// Map global period (D/W/M/Q/YTD/custom) → existing site internal period (today/yesterday/7d/30d)
+const K_TO_LOCAL_PERIOD={D:'today',W:'7d',M:'30d',Q:'30d',YTD:'30d',custom:'custom'};
+const K_PERIOD_ECHO={D:'Today',W:'Last 7 days',M:'Last 30 days',Q:'Quarter (mocked as 30d)',YTD:'YTD (mocked as 30d)',custom:'Custom range'};
+
+function syncSitePeriodEchoes(){
+  var key = (K && K.period && K.period.site) || 'M';
+  ['k-hvac-period-echo','k-ref-period-echo'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.textContent = K_PERIOD_ECHO[key] || key;
+  });
+  // Drive existing chart engine through the legacy variable
+  window._currentPeriod = K_TO_LOCAL_PERIOD[key] || 'today';
+  if (typeof renderDevPanel === 'function') {
+    try { renderDevPanel(); } catch(e){}
+  }
+}
+
+window.addEventListener('k-periodchange', function(e){
+  if (e.detail && e.detail.scope === 'site') syncSitePeriodEchoes();
+});
+window.addEventListener('k-prefschange', function(){
+  // Re-render dev panel so DEV_CONFIG values pass through K.fmt
+  if (typeof renderDevPanel === 'function') {
+    try { renderDevPanel(); } catch(e){}
+  }
+});
+
+document.addEventListener('DOMContentLoaded', function(){
+  if (typeof K !== 'undefined') {
+    K.init({ scope: 'site', sitePicker: true, siteId: '214', crossHref: 'index.html' });
+    syncSitePeriodEchoes();
+  }
+});
 </script>
 </body>
 </html>

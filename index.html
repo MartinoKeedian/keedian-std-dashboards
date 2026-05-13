@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portfolio View</title>
+<link rel="stylesheet" href="keedian-ui.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#e5e7eb;padding:20px;font-family:sans-serif}
@@ -95,8 +96,18 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
   </div>
   <div class="main">
     <div class="topbar">
-      <div class="bc">Portfolio <div class="dot4"></div><b>ACME Corp</b></div>
-      <div style="margin-left:auto;font-size:11px;color:#6b7280">April 2026</div>
+      <div class="bc"><b>Portfolio</b> <div class="dot4"></div>ACME Corp</div>
+      <div class="k-topbar-extras">
+        <a class="k-cross" id="k-cross-link" href="Site-Standard-Dashboard.html" title="Open the site dashboard (Store #214 demo)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Open site dashboard
+        </a>
+        <div id="k-period-bar"></div>
+        <span id="k-period-label">April 2026</span>
+        <button id="k-settings-btn" title="Display settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
     </div>
     <div class="tab-bar">
       <div class="tab active" onclick="showTab('exec',this)">Executive summary</div>
@@ -111,7 +122,10 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 
     <!-- EXECUTIVE SUMMARY -->
     <div class="content" id="tab-exec">
-      <div class="slabel">Fleet status — April 2026</div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div class="slabel">Fleet status</div>
+        <span class="k-badge k-badge-live" title="Current snapshot — does not respond to period selector">Live</span>
+      </div>
       <div class="g5">
         <div class="fcard"><div class="fval">87</div><div class="flbl">Total stores</div><div class="fsub arr-fl" style="color:#6b7280">ACME Corp portfolio</div></div>
         <div class="fcard"><div class="fval" style="color:#10b981">71</div><div class="flbl">Full data availability</div><div class="fsub" style="color:#6b7280">100% uptime this month</div></div>
@@ -131,11 +145,14 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
         </div>
       </div>
 
-      <div class="slabel">ROI summary — portfolio</div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div class="slabel">ROI summary — portfolio</div>
+        <span class="k-badge k-badge-cum" title="Cumulative from installation — does not respond to period selector">Cumulative</span>
+      </div>
       <div class="g3">
         <div class="fcard"><div class="fval" style="color:#10b981">47<span style="font-size:14px;color:#6b7280">%</span></div><div class="flbl">Sites with positive ROI</div><div class="fsub" style="color:#10b981">41 of 87 stores achieved</div></div>
-        <div class="fcard"><div class="fval" style="color:#2563eb">$1.24M</div><div class="flbl">Accumulated savings — portfolio</div><div class="fsub arr-up">▲ $48k vs March</div></div>
-        <div class="fcard"><div class="fval">$312k</div><div class="flbl">Savings this year (2026)</div><div class="fsub arr-up">▲ 12% vs 2025 YTD</div></div>
+        <div class="fcard"><div class="fval" style="color:#2563eb"><span data-fmt-money-compact="1240000">$1.24M</span></div><div class="flbl">Accumulated savings — portfolio</div><div class="fsub arr-up">▲ <span data-fmt-money-compact="48000">$48k</span> vs March</div></div>
+        <div class="fcard"><div class="fval"><span data-fmt-money-compact="312000">$312k</span></div><div class="flbl">Savings this year (2026)</div><div class="fsub arr-up">▲ 12% vs 2025 YTD</div></div>
       </div>
       <div class="slabel">HVAC — % stores in compliance this month</div>
       <div class="g4">
@@ -239,9 +256,12 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
         <select class="fsel" id="roiRoi" onchange="renderRoi()"><option value="all">All ROI statuses</option><option value="achieved">ROI achieved</option><option value="progress">In progress</option><option value="not">Not achieved</option></select>
         <span style="font-size:10px;color:#9ca3af;margin-left:auto">Click column headers to sort</span>
       </div>
+      <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:6px">
+        <span class="k-badge k-badge-cum" title="Cumulative from installation — does not respond to period selector">Cumulative</span>
+      </div>
       <div class="g3" style="margin-bottom:10px">
         <div class="fcard"><div class="fval" style="color:#10b981">47<span style="font-size:14px;color:#6b7280">%</span></div><div class="flbl">Sites with positive ROI</div><div class="fsub" style="color:#6b7280">41 of 87 stores</div></div>
-        <div class="fcard"><div class="fval" style="color:#2563eb">$1.24M</div><div class="flbl">Total accumulated savings</div><div class="fsub arr-up">▲ $48k vs March</div></div>
+        <div class="fcard"><div class="fval" style="color:#2563eb"><span data-fmt-money-compact="1240000">$1.24M</span></div><div class="flbl">Total accumulated savings</div><div class="fsub arr-up">▲ <span data-fmt-money-compact="48000">$48k</span> vs March</div></div>
         <div class="fcard"><div class="fval">28 mo</div><div class="flbl">Avg payback period</div><div class="fsub" style="color:#6b7280">across portfolio</div></div>
       </div>
       <div class="chart-card">
@@ -548,6 +568,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css"/>
+<script src="keedian-ui.js"></script>
 <script>
 function showTab(name,el){document.querySelectorAll('.tab:not(.soon)').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.querySelectorAll('.content').forEach(c=>c.classList.add('hidden'));document.getElementById('tab-'+name).classList.remove('hidden');if(name==='hvac'&&!window.hvacBuilt){buildHvacData();renderSites();window.hvacBuilt=true;}if(name==='perf'&&!window.perfBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderPerf();window.perfBuilt=true;}if(name==='roi'&&!window.roiBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderRoi();buildRoiCharts();window.roiBuilt=true;}if(name==='refrig'&&!window.refrigBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderRefrig();window.refrigBuilt=true;}if(name==='lighting'&&!window.ltBuilt){buildLightingCharts();window.ltBuilt=true;}if(name==='alarms'&&!window.alarmsBuilt){buildAlarmCharts();window.alarmsBuilt=true;}}
 
@@ -640,7 +661,7 @@ function connBadge(cm,cn){
   return `${now}<div style="margin-top:2px">${mo}</div>`;}
 function eqBadge(t){return t==='RTU'?'<span class="chip c-blue">RTU</span>':t==='AHU'?'<span class="chip c-purple">AHU</span>':'<span class="chip c-gray">CU</span>';}
 function roiBadge(s){return s==='achieved'?'<span class="chip c-ok">Achieved</span>':s==='progress'?'<span class="chip c-blue">In progress</span>':'<span class="chip c-err">Not achieved</span>';}
-function fmtMoney(v){return '$'+v.toLocaleString()}
+function fmtMoney(v){return (typeof K!=='undefined'&&K.fmt)?K.fmt.money(v):('$'+v.toLocaleString());}
 
 let currentSub='sites',siteSort={col:'avgSp',dir:-1},devSort={col:'sp',dir:-1};
 
@@ -1266,6 +1287,21 @@ window.showTab=function(name,el){
 };
 document.addEventListener('DOMContentLoaded',()=>setTimeout(initLeafletMap,500));
 
+// ── Keedian UI module wiring ─────────────────────────────────────────────────
+window.addEventListener('k-prefschange', function(){
+  // Re-render anything that depends on fmtMoney (currently rendered tables)
+  if (typeof renderRoi === 'function' && window.roiBuilt) try { renderRoi(); } catch(e){}
+  if (typeof renderSites === 'function' && window.hvacBuilt) try { renderSites(); } catch(e){}
+  if (typeof renderDevices === 'function' && window.hvacBuilt) try { renderDevices(); } catch(e){}
+});
+window.addEventListener('k-periodchange', function(e){
+  // Period filter is mocked at the portfolio level — labels update; data stays as-is
+});
+document.addEventListener('DOMContentLoaded', function(){
+  if (typeof K !== 'undefined') {
+    K.init({ scope: 'portfolio', crossHref: 'Site-Standard-Dashboard.html' });
+  }
+});
 </script>
 </body>
 </html>

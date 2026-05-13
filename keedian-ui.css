@@ -1,0 +1,74 @@
+/* keedian-ui.css — shared topbar / period bar / settings modal / site picker */
+
+/* Topbar period bar */
+#k-period-bar{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+#k-period-bar .k-prd{padding:3px 9px;border-radius:5px;border:1px solid #e5e7eb;background:#fff;font-size:11px;color:#374151;cursor:pointer}
+#k-period-bar .k-prd:hover{background:#f9fafb}
+#k-period-bar .k-prd.active{background:#2563eb;color:#fff;border-color:#2563eb}
+#k-period-bar .k-prd.k-apply{background:#10b981;color:#fff;border-color:#10b981}
+#k-period-bar .k-date{padding:3px 6px;border-radius:5px;border:1px solid #e5e7eb;font-size:11px;color:#374151;background:#fff}
+
+#k-period-label{font-size:11px;color:#6b7280}
+
+/* Cross-link button (Open site dashboard / Back to portfolio) */
+.k-cross{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;background:#eff6ff;color:#1d4ed8;font-size:11px;text-decoration:none;border:1px solid #bfdbfe;font-weight:500}
+.k-cross:hover{background:#dbeafe}
+.k-cross svg{width:11px;height:11px}
+
+/* Settings gear button */
+#k-settings-btn{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;color:#6b7280}
+#k-settings-btn:hover{background:#f3f4f6;color:#111827}
+#k-settings-btn svg{width:14px;height:14px}
+
+/* Site picker dropdown */
+#k-site-picker{position:relative;display:inline-block}
+.k-site-btn{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;font-size:12px;color:#111827;font-weight:500;cursor:pointer}
+.k-site-btn:hover{background:#f9fafb}
+.k-site-btn svg{color:#6b7280}
+.k-site-menu{position:absolute;top:calc(100% + 4px);left:0;background:#fff;border:1px solid #e5e7eb;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.08);min-width:260px;z-index:1000;padding:4px 0}
+.k-site-opt{padding:7px 12px;font-size:11px;color:#374151;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.k-site-opt:hover{background:#f3f4f6}
+.k-site-opt.active{background:#eff6ff;color:#1d4ed8;font-weight:500}
+.k-site-opt.soon{color:#9ca3af;cursor:not-allowed}
+.k-site-opt.soon:hover{background:transparent}
+.k-site-soon{font-size:9px;background:#f3f4f6;color:#6b7280;padding:1px 5px;border-radius:3px;text-transform:uppercase;letter-spacing:0.04em}
+
+/* Live / Cumulative badge for KPIs that don't respond to the period */
+.k-badge{display:inline-flex;align-items:center;gap:3px;padding:1px 6px;border-radius:8px;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:0.04em}
+.k-badge-live{background:#dcfce7;color:#15803d}
+.k-badge-cum{background:#ede9fe;color:#6b21a8}
+
+/* Settings modal */
+.k-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px}
+.k-modal{background:#fff;border-radius:12px;width:520px;max-width:100%;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,0.2)}
+.k-modal-hdr{padding:16px 20px;border-bottom:1px solid #e5e7eb;display:flex;align-items:flex-start;justify-content:space-between}
+.k-modal-ttl{font-size:15px;font-weight:600;color:#111827}
+.k-modal-sub{font-size:11px;color:#6b7280;margin-top:2px}
+.k-x{background:none;border:none;font-size:24px;color:#9ca3af;cursor:pointer;line-height:1;padding:0 4px}
+.k-x:hover{color:#111827}
+.k-modal-body{padding:18px 20px;overflow-y:auto}
+.k-row{margin-bottom:18px}
+.k-row:last-child{margin-bottom:0}
+.k-lbl{display:block;font-size:11px;font-weight:600;color:#111827;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:7px}
+.k-seg{display:inline-flex;flex-wrap:wrap;gap:6px}
+.k-seg button{padding:6px 12px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;font-size:12px;color:#374151;cursor:pointer}
+.k-seg button:hover{background:#f9fafb}
+.k-seg button.active{background:#2563eb;color:#fff;border-color:#2563eb}
+.k-hint{font-size:10px;color:#9ca3af;margin-top:6px}
+.k-modal-ftr{padding:14px 20px;border-top:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;gap:8px;background:#f9fafb}
+.k-btn-primary{padding:7px 16px;border-radius:6px;border:none;background:#2563eb;color:#fff;font-size:12px;font-weight:500;cursor:pointer}
+.k-btn-primary:hover{background:#1d4ed8}
+.k-btn-ghost{padding:7px 12px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;color:#6b7280;font-size:11px;cursor:pointer}
+.k-btn-ghost:hover{background:#f3f4f6;color:#111827}
+
+/* Topbar layout helpers used by both dashboards */
+.k-topbar-extras{display:flex;align-items:center;gap:10px;margin-left:auto}
+.k-topbar-extras > *{flex-shrink:0}
+
+@media (max-width:768px){
+  .k-modal{width:100%}
+  #k-period-bar{gap:3px}
+  #k-period-bar .k-prd{padding:3px 7px;font-size:10px}
+  .k-topbar-extras{gap:6px;flex-wrap:wrap}
+  .k-site-btn .k-site-name{max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}
