@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Site Dashboard — Store #214</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#e5e7eb;padding:20px;font-family:sans-serif}
+.wrap{display:flex;min-height:900px;background:#1a1f2e;border-radius:12px;overflow:hidden}
+.sidebar{width:56px;background:#1a1f2e;display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:6px;border-right:1px solid rgba(255,255,255,0.07)}
+.logo{width:32px;height:32px;background:#3b82f6;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:500;margin-bottom:10px}
+.nav{width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;opacity:0.45}
+.nav.active{background:rgba(59,130,246,0.2);opacity:1}
+.nav svg{width:18px;height:18px;fill:none;stroke:#9ca3af;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.nav.active svg{stroke:#60a5fa}
+.main{flex:1;display:flex;flex-direction:column;background:#f0f2f5;min-width:0}
+.topbar{height:48px;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;padding:0 16px;flex-shrink:0}
+.bc{font-size:12px;color:#6b7280;display:flex;align-items:center;gap:6px}
+.bc b{color:#111827;font-weight:500}
+.dot4{width:4px;height:4px;background:#d1d5db;border-radius:50%}
+.alert-bar{background:#fef9f9;border-bottom:1px solid #fecaca;padding:7px 16px;display:flex;align-items:center;gap:10px;font-size:11px;color:#991b1b;flex-shrink:0}
+.tab-bar{display:flex;border-bottom:1px solid #e5e7eb;background:#fff;padding:0 16px;flex-shrink:0;overflow-x:auto}
+.tab{padding:10px 14px;font-size:12px;color:#6b7280;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0}
+.tab.active{color:#2563eb;border-bottom-color:#2563eb;font-weight:500}
+.tab.soon{color:#d1d5db;cursor:default}
+.content{flex:1;overflow-y:auto;padding:14px}
+.content.hidden{display:none}
+.slabel{font-size:10px;font-weight:500;color:#6b7280;letter-spacing:0.08em;text-transform:uppercase;margin:0 0 8px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:10px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:10px}
+.card{background:#fff;border-radius:8px;border:1px solid #e5e7eb;padding:12px 14px}
+.kcard{background:#fff;border-radius:8px;border:1px solid #e5e7eb;padding:12px}
+.ktop{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.kttl{font-size:10px;color:#6b7280;font-weight:500;text-transform:uppercase;letter-spacing:0.05em}
+.kval{font-size:22px;font-weight:500;color:#111827;line-height:1}
+.ksub{font-size:10px;color:#6b7280;margin-top:2px}
+.kchg{font-size:11px;margin-top:4px}
+.pill{display:inline-flex;align-items:center;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:500}
+.p-ok{background:#d1fae5;color:#065f46}
+.p-warn{background:#fef3c7;color:#92400e}
+.p-err{background:#fee2e2;color:#991b1b}
+.p-blue{background:#dbeafe;color:#1e40af}
+.p-gray{background:#f3f4f6;color:#374151}
+.p-purple{background:#ede9fe;color:#5b21b6}
+.map-bg{height:110px;background:#dbeafe;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.map-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(148,163,184,0.2) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,184,0.2) 1px,transparent 1px);background-size:18px 18px}
+.map-pin{width:16px;height:16px;background:#2563eb;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff}
+.map-lbl{position:absolute;bottom:5px;left:7px;background:rgba(0,0,0,0.5);color:#fff;font-size:10px;padding:1px 5px;border-radius:3px}
+.tbl-wrap{background:#fff;border-radius:8px;border:1px solid #e5e7eb;overflow:hidden;margin-bottom:10px}
+.tbl-hdr-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #f3f4f6}
+.tbl-ttl{font-size:13px;font-weight:500;color:#111827}
+.tbl-sub{font-size:10px;color:#6b7280;margin-top:2px}
+.dtbl{width:100%;border-collapse:collapse;font-size:11px}
+.dtbl th{background:#f9fafb;font-size:10px;font-weight:500;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;padding:7px 10px;border-bottom:1px solid #e5e7eb;text-align:left;white-space:nowrap}
+.dtbl td{padding:8px 10px;border-bottom:1px solid #f9fafb;color:#374151;white-space:nowrap}
+.dtbl tr:last-child td{border-bottom:none}
+.dtbl tr:hover td{background:#f9fafb}
+.chip{display:inline-flex;align-items:center;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:500}
+.c-ok{background:#d1fae5;color:#065f46}
+.c-warn{background:#fef3c7;color:#92400e}
+.c-err{background:#fee2e2;color:#991b1b}
+.c-blue{background:#dbeafe;color:#1e40af}
+.c-purple{background:#ede9fe;color:#5b21b6}
+.c-teal{background:#ccfbf1;color:#0f766e}
+.c-gray{background:#f3f4f6;color:#6b7280}
+.c-orange{background:#ffedd5;color:#9a3412}
+.cdot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.cdot-ok{background:#10b981}
+.cdot-lost{background:#f59e0b}
+.cdot-off{background:#ef4444}
+.mbar{display:flex;align-items:center;gap:5px}
+.mb{width:56px;height:4px;background:#f3f4f6;border-radius:2px;overflow:hidden;flex-shrink:0}
+.mf{height:100%;border-radius:2px}
+.sub{font-size:10px;color:#6b7280;margin-top:2px}
+.arr-up{color:#10b981}
+.arr-dn{color:#ef4444}
+.arr-fl{color:#6b7280}
+.chart-card{background:#fff;border-radius:8px;border:1px solid #e5e7eb;padding:14px;margin-bottom:10px}
+.chart-ttl{font-size:13px;font-weight:500;color:#111827;margin-bottom:4px}
+.chart-sub{font-size:10px;color:#6b7280;margin-bottom:8px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:#6b7280;margin-bottom:8px}
+.li{display:flex;align-items:center;gap:4px}
+.ls{width:16px;height:3px;border-radius:2px;display:inline-block}
+.sel-wrap{display:flex;gap:4px}
+.sel-btn{padding:3px 10px;border-radius:4px;border:1px solid #e5e7eb;background:#fff;font-size:11px;color:#374151;cursor:pointer}
+.sel-btn.active{background:#2563eb;color:#fff;border-color:#2563eb}
+.sect-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.fsel{padding:4px 8px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;font-size:11px;color:#374151;cursor:pointer}
+.badge-conn{display:inline-flex;align-items:center;gap:4px;font-size:11px}
+.dev-sel-bar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.dev-btn{padding:5px 14px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;font-size:11px;color:#374151;cursor:pointer;display:flex;align-items:center;gap:5px}
+.dev-btn.active{background:#2563eb;color:#fff;border-color:#2563eb}
+.date-bar{display:flex;gap:6px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.date-preset{padding:4px 10px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;font-size:11px;color:#374151;cursor:pointer}
+.date-preset.active{background:#2563eb;color:#fff;border-color:#2563eb}
+.date-input{padding:4px 8px;border-radius:6px;border:1px solid #e5e7eb;font-size:11px;color:#374151;background:#fff}
+.roi-impact-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:10px}
+.roi-impact-card{background:#fff;border-radius:8px;border:1px solid #e5e7eb;padding:12px}
+.roi-impact-card.future{background:#fafafa;border-style:dashed}
+.roi-future-lbl{font-size:10px;color:#9ca3af;font-style:italic;margin-top:4px}
+.progress-bar-wrap{height:6px;background:#f3f4f6;border-radius:3px;overflow:hidden;margin-top:6px}
+.progress-bar-fill{height:100%;border-radius:3px}
+
+@media (max-width: 768px) {
+  body{padding:0}
+  .wrap{flex-direction:column;min-height:100vh;border-radius:0}
+  .sidebar{display:none}
+  .main{width:100%}
+  .topbar{height:auto;padding:10px 14px;flex-wrap:wrap;gap:4px}
+  .bc{font-size:11px;flex-wrap:wrap}
+  .bc b{font-size:12px}
+  .alert-bar{font-size:10px;padding:6px 12px;flex-wrap:wrap;gap:6px}
+  .tab-bar{padding:0 8px;-webkit-overflow-scrolling:touch}
+  .tab{padding:10px 10px;font-size:11px}
+  .content{padding:10px}
+  .g2{grid-template-columns:1fr}
+  .g3{grid-template-columns:1fr}
+  .g4{grid-template-columns:1fr 1fr}
+  .g4.single-col{grid-template-columns:1fr}
+  .roi-impact-grid{grid-template-columns:1fr}
+  .kcard{padding:10px}
+  .kval{font-size:20px}
+  .card{padding:10px 12px}
+  .map-bg{height:90px}
+  .chart-card{padding:10px}
+  .tbl-hdr-bar{flex-direction:column;align-items:flex-start;gap:4px}
+  .dev-sel-bar{gap:6px}
+  .dev-btn{padding:5px 10px;font-size:10px}
+  .date-bar{gap:5px}
+  .date-preset{padding:4px 8px;font-size:10px}
+  #customDateRange{flex-direction:column;align-items:flex-start}
+  .sect-hdr{flex-direction:column;align-items:flex-start;gap:8px}
+  .sel-wrap{align-self:flex-start}
+  .mbar{flex-wrap:wrap}
+  .mb{width:44px}
+}
+@media (max-width: 390px) {
+  .g4{grid-template-columns:1fr}
+  .kval{font-size:18px}
+  .bc .dot4:first-of-type,.bc div:nth-child(2),.bc div:nth-child(3){display:none}
+}
+
+@media (max-width: 768px) {
+  .bc-portfolio{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="sidebar">
+    <div class="logo">K</div>
+    <div class="nav"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+    <div class="nav active"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+    <div class="nav"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+    <div class="nav" style="margin-top:auto"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="bc"><span class="bc-portfolio">Portfolio <div class="dot4" style="display:inline-block"></div> ACME Corp <div class="dot4" style="display:inline-block"></div> </span><b>Store #214 — San Diego</b></div>
+      <div style="margin-left:auto;font-size:11px;color:#6b7280">April 2026</div>
+    </div>
+    <div class="alert-bar">
+      <svg width="13" height="13" fill="none" stroke="#991b1b" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      RTU-2 possible equipment fault — low temp compliance with low runtime &nbsp;|&nbsp; RTU-3 frequent setpoint override — runtime 19.6 h/day above threshold
+    </div>
+    <div class="tab-bar">
+      <div class="tab active" onclick="showTab('overview',this)">Overview</div>
+      <div class="tab" onclick="showTab('hvac',this)">HVAC</div>
+      <div class="tab" onclick="showTab('refrig',this)">Refrigeration</div>
+      <div class="tab" onclick="showTab('roi',this)">ROI & savings</div>
+      <div class="tab" onclick="showTab('lighting',this)">Lighting</div>
+      <div class="tab soon">Energy</div>
+      <div class="tab" onclick="showTab('alarms',this)">Alarms</div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="content" id="tab-overview">
+      <div class="g2">
+        <div style="background:#fff;border-radius:8px;border:1px solid #e5e7eb;overflow:hidden">
+          <div class="map-bg"><div class="map-grid"></div><div class="map-pin"></div><div class="map-lbl">Store #214</div></div>
+          <div style="padding:10px 12px;display:flex;gap:16px;align-items:flex-start">
+            <div>
+              <div style="font-size:12px;font-weight:500;color:#111827">9821 Mission Gorge Rd</div>
+              <div style="font-size:11px;color:#6b7280;margin-top:1px">San Diego, CA 92071</div>
+              <div style="display:flex;gap:12px;margin-top:8px">
+                <div style="font-size:11px;color:#374151"><b style="color:#111827">3</b> RTUs</div>
+                <div style="font-size:11px;color:#374151"><b style="color:#111827">1</b> Walk-in</div>
+                <div style="font-size:11px;color:#374151"><b style="color:#111827">1</b> Freezer</div>
+                <div style="font-size:11px;color:#374151"><b style="color:#111827">24h</b></div>
+              </div>
+            </div>
+            <div style="margin-left:auto;text-align:right">
+              <div style="font-size:10px;color:#6b7280">Gateway GW-001</div>
+              <div style="display:inline-flex;align-items:center;gap:4px;margin-top:3px;padding:2px 8px;border-radius:10px;background:#d1fae5;color:#065f46;font-size:10px;font-weight:500"><span class="cdot cdot-ok"></span>Online</div>
+              <div style="font-size:10px;color:#6b7280;margin-top:2px">Last seen 4 min ago</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="slabel" style="margin:0 0 10px">ROI & savings</div>
+          <div style="display:flex;gap:10px">
+            <div style="flex:1">
+              <div style="font-size:10px;color:#6b7280">Accumulated savings</div>
+              <div style="font-size:20px;font-weight:500;color:#2563eb;margin-top:2px">$14,280</div>
+              <div style="font-size:10px;color:#10b981;margin-top:2px">▲ $480 vs March</div>
+            </div>
+            <div style="width:1px;background:#f3f4f6"></div>
+            <div style="flex:1">
+              <div style="font-size:10px;color:#6b7280">Investment</div>
+              <div style="font-size:20px;font-weight:500;color:#111827;margin-top:2px">$12,400</div>
+              <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:100%;background:#10b981"></div></div>
+              <div style="font-size:10px;color:#065f46;margin-top:3px;font-weight:500">ROI achieved · 115%</div>
+            </div>
+            <div style="width:1px;background:#f3f4f6"></div>
+            <div style="flex:1">
+              <div style="font-size:10px;color:#6b7280">Payback period</div>
+              <div style="font-size:20px;font-weight:500;color:#111827;margin-top:2px">26 <span style="font-size:12px;color:#6b7280">mo</span></div>
+              <div style="font-size:10px;color:#6b7280;margin-top:2px">Installed Feb 2024</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slabel">HVAC — site overview · April 2026</div>
+      <div class="g4">
+        <div class="kcard"><div class="ktop"><div class="kttl">Runtime</div><span class="pill p-warn">Watch</span></div><div class="kval">12.3 <span style="font-size:13px;color:#6b7280">h/day</span></div><div class="ksub">site avg · target 8–18 h</div><div class="kchg arr-dn">▼ RTU-3 above threshold</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Cooling ΔT</div><span class="pill p-warn">Watch</span></div><div class="kval">17.2 <span style="font-size:13px;color:#6b7280">°F</span></div><div class="ksub">site avg · target 16–22°F</div><div class="kchg arr-dn">▼ RTU-2 below 16°F</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Setpoint compliance</div><span class="pill p-err">Action needed</span></div><div class="kval">93.3 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">site avg · target ≥ 98%</div><div class="kchg arr-dn">▼ RTU-3 at 82.7%</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Temp compliance</div><span class="pill p-warn">Watch</span></div><div class="kval">93.9 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">site avg · target ≥ 95%</div><div class="kchg arr-dn">▼ RTU-2 at 88.4%</div></div>
+      </div>
+
+      <div class="slabel">Refrigeration — site overview · April 2026</div>
+      <div class="g2" style="margin-bottom:10px">
+        <div class="kcard"><div class="ktop"><div class="kttl">Walk-in coolers</div><span class="pill p-ok">In compliance</span></div><div class="kval">99.1 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">avg compliance · target ≥ 98% · range 34–38°F</div><div class="kchg" style="color:#6b7280">Current: <b style="color:#065f46">35.8°F</b> · All units in range</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Freezers</div><span class="pill p-ok">In compliance</span></div><div class="kval">99.4 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">avg compliance · target ≥ 99% · range -10°F–0°F</div><div class="kchg" style="color:#6b7280">Current: <b style="color:#065f46">-4.2°F</b> · All units in range</div></div>
+      </div>
+
+      <div class="slabel">Energy — current month</div>
+      <div class="g3" style="margin-bottom:10px">
+        <div class="kcard"><div class="ktop"><div class="kttl">Consumption</div><span class="pill p-ok">Below baseline</span></div><div class="kval">2,847 <span style="font-size:13px;color:#6b7280">kWh</span></div><div class="ksub">April 2026</div><div class="kchg arr-up">▼ 6.2% vs baseline</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Peak demand</div><span class="pill p-ok">Normal</span></div><div class="kval">27.4 <span style="font-size:13px;color:#6b7280">kW</span></div><div class="ksub">April 2026</div><div class="kchg arr-up">▼ 3.1% vs March</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">M&V savings</div><span class="pill p-blue">This month</span></div><div class="kval">$480 <span style="font-size:13px;color:#6b7280">/mo</span></div><div class="ksub">vs baseline period</div><div class="kchg arr-up">▲ 7.4% efficiency gain</div></div>
+      </div>
+      <div class="slabel">Lighting — site averages · April 2026</div>
+      <div class="g3" style="margin-bottom:10px">
+        <div class="kcard"><div class="ktop"><div class="kttl">Schedule compliance</div><span class="pill p-ok">In compliance</span></div><div class="kval">93.4 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">avg across all circuits · target ≥ 90%</div><div class="kchg arr-up">▲ 1.2pp vs March</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Utilization</div><span class="pill p-ok">Within range</span></div><div class="kval">76.8 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">avg time on across all spaces</div><div class="kchg arr-fl" style="color:#6b7280">All spaces in range</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Burn hours</div><span class="pill p-ok">Within range</span></div><div class="kval">15.2 <span style="font-size:13px;color:#6b7280">h/day</span></div><div class="ksub">avg across all circuits</div><div class="kchg arr-fl" style="color:#6b7280">All spaces in range</div></div>
+      </div>
+
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div class="chart-card" style="margin-bottom:0">
+          <div class="chart-ttl">HVAC compliance trend — %</div>
+          <div class="chart-sub">Setpoint and temperature compliance · last 13 months</div>
+          <div class="legend">
+            <div class="li"><span class="ls" style="background:#7c3aed"></span>Setpoint compl. (%)</div>
+            <div class="li"><span class="ls" style="background:#0f766e"></span>Temp compl. (%)</div>
+          </div>
+          <div style="position:relative;height:160px"><canvas id="ovHvacComplChart"></canvas></div>
+        </div>
+        <div class="chart-card" style="margin-bottom:0">
+          <div class="chart-ttl">HVAC operational trend</div>
+          <div class="chart-sub">Runtime (left axis) and cooling ΔT (right axis) · last 13 months</div>
+          <div class="legend">
+            <div class="li"><span class="ls" style="background:#2563eb"></span>Runtime (h/day)</div>
+            <div class="li"><span class="ls" style="background:#0891b2"></span>Cooling ΔT (°F)</div>
+          </div>
+          <div style="position:relative;height:160px"><canvas id="ovHvacOpsChart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="sect-hdr">
+          <div><div class="chart-ttl">Refrigeration trend — monthly averages</div><div class="chart-sub">Compliance per unit · last 13 months · tooltip shows target and threshold</div></div>
+        </div>
+        <div class="legend">
+          <div class="li"><span class="ls" style="background:#2563eb"></span>WIC-1 cooler (≥98%)</div>
+          <div class="li"><span class="ls" style="background:#0f766e"></span>FRZ-1 freezer (≥99%)</div>
+        </div>
+        <div style="position:relative;height:130px"><canvas id="ovRefChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- HVAC TAB -->
+    <div class="content hidden" id="tab-hvac">
+      <div class="slabel">HVAC KPIs — site averages · April 2026</div>
+      <div class="g4">
+        <div class="kcard"><div class="ktop"><div class="kttl">Runtime</div><span class="pill p-warn">Watch</span></div><div class="kval">12.3 <span style="font-size:13px;color:#6b7280">h/day</span></div><div class="ksub">site avg · 3 devices · target 8–18 h</div><div class="kchg arr-dn">▼ RTU-3 above threshold</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Cooling ΔT</div><span class="pill p-warn">Watch</span></div><div class="kval">17.2 <span style="font-size:13px;color:#6b7280">°F</span></div><div class="ksub">site avg · compressor-on only</div><div class="kchg arr-dn">▼ RTU-2 below 16°F</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Setpoint compliance</div><span class="pill p-err">Action needed</span></div><div class="kval">93.3 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">site avg · policy day 76°F / night 78°F</div><div class="kchg arr-dn">▼ RTU-3 at 82.7%</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Temp compliance</div><span class="pill p-warn">Watch</span></div><div class="kval">93.9 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">site avg · band 72–79°F daytime</div><div class="kchg arr-dn">▼ RTU-2 at 88.4%</div></div>
+      </div>
+      <div class="slabel">Per device — HVAC</div>
+      <div class="tbl-wrap">
+        <div class="tbl-hdr-bar"><div><div class="tbl-ttl">Device detail — current month</div><div class="tbl-sub">Individual readings · last known values shown in gray for devices with lost connection</div></div></div>
+        <div style="overflow-x:auto">
+          <table class="dtbl">
+            <thead><tr><th>Device</th><th>Type</th><th>Connection</th><th>Data avail.</th><th>Runtime</th><th>Cooling ΔT</th><th>Setpoint compl.</th><th>Temp compl.</th></tr></thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:500;color:#111827">RTU-1</td>
+                <td><span class="chip c-blue">RTU</span></td>
+                <td><div class="badge-conn"><span class="cdot cdot-ok"></span><span style="color:#065f46;font-weight:500">Online</span></div><div class="sub">4 min ago · Full availability</div></td>
+                <td style="font-weight:500;color:#065f46">100%</td>
+                <td><div class="mbar"><div class="mb"><div class="mf" style="width:58%;background:#10b981"></div></div><span class="chip c-ok">11.2h</span></div><div class="sub">target 8–18h</div></td>
+                <td><div class="mbar"><div class="mb"><div class="mf" style="width:70%;background:#10b981"></div></div><span class="chip c-ok">17.8°F</span></div><div class="sub">target 16–22°F</div></td>
+                <td><span class="chip c-ok">98.7%</span><div class="sub">day 76°F · night 78°F</div></td>
+                <td><span class="chip c-ok">97.2%</span><div class="sub">band 72–79°F</div></td>
+              </tr>
+              <tr>
+                <td style="font-weight:500;color:#111827">RTU-2</td>
+                <td><span class="chip c-blue">RTU</span></td>
+                <td><div class="badge-conn"><span class="cdot cdot-ok"></span><span style="color:#065f46;font-weight:500">Online</span></div><div class="sub">3 min ago · Full availability</div></td>
+                <td style="font-weight:500;color:#065f46">100%</td>
+                <td><div class="mbar"><div class="mb"><div class="mf" style="width:31%;background:#f59e0b"></div></div><span class="chip c-warn">6.2h</span></div><div class="sub">below 8h threshold</div></td>
+                <td><div class="mbar"><div class="mb"><div class="mf" style="width:74%;background:#f59e0b"></div></div><span class="chip c-warn">14.8°F</span></div><div class="sub">below 16°F threshold</div></td>
+                <td><span class="chip c-ok">98.4%</span><div class="sub">policy followed</div></td>
+                <td><span class="chip c-err">88.4%</span><div class="sub">below 95% threshold</div></td>
+              </tr>
+              <tr>
+                <td style="font-weight:500;color:#111827">RTU-3</td>
+                <td><span class="chip c-blue">RTU</span></td>
+                <td><div class="badge-conn"><span class="cdot cdot-ok"></span><span style="color:#065f46;font-weight:500">Online</span></div><div class="sub">2 min ago · Full availability</div></td>
+                <td style="font-weight:500;color:#065f46">100%</td>
+                <td><div class="mbar"><div class="mb"><div class="mf" style="width:98%;background:#ef4444"></div></div><span class="chip c-err">19.6h</span></div><div class="sub">above 18h threshold</div></td>
+                <td><div class="mbar"><div class="mb"><div class="mf" style="width:78%;background:#10b981"></div></div><span class="chip c-ok">18.9°F</span></div><div class="sub">target 16–22°F</div></td>
+                <td><span class="chip c-err">82.7%</span><div class="sub">frequent override</div></td>
+                <td><span class="chip c-ok">96.1%</span><div class="sub">band 72–79°F</div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="slabel" id="hvacDevSelLabel">Device telemetry — select device</div>
+      <div class="dev-sel-bar" id="hvacDevSelBar">
+        <div class="dev-btn active" onclick="selectDevHvac('RTU-1',this)"><span class="chip c-blue" style="font-size:9px">RTU</span> RTU-1</div>
+        <div class="dev-btn" onclick="selectDevHvac('RTU-2',this)"><span class="chip c-blue" style="font-size:9px">RTU</span> RTU-2</div>
+        <div class="dev-btn" onclick="selectDevHvac('RTU-3',this)"><span class="chip c-blue" style="font-size:9px">RTU</span> RTU-3</div>
+      </div>
+
+      <div class="slabel">Select period</div>
+      <div class="date-bar">
+        <div class="date-preset active" onclick="setPeriodHvac('today',this)">Today</div>
+        <div class="date-preset" onclick="setPeriodHvac('yesterday',this)">Yesterday</div>
+        <div class="date-preset" onclick="setPeriodHvac('7d',this)">Last 7 days</div>
+        <div class="date-preset" onclick="setPeriodHvac('30d',this)">Last 30 days</div>
+        <div class="date-preset" onclick="setPeriodHvac('custom',this)">Custom range</div>
+        <div id="customDateRangeHvac" style="display:none;align-items:center;gap:6px">
+          <input type="date" class="date-input" id="dateFromHvac" value="2026-04-01">
+          <span style="font-size:11px;color:#6b7280">to</span>
+          <input type="date" class="date-input" id="dateToHvac" value="2026-04-24">
+          <button class="sel-btn active" onclick="applyCustomDateHvac()" style="font-size:11px">Apply</button>
+        </div>
+      </div>
+
+      <div id="devPanel">
+        <div class="g4" id="devKpiCards" style="margin-bottom:10px"></div>
+        <div id="devInsightBox" style="margin-bottom:10px"></div>
+        <div class="chart-card">
+          <div class="chart-ttl" id="devChartTtl">RTU-1 — telemetry · Today (10 min intervals)</div>
+          <div class="chart-sub">All signals overlaid · left axis = temperature (°F) · right axis = power (kW) or compressor</div>
+          <div id="devLegend" style="display:none"></div>
+          <div style="position:relative;height:260px"><canvas id="devMainChart"></canvas></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- REFRIGERATION TAB -->
+    <div class="content hidden" id="tab-refrig">
+      <div class="slabel">Refrigeration KPIs — site averages · April 2026</div>
+      <div class="g2">
+        <div class="kcard"><div class="ktop"><div class="kttl">Walk-in coolers</div><span class="pill p-ok">In compliance</span></div><div class="kval">99.1 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">avg compliance · 1 unit · target ≥ 98% · range 34–38°F</div><div class="kchg" style="color:#6b7280">Current: <b style="color:#065f46">35.8°F</b> · All units in range</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Freezers</div><span class="pill p-ok">In compliance</span></div><div class="kval">99.4 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">avg compliance · 1 unit · target ≥ 99% · range -10°F–0°F</div><div class="kchg" style="color:#6b7280">Current: <b style="color:#065f46">-4.2°F</b> · All units in range</div></div>
+      </div>
+      <div class="slabel">Per device — Refrigeration</div>
+      <div class="tbl-wrap">
+        <div class="tbl-hdr-bar"><div><div class="tbl-ttl">Device detail — current month</div><div class="tbl-sub">Current temperature + monthly compliance per unit</div></div></div>
+        <div style="overflow-x:auto">
+          <table class="dtbl">
+            <thead><tr><th>Device</th><th>Type</th><th>Connection</th><th>Data avail.</th><th>Current temp</th><th>Target range</th><th>Monthly compliance</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:500;color:#111827">WIC-1</td>
+                <td><span class="chip c-blue">Walk-in cooler</span></td>
+                <td><div class="badge-conn"><span class="cdot cdot-ok"></span><span style="color:#065f46;font-weight:500">Online</span></div><div class="sub">6 min ago · Full availability</div></td>
+                <td style="font-weight:500;color:#065f46">100%</td>
+                <td><span style="font-size:14px;font-weight:500;color:#065f46">35.8°F</span></td>
+                <td style="color:#6b7280;font-size:11px">34–38°F</td>
+                <td><span class="chip c-ok">99.1%</span><div class="sub">threshold ≥ 98%</div></td>
+                <td><span class="chip c-ok">In compliance</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:500;color:#111827">FRZ-1</td>
+                <td><span class="chip c-teal">Freezer</span></td>
+                <td><div class="badge-conn"><span class="cdot cdot-ok"></span><span style="color:#065f46;font-weight:500">Online</span></div><div class="sub">3 min ago · Full availability</div></td>
+                <td style="font-weight:500;color:#065f46">100%</td>
+                <td><span style="font-size:14px;font-weight:500;color:#065f46">-4.2°F</span></td>
+                <td style="color:#6b7280;font-size:11px">-10°F – 0°F</td>
+                <td><span class="chip c-ok">99.4%</span><div class="sub">threshold ≥ 99%</div></td>
+                <td><span class="chip c-ok">In compliance</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="slabel">Device telemetry — select device</div>
+      <div class="dev-sel-bar" id="refDevSelBar">
+        <div class="dev-btn active" onclick="selectDevRef('WIC-1',this)"><span class="chip c-blue" style="font-size:9px">WIC</span> WIC-1</div>
+        <div class="dev-btn" onclick="selectDevRef('FRZ-1',this)"><span class="chip c-teal" style="font-size:9px">FRZ</span> FRZ-1</div>
+      </div>
+
+      <div class="slabel">Select period</div>
+      <div class="date-bar">
+        <div class="date-preset active" onclick="setPeriodRef('today',this)">Today</div>
+        <div class="date-preset" onclick="setPeriodRef('yesterday',this)">Yesterday</div>
+        <div class="date-preset" onclick="setPeriodRef('7d',this)">Last 7 days</div>
+        <div class="date-preset" onclick="setPeriodRef('30d',this)">Last 30 days</div>
+        <div class="date-preset" onclick="setPeriodRef('custom',this)">Custom range</div>
+        <div id="customDateRangeRef" style="display:none;align-items:center;gap:6px">
+          <input type="date" class="date-input" id="dateFromRef" value="2026-04-01">
+          <span style="font-size:11px;color:#6b7280">to</span>
+          <input type="date" class="date-input" id="dateToRef" value="2026-04-24">
+          <button class="sel-btn active" onclick="applyCustomDateRef()" style="font-size:11px">Apply</button>
+        </div>
+      </div>
+
+      <div id="refDevPanel">
+        <div class="g4" id="refDevKpiCards" style="margin-bottom:10px"></div>
+        <div class="chart-card">
+          <div class="chart-ttl" id="refDevChartTtl">WIC-1 — telemetry · Today (10 min intervals)</div>
+          <div class="chart-sub">Unit temperature and door open/close events over time</div>
+          <div style="position:relative;height:260px"><canvas id="refDevMainChart"></canvas></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DEVICE DETAIL TAB -->
+    <!-- ROI & SAVINGS TAB -->
+    <div class="content hidden" id="tab-roi">
+      <div class="slabel">ROI summary — Store #214</div>
+      <div class="g4 single-col">
+        <div class="kcard"><div class="ktop"><div class="kttl">Total investment</div><span class="pill p-gray">Feb 2024</span></div><div class="kval">$12,400</div><div class="ksub">Installation + onboarding</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Accumulated savings</div><span class="pill p-ok">All sources</span></div><div class="kval" style="color:#2563eb">$14,280</div><div class="ksub">Since installation · 26 months</div><div class="kchg arr-up">▲ $480 this month</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Payback period</div><span class="pill p-ok">Achieved</span></div><div class="kval">26 <span style="font-size:13px;color:#6b7280">mo</span></div><div class="ksub">Investment recovered month 26</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">ROI</div><span class="pill p-ok">Positive</span></div><div class="kval" style="color:#10b981">115<span style="font-size:13px">%</span></div><div class="ksub">Accumulated savings / investment</div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:100%;background:#10b981"></div></div></div>
+      </div>
+
+      <div class="slabel">Savings breakdown — April 2026</div>
+      <div class="roi-impact-grid">
+        <div class="roi-impact-card">
+          <div class="ktop"><div class="kttl">Energy savings</div><span class="pill p-ok">Calculated</span></div>
+          <div class="kval" style="color:#2563eb">$312 <span style="font-size:12px;color:#6b7280">/mo</span></div>
+          <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;font-size:11px">
+              <span style="color:#6b7280">Consumption savings</span>
+              <span style="font-weight:500;color:#111827">247 kWh · $198</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:11px">
+              <span style="color:#6b7280">Peak demand reduction</span>
+              <span style="font-weight:500;color:#111827">2.8 kW · $114</span>
+            </div>
+          </div>
+          <div class="ksub" style="margin-top:6px">vs M&V baseline · Apr 2023</div>
+        </div>
+        <div class="roi-impact-card">
+          <div class="ktop"><div class="kttl">Avoided truck rolls</div><span class="pill p-ok">Calculated</span></div>
+          <div class="kval" style="color:#2563eb">$168 <span style="font-size:12px;color:#6b7280">/mo</span></div>
+          <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;font-size:11px">
+              <span style="color:#6b7280">Events avoided</span>
+              <span style="font-weight:500;color:#111827">2 this month</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:11px">
+              <span style="color:#6b7280">Value per event</span>
+              <span style="font-weight:500;color:#111827">$84 (pre-agreed)</span>
+            </div>
+          </div>
+          <div class="ksub" style="margin-top:6px">Source: ticket platform · remote resolution</div>
+        </div>
+        <div class="roi-impact-card future">
+          <div class="ktop"><div class="kttl">Product loss avoided</div><span class="pill p-gray">Coming soon</span></div>
+          <div class="kval" style="color:#9ca3af">— </div>
+          <div class="roi-future-lbl">Value not yet calculated · requires refrigeration event log integration</div>
+        </div>
+        <div class="roi-impact-card future">
+          <div class="ktop"><div class="kttl">Extended product lifespan</div><span class="pill p-gray">Coming soon</span></div>
+          <div class="kval" style="color:#9ca3af">—</div>
+          <div class="roi-future-lbl">Value not yet calculated · requires product category data</div>
+        </div>
+        <div class="roi-impact-card future">
+          <div class="ktop"><div class="kttl">Other savings</div><span class="pill p-gray">Coming soon</span></div>
+          <div class="kval" style="color:#9ca3af">—</div>
+          <div class="roi-future-lbl">Additional saving categories to be defined</div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-ttl">Monthly savings — accumulated · Store #214</div>
+        <div class="chart-sub">Energy savings + avoided truck rolls · since installation</div>
+        <div class="legend">
+          <div class="li"><span class="ls" style="background:#2563eb"></span>Energy savings</div>
+          <div class="li"><span class="ls" style="background:#0891b2"></span>Avoided truck rolls</div>
+        </div>
+        <div style="position:relative;height:180px"><canvas id="roiChart"></canvas></div>
+      </div>
+
+      <div class="tbl-wrap">
+        <div class="tbl-hdr-bar"><div class="tbl-ttl">Monthly savings detail</div></div>
+        <div style="overflow-x:auto">
+          <table class="dtbl">
+            <thead><tr><th>Month</th><th>Energy savings</th><th>Avoided truck rolls</th><th>Total savings</th><th>Accumulated</th></tr></thead>
+            <tbody id="roiTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIGHTING TAB -->
+    <div class="content hidden" id="tab-lighting">
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:11px;color:#92400e"><b>Note — reference only:</b> All thresholds and ranges are illustrative. Schedule compliance requires on/off schedules to be defined per space before calculation. Parameters must be agreed with each client.</div>
+
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+        <span style="font-size:11px;color:#6b7280;font-weight:500">Filter by space:</span>
+        <select class="fsel" id="ltSpaceFilter" onchange="renderLightingCircuits()" style="padding:4px 8px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;font-size:11px;color:#374151">
+          <option value="all">All spaces</option>
+          <option value="sales">Sales floor</option>
+          <option value="parking">Parking</option>
+          <option value="backofhouse">Back of house</option>
+          <option value="bathrooms">Bathrooms</option>
+        </select>
+      </div>
+
+      <div class="slabel">Site KPIs — April 2026</div>
+      <div class="g3" style="margin-bottom:10px">
+        <div class="kcard"><div class="ktop"><div class="kttl">Schedule compliance</div><span class="pill p-ok">In compliance</span></div><div class="kval">93.4 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">site avg · target ≥ 90%</div><div class="kchg arr-up">▲ 1.2pp vs March</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Utilization</div><span class="pill p-ok">Within range</span></div><div class="kval">76.8 <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">avg time on · range varies by space</div><div class="kchg arr-fl" style="color:#6b7280">All spaces in range</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Burn hours</div><span class="pill p-ok">Within range</span></div><div class="kval">15.2 <span style="font-size:13px;color:#6b7280">h/day</span></div><div class="ksub">avg h/day · range varies by space</div><div class="kchg arr-fl" style="color:#6b7280">All spaces in range</div></div>
+      </div>
+
+      <div class="chart-card" style="margin-bottom:10px">
+        <div class="chart-ttl">Lighting trend — site averages · last 13 months</div>
+        <div class="chart-sub">Schedule, utilization and burn hours over time</div>
+        <div class="legend">
+          <div class="li"><span class="ls" style="background:#f59e0b"></span>Schedule compl. (%)</div>
+          <div class="li"><span class="ls" style="background:#8b5cf6"></span>Utilization (%)</div>
+          <div class="li"><span class="ls" style="background:#06b6d4"></span>Burn hours (h/day)</div>
+        </div>
+        <div style="position:relative;height:160px"><canvas id="ltSiteChart"></canvas></div>
+      </div>
+
+      <div class="tbl-wrap">
+        <div class="tbl-hdr-bar"><div><div class="tbl-ttl">Lighting circuits — current state</div><div class="tbl-sub">Per circuit data with current state and monthly compliance</div></div></div>
+        <div style="overflow-x:auto"><table class="dtbl" id="ltCircuitsTable"></table></div>
+      </div>
+    </div>
+
+    <!-- ALARMS TAB -->
+    <div class="content hidden" id="tab-alarms">
+
+      <!-- ALARM → TICKET FUNNEL -->
+      <div class="slabel">Alarm to ticket funnel — April 2026</div>
+      <div class="g3" style="margin-bottom:10px">
+        <div class="kcard">
+          <div class="ktop"><div class="kttl">Total alarms received</div><span class="pill p-gray">This month</span></div>
+          <div class="kval">612</div>
+          <div class="ksub">All alarms received from BMS + FDD</div>
+          <div style="display:flex;gap:14px;margin-top:6px;font-size:11px">
+            <div><span style="color:#6b7280">BMS:</span> <b style="color:#374151">487</b></div>
+            <div><span style="color:#6b7280">FDD:</span> <b style="color:#374151">125</b></div>
+          </div>
+        </div>
+        <div class="kcard">
+          <div class="ktop"><div class="kttl">Tickets generated</div><span class="pill p-blue">From alarms</span></div>
+          <div class="kval" style="color:#2563eb">17</div>
+          <div class="ksub">Tickets created after filtering and analysis</div>
+          <div style="display:flex;gap:14px;margin-top:6px;font-size:11px">
+            <div><span style="color:#6b7280">Conversion:</span> <b style="color:#2563eb">2.78%</b></div>
+            <div><span style="color:#6b7280">Target:</span> <b style="color:#374151">&lt;5%</b></div>
+          </div>
+        </div>
+        <div class="kcard">
+          <div class="ktop"><div class="kttl">Filtering rate</div><span class="pill p-ok">Working as expected</span></div>
+          <div class="kval">36 <span style="font-size:13px;color:#6b7280">: 1</span></div>
+          <div class="ksub">Alarms filtered per ticket created</div>
+          <div style="font-size:11px;color:#6b7280;margin-top:6px">High ratio = effective filtering</div>
+        </div>
+      </div>
+
+      <!-- TICKETS BY ORIGIN -->
+      <div class="slabel">Tickets by origin · April 2026</div>
+      <div class="g2" style="margin-bottom:10px">
+        <div class="kcard">
+          <div class="ktop"><div class="kttl">Proactive tickets</div><span class="pill p-ok">Detected by us</span></div>
+          <div class="kval" style="color:#10b981">12</div>
+          <div class="ksub">70.6% of total · platform detected before client noticed</div>
+          <div class="kchg arr-up">▲ 2 vs March</div>
+        </div>
+        <div class="kcard">
+          <div class="ktop"><div class="kttl">Reactive tickets</div><span class="pill p-warn">Reported by client</span></div>
+          <div class="kval" style="color:#f59e0b">5</div>
+          <div class="ksub">29.4% of total · CMMS or phone</div>
+          <div class="kchg arr-dn">▼ 1 vs March</div>
+        </div>
+      </div>
+
+      <!-- TICKETS BY RESOLUTION -->
+      <div class="slabel">Tickets by resolution · April 2026</div>
+      <div class="g4" style="margin-bottom:10px">
+        <div class="kcard">
+          <div class="ktop"><div class="kttl">Avoided truck rolls</div><span class="pill p-ok">Resolved remotely</span></div>
+          <div class="kval" style="color:#10b981">9</div>
+          <div class="ksub">52.9% · resolved without dispatch</div>
+          <div class="kchg arr-up">▲ 2 vs March</div>
+        </div>
+        <div class="kcard">
+          <div class="ktop"><div class="kttl">Dispatched</div><span class="pill p-warn">Sent to CMMS</span></div>
+          <div class="kval" style="color:#f59e0b">3</div>
+          <div class="ksub">17.6% · technician on site needed</div>
+          <div class="kchg arr-dn">▼ 1 vs March</div>
+        </div>
+        <div class="kcard">
+          <div class="ktop"><div class="kttl">Consolidated</div><span class="pill p-blue">Reported</span></div>
+          <div class="kval" style="color:#2563eb">3</div>
+          <div class="ksub">17.6% · grouped in monthly report</div>
+          <div class="kchg arr-fl" style="color:#6b7280">Same as March</div>
+        </div>
+        <div class="kcard">
+          <div class="ktop"><div class="kttl">Discarded</div><span class="pill p-gray">False positive</span></div>
+          <div class="kval" style="color:#6b7280">2</div>
+          <div class="ksub">11.8% · no action required</div>
+          <div class="kchg arr-fl" style="color:#6b7280">Same as March</div>
+        </div>
+      </div>
+
+      <!-- TICKETS BY CRITICALITY -->
+      <div class="slabel">Tickets by criticality · April 2026</div>
+      <div class="g4" style="margin-bottom:10px">
+        <div class="fcard" style="border-left:3px solid #ef4444"><div class="fval" style="color:#ef4444">2</div><div class="flbl">Critical</div><div class="fsub" style="color:#ef4444">▲ 1 vs March</div></div>
+        <div class="fcard" style="border-left:3px solid #f59e0b"><div class="fval" style="color:#f59e0b">5</div><div class="flbl">High</div><div class="fsub arr-dn">▼ 1 vs March</div></div>
+        <div class="fcard" style="border-left:3px solid #3b82f6"><div class="fval" style="color:#3b82f6">7</div><div class="flbl">Medium</div><div class="fsub arr-up">▲ 1 vs March</div></div>
+        <div class="fcard" style="border-left:3px solid #6b7280"><div class="fval" style="color:#6b7280">3</div><div class="flbl">Low</div><div class="fsub arr-fl" style="color:#6b7280">Same as March</div></div>
+      </div>
+
+      <!-- ALARMS VS TICKETS TREND -->
+      <div class="chart-card" style="margin-bottom:10px">
+        <div class="chart-ttl">Alarms vs tickets — monthly volume</div>
+        <div class="chart-sub">Bars show alarm volume (left axis), line shows tickets generated (right axis) · last 13 months</div>
+        <div class="legend">
+          <div class="li"><span class="ls" style="background:#bfdbfe"></span>Alarms (BMS + FDD)</div>
+          <div class="li"><span class="ls" style="background:#ef4444"></span>Tickets generated</div>
+        </div>
+        <div style="position:relative;height:180px"><canvas id="alarmsTicketsChart"></canvas></div>
+      </div>
+
+      <!-- PROACTIVE VS REACTIVE TREND -->
+      <div class="chart-card" style="margin-bottom:10px">
+        <div class="chart-ttl">Proactive vs Reactive tickets — monthly</div>
+        <div class="chart-sub">Proactive: detected by platform before client · Reactive: reported by client (CMMS / phone)</div>
+        <div class="legend">
+          <div class="li"><span class="ls" style="background:#10b981"></span>Proactive</div>
+          <div class="li"><span class="ls" style="background:#f59e0b"></span>Reactive</div>
+        </div>
+        <div style="position:relative;height:160px"><canvas id="proactiveReactiveChart"></canvas></div>
+      </div>
+
+      <!-- RESOLUTION TREND -->
+      <div class="chart-card" style="margin-bottom:10px">
+        <div class="chart-ttl">Tickets by resolution — monthly</div>
+        <div class="chart-sub">How tickets were closed during each month</div>
+        <div class="legend">
+          <div class="li"><span class="ls" style="background:#10b981"></span>Avoided truck roll</div>
+          <div class="li"><span class="ls" style="background:#f59e0b"></span>Dispatched</div>
+          <div class="li"><span class="ls" style="background:#3b82f6"></span>Consolidated</div>
+          <div class="li"><span class="ls" style="background:#9ca3af"></span>Discarded</div>
+        </div>
+        <div style="position:relative;height:180px"><canvas id="resolutionChart"></canvas></div>
+      </div>
+
+      <!-- CRITICALITY TREND -->
+      <div class="chart-card" style="margin-bottom:10px">
+        <div class="chart-ttl">Tickets by criticality — monthly</div>
+        <div class="chart-sub">Distribution of tickets by criticality level over time</div>
+        <div class="legend">
+          <div class="li"><span class="ls" style="background:#ef4444"></span>Critical</div>
+          <div class="li"><span class="ls" style="background:#f59e0b"></span>High</div>
+          <div class="li"><span class="ls" style="background:#3b82f6"></span>Medium</div>
+          <div class="li"><span class="ls" style="background:#9ca3af"></span>Low</div>
+        </div>
+        <div style="position:relative;height:180px"><canvas id="criticalityChart"></canvas></div>
+      </div>
+
+      <!-- TOP 10 TICKET CATEGORIES -->
+      <div class="chart-card" style="margin-bottom:10px">
+        <div class="sect-hdr">
+          <div>
+            <div class="chart-ttl">Top 10 ticket categories</div>
+            <div class="chart-sub" id="topTicketsSubtitle">Most common ticket categories in last 7 days</div>
+          </div>
+          <div class="sel-wrap">
+            <button class="sel-btn active" onclick="setTopPeriod('7d',this)">Last 7d</button>
+            <button class="sel-btn" onclick="setTopPeriod('30d',this)">Last 30d</button>
+          </div>
+        </div>
+        <div id="topTicketsList" style="margin-top:10px"></div>
+      </div>
+
+      <!-- TOP DEVICES -->
+      <div class="tbl-wrap">
+        <div class="tbl-hdr-bar"><div><div class="tbl-ttl">Top devices with most tickets — current month</div><div class="tbl-sub">Devices ranked by ticket volume</div></div></div>
+        <div style="overflow-x:auto"><table class="dtbl" id="topDevicesTable"></table></div>
+      </div>
+
+      <!-- ACTIVE TICKETS -->
+      <div class="tbl-wrap">
+        <div class="tbl-hdr-bar">
+          <div><div class="tbl-ttl">Active tickets — open</div><div class="tbl-sub">Currently unresolved tickets at this site</div></div>
+          <div style="display:flex;gap:6px">
+            <select class="fsel" id="ticketStatusFilter" onchange="renderActiveTickets()" style="padding:4px 8px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;font-size:11px;color:#374151">
+              <option value="all">All status</option>
+              <option value="open">Open</option>
+              <option value="inprogress">In progress</option>
+              <option value="dispatched">Dispatched</option>
+            </select>
+            <select class="fsel" id="ticketTypeFilter" onchange="renderActiveTickets()" style="padding:4px 8px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;font-size:11px;color:#374151">
+              <option value="all">All origins</option>
+              <option value="proactive">Proactive</option>
+              <option value="reactive">Reactive</option>
+            </select>
+          </div>
+        </div>
+        <div style="overflow-x:auto"><table class="dtbl" id="activeTicketsTable"></table></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Core navigation — runs independently of Chart.js
+function showTab(name,el){
+  document.querySelectorAll('.tab:not(.soon)').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.content').forEach(c=>c.classList.add('hidden'));
+  const target=document.getElementById('tab-'+name);
+  if(target)target.classList.remove('hidden');
+  if(typeof initTabCharts==='function'){
+    try{initTabCharts(name);}catch(e){console.error('Tab init error:',e);}
+  }
+}
+function showRefSub(name,el){}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// showTab defined above, chart-dependent init here
+function initTabCharts(name){
+  if(name==='overview'&&!window.ovBuilt){buildOverviewCharts();window.ovBuilt=true;}
+  if(name==='hvac'){
+    var curDev=window._currentDev;
+    if(!curDev||curDev==='WIC-1'||curDev==='FRZ-1')window._currentDev='RTU-1';
+    window._currentPeriod=window._currentPeriod||'today';
+    // Sync active state of HVAC dev buttons
+    var hbar=document.getElementById('hvacDevSelBar');
+    if(hbar){
+      hbar.querySelectorAll('.dev-btn').forEach(function(b){
+        b.classList.toggle('active',b.textContent.trim().indexOf(window._currentDev)>=0);
+      });
+    }
+    setTimeout(function(){if(typeof renderDevPanel==='function'){renderDevPanel();}},100);
+  }
+  if(name==='refrig'){
+    var curDevR=window._currentDev;
+    if(!curDevR||(curDevR!=='WIC-1'&&curDevR!=='FRZ-1'))window._currentDev='WIC-1';
+    window._currentPeriod=window._currentPeriod||'today';
+    var rbar=document.getElementById('refDevSelBar');
+    if(rbar){
+      rbar.querySelectorAll('.dev-btn').forEach(function(b){
+        b.classList.toggle('active',b.textContent.trim().indexOf(window._currentDev)>=0);
+      });
+    }
+    setTimeout(function(){if(typeof renderDevPanel==='function'){renderDevPanel();}},100);
+  }
+  if(name==='roi'&&!window.roiBuilt){buildRoiTab();window.roiBuilt=true;}
+  if(name==='lighting'&&!window.ltBuilt&&typeof buildLightingTab==='function'){buildLightingTab();window.ltBuilt=true;}
+  if(name==='alarms'&&!window.alarmsBuilt&&typeof buildAlarmsTab==='function'){buildAlarmsTab();window.alarmsBuilt=true;}
+}
+
+const MONTHS13=['Apr\'25','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan\'26','Feb','Mar','Apr\'26'];
+const MONTHS26=['Mar\'24','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan\'25','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan\'26','Feb','Mar','Apr\'26'];
+
+function chartOpts(yMin,yMax,pct,tooltipSuffix){
+  return{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{if(ctx.dataset.label&&ctx.dataset.label.startsWith('_'))return null;return ` ${ctx.dataset.label||''}: ${ctx.parsed.y.toFixed(1)}${pct?'%':(tooltipSuffix||'')}`}}}},
+    scales:{x:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:9},color:'#6b7280',maxRotation:45,autoSkip:true,maxTicksLimit:13},border:{display:false}},
+      y:{min:yMin,max:yMax,grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:9},color:'#6b7280'},border:{display:false}}}};
+}
+function ds(label,data,color,dash){return{label,data,borderColor:color,backgroundColor:'transparent',borderWidth:2,pointRadius:2,tension:0.3,fill:false,borderDash:dash||[]};}
+function bandDs(low,high,n){return[{label:'_lo',data:Array(n).fill(low),borderColor:'transparent',pointRadius:0,fill:false},{label:'_hi',data:Array(n).fill(high),borderColor:'transparent',backgroundColor:'rgba(148,163,184,0.1)',pointRadius:0,fill:'-1'}];}
+
+// Overview charts
+function buildOverviewCharts(){
+  // Compliance chart (%)
+  new Chart(document.getElementById('ovHvacComplChart'),{type:'line',data:{labels:MONTHS13,datasets:[
+    ds('Setpoint',[99.1,98.8,99.2,98.9,99.0,98.8,96.4,94.1,91.3,88.7,87.2,85.9,94.1],'#7c3aed'),
+    ds('Temp compl.',[97.4,97.8,97.2,97.6,97.1,97.4,96.8,96.5,96.9,97.0,96.5,96.8,96.3],'#0f766e')
+  ]},options:chartOpts(80,102,true,'')});
+
+  // Operational chart (h/day + °F dual axis)
+  new Chart(document.getElementById('ovHvacOpsChart'),{type:'line',data:{labels:MONTHS13,datasets:[
+    {label:'Runtime',data:[11.4,11.8,11.2,11.6,11.0,11.4,13.2,14.1,15.3,16.0,13.6,13.4,13.6],borderColor:'#2563eb',backgroundColor:'transparent',borderWidth:2,pointRadius:2,tension:0.3,yAxisID:'yRt'},
+    {label:'ΔT',data:[18.1,17.8,18.4,17.9,18.2,18.0,18.2,18.1,18.4,18.3,18.2,18.1,18.2],borderColor:'#0891b2',backgroundColor:'transparent',borderWidth:2,pointRadius:2,tension:0.3,yAxisID:'yDt'}
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ' '+ctx.dataset.label+': '+ctx.parsed.y.toFixed(1)+(ctx.dataset.label==='Runtime'?' h/day':'°F')}}}},scales:{x:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:9},color:'#6b7280',maxRotation:0,autoSkip:true,maxTicksLimit:13},border:{display:false}},yRt:{type:'linear',position:'left',min:6,max:22,grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:9},color:'#2563eb',callback:function(v){return v+'h'}},border:{display:false}},yDt:{type:'linear',position:'right',min:14,max:24,grid:{display:false},ticks:{font:{size:9},color:'#0891b2',callback:function(v){return v+'°F'}},border:{display:false}}}}});
+
+  const refTooltip={callbacks:{label:ctx=>{if(!ctx.dataset.label||ctx.dataset.label.startsWith('_'))return null;const t={WIC1:{thresh:98,range:'34–38°F'},FRZ1:{thresh:99,range:'-10°F–0°F'}};const k=ctx.dataset.label==='WIC-1'?'WIC1':'FRZ1';return ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}% — threshold ≥${t[k].thresh}% · range ${t[k].range}`}}};
+  new Chart(document.getElementById('ovRefChart'),{type:'line',data:{labels:MONTHS13,datasets:[
+    ...bandDs(98,100,13),
+    ds('WIC-1',[99.2,99.0,99.3,99.1,99.2,99.1,99.2,99.1,99.3,99.0,99.2,99.1,99.1],'#2563eb'),
+    ds('FRZ-1',[99.5,99.3,99.6,99.4,99.5,99.4,99.5,99.4,99.6,99.3,99.5,99.4,99.4],'#0f766e')
+  ]},options:{...chartOpts(96,101,true),plugins:{legend:{display:false},tooltip:refTooltip}}});
+}
+
+// Device detail
+const DEV_CONFIG={
+  'RTU-1':{type:'hvac',color:'#2563eb',scenario:'normal',signals:['Supply temp (°F)','Return temp (°F)','Space temp (°F)','Setpoint (°F)','kW','Mode'],kpis:{runtime:'11.2h',dt:'17.8°F',sp:'98.7%',tc:'97.2%'}},
+  'RTU-2':{type:'hvac',color:'#7c3aed',scenario:'fault',signals:['Supply temp (°F)','Return temp (°F)','Space temp (°F)','Setpoint (°F)','kW','Mode'],kpis:{runtime:'6.2h',dt:'14.8°F',sp:'98.4%',tc:'88.4%'}},
+  'RTU-3':{type:'hvac',color:'#0891b2',scenario:'override',signals:['Supply temp (°F)','Return temp (°F)','Space temp (°F)','Setpoint (°F)','kW','Mode'],kpis:{runtime:'19.6h',dt:'18.9°F',sp:'82.7%',tc:'96.1%'}},
+  'WIC-1':{type:'refrig',color:'#2563eb',signals:['Unit temp (°F)','Door state'],kpis:{temp:'35.8°F',compliance:'99.1%',range:'34–38°F',status:'In compliance'}},
+  'FRZ-1':{type:'refrig',color:'#0f766e',signals:['Unit temp (°F)','Door state'],kpis:{temp:'-4.2°F',compliance:'99.4%',range:'-10°F–0°F',status:'In compliance'}}
+};
+
+var devChartInstances=[];
+if(!window._currentDev)window._currentDev='RTU-1';
+if(!window._currentPeriod)window._currentPeriod='today';
+
+function selectDev(name,el){
+  document.querySelectorAll('.dev-btn').forEach(b=>b.classList.remove('active'));
+  if(el)el.classList.add('active');
+  window._currentDev=name;
+  renderDevPanel();
+}
+
+function setPeriod(period,el){
+  document.querySelectorAll('.date-preset').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  window._currentPeriod=period;
+  document.getElementById('customDateRange').style.display=period==='custom'?'flex':'none';
+  if(period!=='custom')renderDevPanel();
+}
+
+function applyCustomDate(){renderDevPanel();}
+
+function genWave(base,amp,pts,noise){
+  noise=noise||0.3;
+  return Array.from({length:pts},function(_,i){
+    return parseFloat((base+Math.sin(i*0.2)*amp+(Math.random()-0.5)*noise).toFixed(2));
+  });
+}
+function makeLabels(pts){
+  var p=window._currentPeriod||'today';
+  return Array.from({length:pts},function(_,i){
+    if(p==='today'||p==='yesterday'){var h=Math.floor(i*10/60).toString().padStart(2,'0');var m=(i*10%60).toString().padStart(2,'0');return h+':'+m;}
+    if(p==='7d') return 'D'+(Math.floor(i/6)+1);
+    return 'H'+(i+1);
+  });
+}
+function getPts(){return 144;}
+var devMainChartInstance=null;
+
+function renderDevPanel(){
+  var dev=window._currentDev||'RTU-1';
+  var cfg=DEV_CONFIG[dev];
+  if(!cfg)return;
+  var p=window._currentPeriod||'today';
+  var periodLabel={today:'Today (10 min intervals)',yesterday:'Yesterday (10 min intervals)','7d':'Last 7 days','30d':'Last 30 days',custom:'Custom range'}[p]||p;
+
+  // Choose target panel based on device type
+  var isRefDev=(cfg.type==='refrig');
+  var elKpi=document.getElementById(isRefDev?'refDevKpiCards':'devKpiCards');
+  var elInsight=document.getElementById('devInsightBox');
+  var elChartTtl=document.getElementById(isRefDev?'refDevChartTtl':'devChartTtl');
+  var elCanvas=document.getElementById(isRefDev?'refDevMainChart':'devMainChart');
+  var elLegend=document.getElementById('devLegend');
+
+  var kpiHtml='';
+  if(cfg.type==='hvac'){
+    var rtCol=parseFloat(cfg.kpis.runtime)>18?'#ef4444':parseFloat(cfg.kpis.runtime)<8?'#f59e0b':'#111827';
+    var spCol=parseFloat(cfg.kpis.sp)<98?'#ef4444':'#111827';
+    kpiHtml='<div class="kcard"><div class="ktop"><div class="kttl">Runtime</div></div><div class="kval" style="color:'+rtCol+'">'+cfg.kpis.runtime+'</div><div class="ksub">avg h/day · target 8–18h</div></div>'+
+      '<div class="kcard"><div class="ktop"><div class="kttl">Cooling ΔT</div></div><div class="kval">'+cfg.kpis.dt+'</div><div class="ksub">avg °F · compressor-on only</div></div>'+
+      '<div class="kcard"><div class="ktop"><div class="kttl">Setpoint compliance</div></div><div class="kval" style="color:'+spCol+'">'+cfg.kpis.sp+'</div><div class="ksub">% time within policy</div></div>'+
+      '<div class="kcard"><div class="ktop"><div class="kttl">Temp compliance</div></div><div class="kval">'+cfg.kpis.tc+'</div><div class="ksub">% time within comfort band</div></div>';
+  } else {
+    kpiHtml='<div class="kcard"><div class="ktop"><div class="kttl">Current temp</div></div><div class="kval" style="color:#065f46">'+cfg.kpis.temp+'</div><div class="ksub">target '+cfg.kpis.range+'</div></div>'+
+      '<div class="kcard"><div class="ktop"><div class="kttl">Monthly compliance</div></div><div class="kval">'+cfg.kpis.compliance+'</div><div class="ksub">% time within range</div></div>'+
+      '<div class="kcard"><div class="ktop"><div class="kttl">Status</div></div><div class="kval" style="font-size:14px"><span class="chip c-ok">'+cfg.kpis.status+'</span></div></div>'+
+      '<div class="kcard"><div class="ktop"><div class="kttl">Data availability</div></div><div class="kval">100%</div></div>';
+  }
+  if(elKpi)elKpi.innerHTML=kpiHtml;
+  if(elChartTtl)elChartTtl.textContent=dev+' — telemetry · '+periodLabel;
+  // Render insight box based on scenario
+  var insightHtml='';
+  var scenario=cfg.scenario;
+  if(scenario==='fault'){
+    insightHtml='<div style="background:#fff7ed;border:1px solid #fed7aa;border-left:4px solid #f59e0b;border-radius:8px;padding:12px 14px">'+
+      '<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px"><span style="font-size:14px;line-height:1">⚠️</span><div style="font-size:12px;font-weight:600;color:#92400e">Anomaly detected — possible equipment fault</div></div>'+
+      '<div style="font-size:11px;color:#78350f;line-height:1.5;margin-bottom:8px">'+
+      '<b>'+dev+'</b> shows high setpoint compliance (98.4%) but low temperature compliance (88.4%) combined with low runtime (6.2 h/day). The unit is not running enough to maintain comfort despite policy being followed correctly.'+
+      '</div>'+
+      '<div style="font-size:11px;color:#78350f;line-height:1.5;margin-bottom:6px"><b>Possible causes:</b></div>'+
+      '<ul style="font-size:11px;color:#78350f;line-height:1.5;margin:0 0 8px 18px;padding:0">'+
+      '<li>Thermostat or temperature sensor malfunction</li>'+
+      '<li>Short-cycling or protection trips</li>'+
+      '<li>Communication issue with actuator or control board</li>'+
+      '</ul>'+
+      '<div style="font-size:11px;color:#92400e"><b>Recommended action:</b> on-site technical inspection.</div>'+
+    '</div>';
+  } else if(scenario==='override'){
+    insightHtml='<div style="background:#eff6ff;border:1px solid #bfdbfe;border-left:4px solid #3b82f6;border-radius:8px;padding:12px 14px">'+
+      '<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px"><span style="font-size:14px;line-height:1">ℹ️</span><div style="font-size:12px;font-weight:600;color:#1e40af">Anomaly detected — frequent setpoint override</div></div>'+
+      '<div style="font-size:11px;color:#1e3a8a;line-height:1.5;margin-bottom:8px">'+
+      '<b>'+dev+'</b> shows low setpoint compliance (82.7%) with high runtime (19.6 h/day) but temperature compliance is met (96.1%). This pattern indicates the operator is manually lowering the setpoint to ensure comfort, causing the equipment to work longer than needed.'+
+      '</div>'+
+      '<div style="font-size:11px;color:#1e3a8a;line-height:1.5;margin-bottom:6px"><b>Possible causes:</b></div>'+
+      '<ul style="font-size:11px;color:#1e3a8a;line-height:1.5;margin:0 0 8px 18px;padding:0">'+
+      '<li>Operator habit — lowering setpoint as comfort safety margin</li>'+
+      '<li>Customer complaints leading to manual adjustment</li>'+
+      '<li>Local conditions not reflected in corporate policy</li>'+
+      '</ul>'+
+      '<div style="font-size:11px;color:#1e40af"><b>Recommended action:</b> review with site operator. Potential energy savings of ~12% by enforcing policy without affecting comfort.</div>'+
+    '</div>';
+  }
+  if(elInsight)elInsight.innerHTML=insightHtml;
+
+
+  if(devMainChartInstance){devMainChartInstance.destroy();devMainChartInstance=null;}
+  var pts=getPts();
+  var labels=makeLabels(pts);
+  var datasets=[];
+  var legendHtml='';
+
+  if(cfg.type==='hvac'){
+    // Hour of day for each point (10-min intervals → 144 points/day)
+    function hourAt(i){return (i%144)*10/60;}
+    // Day vs night: day = 06:00-22:00 setpoint 76, night = 22:00-06:00 setpoint 78
+    function policySetpoint(h){
+      if(h>=5&&h<6)return 78-(h-5)*2;     // ramp 78→76 between 5–6am
+      if(h>=22&&h<23)return 76+(h-22)*2;  // ramp 76→78 between 22–23
+      if(h>=6&&h<22)return 76;            // day
+      return 78;                          // night
+    }
+    var setpD=[],spaceD=[],supplyD=[],returnD=[],kwD=[];
+    var sc=cfg.scenario||'normal';
+    // Override events for RTU-3 (scenario === 'override'): periods where setpoint manually lowered
+    // Each event: {startH, endH, value}
+    var overrideEvents=[
+      {startH:9.5,endH:12,value:73},
+      {startH:13,endH:15.5,value:73.5},
+      {startH:17,endH:19,value:72.5}
+    ];
+    function isInOverride(h){
+      for(var k=0;k<overrideEvents.length;k++){
+        if(h>=overrideEvents[k].startH&&h<overrideEvents[k].endH)return overrideEvents[k].value;
+      }
+      return null;
+    }
+    // External temp pattern (peaks 12pm-4pm in summer)
+    function outdoorTemp(h){return 70+12*Math.sin((h-6)*Math.PI/18);}
+    for(var i=0;i<pts;i++){
+      var h=hourAt(i);
+      var policySp=policySetpoint(h);
+      var actualSp=policySp;
+      if(sc==='override'){
+        var ov=isInOverride(h);
+        if(ov!==null)actualSp=ov;
+      }
+      setpD.push(parseFloat(actualSp.toFixed(2)));
+
+      // Space temp
+      var outT=outdoorTemp(h);
+      var spaceTemp;
+      if(sc==='fault'){
+        // Equipment under-performs in peak hours: space drifts toward outdoor
+        var driftFactor=Math.max(0,(outT-72)/15);
+        spaceTemp=actualSp+driftFactor*4.5+(Math.random()-0.5)*0.5;
+      } else if(sc==='override'){
+        // Override: space follows lower setpoint (gets actually colder when override active)
+        spaceTemp=actualSp+1+(Math.random()-0.5)*0.4;
+      } else {
+        // Normal: space tracks setpoint closely
+        spaceTemp=actualSp+0.8+(Math.random()-0.5)*0.4;
+      }
+      spaceD.push(parseFloat(spaceTemp.toFixed(2)));
+
+      // Compressor / kW state
+      var demand=spaceTemp>actualSp+0.5?1:0;
+      var kw;
+      if(sc==='fault'){
+        // Equipment short-cycles: less runtime overall
+        var shouldRun=demand&&((i%20)<8); // runs less than it should
+        kw=shouldRun?7.5+(Math.random()-0.5)*1:0.4+(Math.random()-0.5)*0.2;
+      } else if(sc==='override'){
+        // Runs longer/harder during override windows + normal demand
+        kw=demand?10+(Math.random()-0.5)*1.5:(isInOverride(h)?9.5:0.5+(Math.random()-0.5)*0.2);
+      } else {
+        // Normal cycling
+        kw=demand?8.5+(Math.random()-0.5)*1.2:0.5+(Math.random()-0.5)*0.2;
+      }
+      kwD.push(Math.max(0,parseFloat(kw.toFixed(2))));
+
+      // Supply / Return temps depend on whether compressor is on
+      var compOn=kw>2;
+      var returnT=spaceTemp+1.5+(Math.random()-0.5)*0.5;
+      var supplyT=compOn?returnT-(sc==='fault'?12:18)+(Math.random()-0.5)*1:returnT-1+(Math.random()-0.5)*0.5;
+      returnD.push(parseFloat(returnT.toFixed(2)));
+      supplyD.push(parseFloat(supplyT.toFixed(2)));
+    }
+    // Compute Y-axis bounds rounded to nearest 10
+    var allTemps=supplyD.concat(returnD).concat(spaceD).concat(setpD);
+    var yMin=Math.floor(Math.min.apply(null,allTemps)/10)*10;
+    var yMax=Math.ceil(Math.max.apply(null,allTemps)/10)*10;
+    datasets.push({label:'_blo',data:Array(pts).fill(72),borderColor:'transparent',backgroundColor:'rgba(16,185,129,0.06)',fill:'+1',pointRadius:0,yAxisID:'yT'});
+    datasets.push({label:'_bhi',data:Array(pts).fill(79),borderColor:'rgba(16,185,129,0.3)',borderDash:[4,4],borderWidth:1,fill:false,pointRadius:0,yAxisID:'yT'});
+    datasets.push({label:'_slo',data:Array(pts).fill(74),borderColor:'transparent',backgroundColor:'rgba(59,130,246,0.05)',fill:'+1',pointRadius:0,yAxisID:'yT'});
+    datasets.push({label:'_shi',data:Array(pts).fill(78),borderColor:'rgba(59,130,246,0.25)',borderDash:[3,3],borderWidth:1,fill:false,pointRadius:0,yAxisID:'yT'});
+    datasets.push({label:'Supply temp (°F)',data:supplyD,borderColor:'#2563eb',backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,tension:0.3,yAxisID:'yT'});
+    datasets.push({label:'Return temp (°F)',data:returnD,borderColor:'#7c3aed',backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,tension:0.3,yAxisID:'yT'});
+    datasets.push({label:'Space temp (°F)',data:spaceD,borderColor:'#0891b2',backgroundColor:'transparent',borderWidth:2,pointRadius:0,tension:0.3,yAxisID:'yT'});
+    datasets.push({label:'Setpoint (°F)',data:setpD,borderColor:'#f59e0b',backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,borderDash:[6,3],tension:0.1,yAxisID:'yT'});
+    datasets.push({label:'kW (right axis)',data:kwD,borderColor:'#10b981',backgroundColor:'rgba(16,185,129,0.08)',borderWidth:1.5,pointRadius:0,tension:0.3,fill:true,yAxisID:'yK'});
+    legendHtml='<div class="li"><span class="ls" style="background:#2563eb"></span>Supply temp (°F)</div>'+
+      '<div class="li"><span class="ls" style="background:#7c3aed"></span>Return temp (°F)</div>'+
+      '<div class="li"><span class="ls" style="background:#0891b2"></span>Space temp (°F)</div>'+
+      '<div class="li"><span class="ls" style="background:#f59e0b"></span>Setpoint (°F)</div>'+
+      '<div class="li"><span class="ls" style="background:#10b981"></span>kW (right axis)</div>'+
+      '<div class="li"><span style="width:16px;height:8px;background:rgba(16,185,129,0.1);border:1px dashed rgba(16,185,129,0.5);display:inline-block;border-radius:2px"></span>Comfort band 72–79°F</div>';
+    devMainChartInstance=new Chart(elCanvas,{type:'line',data:{labels:labels,datasets:datasets},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:true,position:'top',labels:{filter:function(item){return !item.text.startsWith('_');},font:{size:10},boxWidth:12,boxHeight:3,padding:10,color:'#374151'},onClick:function(e,legendItem,legend){var idx=legendItem.datasetIndex;var ci=legend.chart;ci.isDatasetVisible(idx)?ci.hide(idx):ci.show(idx);}},tooltip:{callbacks:{label:function(ctx){if(ctx.dataset.label&&ctx.dataset.label.startsWith('_'))return null;return ' '+ctx.dataset.label+': '+ctx.parsed.y.toFixed(1);}}}},scales:{x:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:9},color:'#6b7280',maxRotation:0,autoSkip:true,maxTicksLimit:12},border:{display:false}},yT:{type:'linear',position:'left',min:yMin,max:yMax,grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:9},color:'#6b7280',callback:function(v){return v+'°F'}},border:{display:false}},yK:{type:'linear',position:'right',min:0,max:20,grid:{display:false},ticks:{font:{size:9},color:'#10b981',callback:function(v){return v+' kW'}},border:{display:false}}}}});
+  } else {
+    var isWic=dev==='WIC-1';
+    var tLow=isWic?34:-10,tHigh=isWic?38:0,tBase=isWic?35.8:-4.2;
+    // Hour helper for refrigeration telemetry (10 min intervals, 144 pts/day)
+    function hourAt(i){return (i%144)*10/60;}
+    // Door open events: short opens during business hours (06-22)
+    // Each event: index window where door is open
+    function isDoorOpen(i){
+      var h=hourAt(i);
+      if(h<6||h>=22)return false;  // closed during off hours
+      // Generate pseudo-random door opens — every ~30 min during operating hours
+      // Each open lasts 1-2 points (10-20 min in real time)
+      var seed=Math.sin(i*0.41+(isWic?0:7.3))*Math.cos(i*0.27+(isWic?2.1:5.5));
+      return seed>0.55;
+    }
+    var unitD=[],doorD=[];
+    var prevTemp=tBase;
+    for(var di=0;di<pts;di++){
+      var doorOpen=isDoorOpen(di);
+      doorD.push(doorOpen?1:0);
+      // Temperature dynamics: rises when door open, drops when door closed
+      var target;
+      if(doorOpen){
+        // Door open: temp rises gradually toward warmer
+        target=prevTemp+(isWic?0.4:0.3)+(Math.random()-0.5)*0.15;
+      } else {
+        // Door closed: temp returns toward base
+        target=prevTemp+(tBase-prevTemp)*0.15+(Math.random()-0.5)*0.15;
+      }
+      // Clamp to realistic bounds
+      var minT=isWic?34:-10,maxT=isWic?40:2;
+      if(target<minT)target=minT+0.2;
+      if(target>maxT)target=maxT-0.2;
+      unitD.push(parseFloat(target.toFixed(2)));
+      prevTemp=target;
+    }
+    // Dynamic Y bounds for temp
+    var tMinDyn=Math.floor(Math.min.apply(null,unitD)/2)*2-2;
+    var tMaxDyn=Math.ceil(Math.max.apply(null,unitD)/2)*2+2;
+    datasets.push({label:'_blo',data:Array(pts).fill(tLow),borderColor:'transparent',backgroundColor:'rgba(16,185,129,0.08)',fill:'+1',pointRadius:0,yAxisID:'yT'});
+    datasets.push({label:'_bhi',data:Array(pts).fill(tHigh),borderColor:'rgba(16,185,129,0.4)',borderDash:[4,4],borderWidth:1,fill:false,pointRadius:0,yAxisID:'yT'});
+    datasets.push({label:'Unit temp (°F)',data:unitD,borderColor:'#2563eb',backgroundColor:'transparent',borderWidth:2,pointRadius:0,tension:0.3,yAxisID:'yT'});
+    datasets.push({label:'Door state (right)',data:doorD,borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,0.15)',borderWidth:1.5,pointRadius:0,stepped:true,fill:true,yAxisID:'yD'});
+    legendHtml='<div class="li"><span class="ls" style="background:#2563eb"></span>Unit temp (°F)</div>'+
+      '<div class="li"><span class="ls" style="background:#f59e0b"></span>Door state (right axis)</div>'+
+      '<div class="li"><span style="width:16px;height:8px;background:rgba(16,185,129,0.12);border:1px dashed rgba(16,185,129,0.5);display:inline-block;border-radius:2px"></span>Target range '+tLow+'–'+tHigh+'°F</div>';
+    devMainChartInstance=new Chart(elCanvas,{type:'line',data:{labels:labels,datasets:datasets},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:true,position:'top',labels:{filter:function(item){return !item.text.startsWith('_');},font:{size:10},boxWidth:12,boxHeight:3,padding:10,color:'#374151'},onClick:function(e,legendItem,legend){var idx=legendItem.datasetIndex;var ci=legend.chart;ci.isDatasetVisible(idx)?ci.hide(idx):ci.show(idx);}},tooltip:{callbacks:{label:function(ctx){if(ctx.dataset.label&&ctx.dataset.label.startsWith('_'))return null;if(ctx.dataset.label.indexOf('Door')>=0)return ' Door: '+(ctx.parsed.y===1?'OPEN':'CLOSED');return ' '+ctx.dataset.label+': '+ctx.parsed.y.toFixed(1);}}}},scales:{x:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:9},color:'#6b7280',maxRotation:0,autoSkip:true,maxTicksLimit:12},border:{display:false}},yT:{type:'linear',position:'left',min:tMinDyn,max:tMaxDyn,grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:9},color:'#6b7280',callback:function(v){return v+'°F'}},border:{display:false}},yD:{type:'linear',position:'right',min:-0.2,max:1.8,grid:{display:false},ticks:{font:{size:9},color:'#f59e0b',callback:function(v){return v===1?'OPEN':v===0?'CLOSED':''}},border:{display:false}}}}});
+  }
+  if(elLegend)elLegend.innerHTML=legendHtml;
+}
+
+// ROI tab
+function buildRoiTab(){
+  const months=MONTHS26;
+  const energy=months.map((_,i)=>Math.round(200+i*4+(Math.sin(i*0.8)*20)));
+  const trucks=months.map((_,i)=>Math.round(60+i*2+(Math.sin(i*1.2)*15)));
+
+  new Chart(document.getElementById('roiChart'),{
+    type:'bar',
+    data:{labels:months,datasets:[
+      {label:'Energy savings',data:energy,backgroundColor:'#bfdbfe',borderColor:'#2563eb',borderWidth:1,stack:'s'},
+      {label:'Avoided truck rolls',data:trucks,backgroundColor:'#bae6fd',borderColor:'#0891b2',borderWidth:1,stack:'s'}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: $${ctx.parsed.y}`}}},
+      scales:{x:{grid:{display:false},ticks:{font:{size:8},color:'#6b7280',maxRotation:45,autoSkip:true,maxTicksLimit:13},border:{display:false},stacked:true},
+        y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:9},color:'#6b7280',callback:v=>'$'+v},border:{display:false},stacked:true}}}
+  });
+
+  let acc=0;
+  const rows=months.map((m,i)=>{
+    const e=energy[i],t=trucks[i],tot=e+t;
+    acc+=tot;
+    return `<tr><td style="font-weight:500;color:#111827">${m}</td><td>$${e}</td><td>$${t}</td><td style="font-weight:500;color:#374151">$${tot}</td><td style="font-weight:500;color:#2563eb">$${acc.toLocaleString()}</td></tr>`;
+  }).reverse().join('');
+  document.getElementById('roiTableBody').innerHTML=rows;
+}
+
+// Init overview on load
+window.addEventListener('load',()=>{
+  try{buildOverviewCharts();window.ovBuilt=true;}catch(e){console.error('Chart init error:',e);}
+});
+
+
+// ── LIGHTING ──────────────────────────────────────────────────────────────────
+const LT_SPACES = {
+  sales:       {label:'Sales floor',   utilRange:[70,90],  burnRange:[14,18]},
+  parking:     {label:'Parking',       utilRange:[80,100], burnRange:[18,24]},
+  backofhouse: {label:'Back of house', utilRange:[40,70],  burnRange:[8,14]},
+  bathrooms:   {label:'Bathrooms',     utilRange:[30,60],  burnRange:[6,12]}
+};
+
+const LT_CIRCUITS = [
+  {id:'C1', name:'Sales floor — main',     space:'sales',       sched:96.2, util:82.4, burn:16.5, on:true},
+  {id:'C2', name:'Sales floor — perimeter',space:'sales',       sched:94.1, util:78.9, burn:15.8, on:true},
+  {id:'C3', name:'Parking — exterior',     space:'parking',     sched:97.8, util:91.2, burn:21.5, on:true},
+  {id:'C4', name:'Parking — pump area',    space:'parking',     sched:95.4, util:89.6, burn:20.8, on:true},
+  {id:'C5', name:'Back of house — storage',space:'backofhouse', sched:88.7, util:54.3, burn:11.2, on:false},
+  {id:'C6', name:'Back of house — office', space:'backofhouse', sched:91.2, util:48.6, burn:9.8,  on:true},
+  {id:'C7', name:'Bathrooms — customer',   space:'bathrooms',   sched:92.5, util:42.1, burn:8.4,  on:false},
+  {id:'C8', name:'Bathrooms — staff',      space:'bathrooms',   sched:90.3, util:38.7, burn:7.6,  on:false}
+];
+
+function renderLightingCircuits(){
+  const sp = document.getElementById('ltSpaceFilter').value;
+  const data = LT_CIRCUITS.filter(c => sp==='all' || c.space===sp);
+  let html = '<thead><tr><th>Circuit</th><th>Space</th><th>State</th><th>Schedule compliance</th><th>Utilization</th><th>Burn hours</th><th>Status</th></tr></thead><tbody>';
+  data.forEach(c => {
+    const spcfg = LT_SPACES[c.space];
+    const utilOk = c.util >= spcfg.utilRange[0] && c.util <= spcfg.utilRange[1];
+    const burnOk = c.burn >= spcfg.burnRange[0] && c.burn <= spcfg.burnRange[1];
+    const schedOk = c.sched >= 90;
+    const allOk = utilOk && burnOk && schedOk;
+    const stateBadge = c.on
+      ? '<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:#065f46;font-weight:500"><span style="width:6px;height:6px;border-radius:50%;background:#10b981;display:inline-block"></span>ON</span>'
+      : '<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:#6b7280;font-weight:500"><span style="width:6px;height:6px;border-radius:50%;background:#9ca3af;display:inline-block"></span>OFF</span>';
+    html += '<tr>';
+    html += '<td style="font-weight:500;color:#111827">' + c.id + ' · ' + c.name + '</td>';
+    html += '<td><span class="chip c-blue">' + spcfg.label + '</span></td>';
+    html += '<td>' + stateBadge + '</td>';
+    html += '<td><span class="chip ' + (schedOk ? 'c-ok' : 'c-warn') + '">' + c.sched + '%</span><div style="font-size:10px;color:#6b7280;margin-top:2px">threshold ≥ 90%</div></td>';
+    html += '<td><span class="chip ' + (utilOk ? 'c-ok' : 'c-warn') + '">' + c.util + '%</span><div style="font-size:10px;color:#6b7280;margin-top:2px">expected ' + spcfg.utilRange[0] + '–' + spcfg.utilRange[1] + '%</div></td>';
+    html += '<td><span class="chip ' + (burnOk ? 'c-ok' : 'c-warn') + '">' + c.burn + 'h</span><div style="font-size:10px;color:#6b7280;margin-top:2px">expected ' + spcfg.burnRange[0] + '–' + spcfg.burnRange[1] + 'h</div></td>';
+    html += '<td>' + (allOk ? '<span class="chip c-ok">In compliance</span>' : '<span class="chip c-warn">Watch</span>') + '</td>';
+    html += '</tr>';
+  });
+  document.getElementById('ltCircuitsTable').innerHTML = html + '</tbody>';
+}
+
+function buildLightingTab(){
+  new Chart(document.getElementById('ltSiteChart'), {
+    type: 'line',
+    data: {
+      labels: MONTHS13,
+      datasets: [
+        {label:'Schedule compliance', data:[91.2,91.8,92.1,92.5,92.3,92.7,93.0,92.8,93.1,93.3,92.9,92.2,93.4], borderColor:'#f59e0b', backgroundColor:'transparent', borderWidth:2, pointRadius:2, tension:0.3, yAxisID:'y1'},
+        {label:'Utilization', data:[74.2,75.1,75.8,76.2,76.0,76.4,76.7,76.5,76.9,77.1,76.8,76.4,76.8], borderColor:'#8b5cf6', backgroundColor:'transparent', borderWidth:2, pointRadius:2, tension:0.3, yAxisID:'y1'},
+        {label:'Burn hours', data:[14.6,14.8,15.0,15.1,15.0,15.2,15.3,15.2,15.3,15.4,15.2,15.1,15.2], borderColor:'#06b6d4', backgroundColor:'transparent', borderWidth:2, pointRadius:2, tension:0.3, yAxisID:'y2'}
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, interaction: {mode:'index', intersect:false},
+      plugins: {legend: {display:false}, tooltip: {callbacks: {label: function(ctx){return ' '+ctx.dataset.label+': '+ctx.parsed.y.toFixed(1)+(ctx.dataset.label==='Burn hours'?'h':'%')}}}},
+      scales: {
+        x: {grid: {color:'rgba(0,0,0,0.04)'}, ticks: {font: {size:9}, color:'#6b7280', maxRotation:0, autoSkip:true, maxTicksLimit:13}, border:{display:false}},
+        y1: {type:'linear', position:'left', min:60, max:100, grid:{color:'rgba(0,0,0,0.04)'}, ticks:{font:{size:9}, color:'#6b7280', callback:function(v){return v+'%'}}, border:{display:false}},
+        y2: {type:'linear', position:'right', min:10, max:24, grid:{display:false}, ticks:{font:{size:9}, color:'#06b6d4', callback:function(v){return v+'h'}}, border:{display:false}}
+      }
+    }
+  });
+  renderLightingCircuits();
+}
+
+
+// ── ALARMS & TICKETS ──────────────────────────────────────────────────────────
+const TICKET_CATEGORIES_7D = [
+  {name:'Setpoint override detected',          count:4, type:'proactive', crit:'medium'},
+  {name:'Equipment fault — possible RTU issue',count:2, type:'proactive', crit:'critical'},
+  {name:'High runtime detected',               count:2, type:'proactive', crit:'high'},
+  {name:'Customer comfort complaint',          count:1, type:'reactive',  crit:'high'},
+  {name:'Low ΔT — possible refrigerant issue', count:1, type:'proactive', crit:'high'},
+  {name:'Lost connection — RTU-3',             count:1, type:'proactive', crit:'medium'},
+  {name:'Walk-in cooler temp warning',         count:1, type:'proactive', crit:'critical'},
+  {name:'Manual schedule change request',      count:1, type:'reactive',  crit:'low'},
+  {name:'HVAC noise complaint',                count:1, type:'reactive',  crit:'medium'},
+  {name:'Sensor reading drift',                count:1, type:'proactive', crit:'low'}
+];
+const TICKET_CATEGORIES_30D = [
+  {name:'Setpoint override detected',          count:18, type:'proactive', crit:'medium'},
+  {name:'High runtime detected',               count:12, type:'proactive', crit:'high'},
+  {name:'Equipment fault — RTU under-performing', count:8, type:'proactive', crit:'critical'},
+  {name:'Low ΔT — possible refrigerant issue', count:7,  type:'proactive', crit:'high'},
+  {name:'Customer comfort complaint',          count:6,  type:'reactive',  crit:'high'},
+  {name:'Lost connection alert',               count:5,  type:'proactive', crit:'medium'},
+  {name:'Walk-in cooler temp warning',         count:4,  type:'proactive', crit:'critical'},
+  {name:'Schedule change request',             count:3,  type:'reactive',  crit:'low'},
+  {name:'Sensor reading drift',                count:2,  type:'proactive', crit:'low'},
+  {name:'HVAC noise complaint',                count:2,  type:'reactive',  crit:'medium'}
+];
+
+const TOP_DEVICES_TICKETS = [
+  {name:'RTU-2', type:'RTU', tickets:6, top:'Equipment fault · Low ΔT', topCrit:'critical'},
+  {name:'RTU-3', type:'RTU', tickets:5, top:'Setpoint override · High runtime', topCrit:'high'},
+  {name:'RTU-1', type:'RTU', tickets:3, top:'Comfort complaint', topCrit:'medium'},
+  {name:'WIC-1', type:'Walk-in cooler', tickets:2, top:'Temperature warning', topCrit:'critical'},
+  {name:'FRZ-1', type:'Freezer', tickets:1, top:'Temperature warning', topCrit:'high'}
+];
+
+const ACTIVE_TICKETS = [
+  {id:'TK-2841', origin:'proactive', desc:'RTU-2 equipment fault — low temp compl. with low runtime', status:'inprogress',  opened:'Apr 22', crit:'critical'},
+  {id:'TK-2839', origin:'proactive', desc:'RTU-3 frequent setpoint override — high runtime',           status:'open',        opened:'Apr 20', crit:'high'},
+  {id:'TK-2836', origin:'proactive', desc:'RTU-3 lost connection — 1h 12m ago',                        status:'dispatched',  opened:'Apr 24', crit:'medium'},
+  {id:'TK-2832', origin:'reactive',  desc:'Customer reports HVAC noise from sales floor unit',         status:'inprogress',  opened:'Apr 23', crit:'medium'},
+  {id:'TK-2829', origin:'reactive',  desc:'Manual request to extend HVAC schedule for staff training', status:'open',        opened:'Apr 21', crit:'low'},
+  {id:'TK-2825', origin:'proactive', desc:'WIC-1 temperature spike 39.4°F — auto-resolved, monitoring',status:'open',        opened:'Apr 24', crit:'high'}
+];
+
+const CRIT_COLORS_TICKETS = {critical:'#ef4444',high:'#f59e0b',medium:'#3b82f6',low:'#9ca3af'};
+const CRIT_BG_TICKETS = {critical:'#fee2e2',high:'#fef3c7',medium:'#dbeafe',low:'#f3f4f6'};
+const CRIT_TXT_TICKETS = {critical:'#991b1b',high:'#92400e',medium:'#1e40af',low:'#6b7280'};
+
+function setTopPeriod(period, btn){
+  document.querySelectorAll('#tab-alarms .sel-btn').forEach(function(b){
+    if(b.textContent.indexOf('Last')>=0) b.classList.remove('active');
+  });
+  btn.classList.add('active');
+  document.getElementById('topTicketsSubtitle').textContent = 'Most common ticket categories in last ' + (period==='7d'?'7 days':'30 days');
+  renderTopTickets(period);
+}
+
+function renderTopTickets(period){
+  const data = period==='7d' ? TICKET_CATEGORIES_7D : TICKET_CATEGORIES_30D;
+  const max = Math.max.apply(null, data.map(function(d){return d.count}));
+  let html = '';
+  data.forEach(function(t, idx){
+    const w = Math.round((t.count / max) * 100);
+    const tcolor = t.type==='proactive' ? '#10b981' : '#f59e0b';
+    const tbg = t.type==='proactive' ? '#d1fae5' : '#fef3c7';
+    html += '<div style="display:flex;align-items:center;padding:6px 0;gap:10px;border-bottom:1px solid #f9fafb">';
+    html += '<div style="width:18px;height:18px;border-radius:50%;background:#f3f4f6;color:#6b7280;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0">' + (idx+1) + '</div>';
+    html += '<div style="flex:1;font-size:11px;color:#111827;font-weight:500">' + t.name + '</div>';
+    html += '<span style="display:inline-flex;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:500;background:' + CRIT_BG_TICKETS[t.crit] + ';color:' + CRIT_TXT_TICKETS[t.crit] + '">' + t.crit + '</span>';
+    html += '<span style="display:inline-flex;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:500;background:' + tbg + ';color:' + tcolor + '">' + t.type + '</span>';
+    html += '<div style="width:80px;height:4px;background:#f3f4f6;border-radius:2px;overflow:hidden"><div style="width:' + w + '%;height:100%;background:' + tcolor + '"></div></div>';
+    html += '<div style="font-size:12px;font-weight:500;color:#111827;width:24px;text-align:right">' + t.count + '</div>';
+    html += '</div>';
+  });
+  document.getElementById('topTicketsList').innerHTML = html;
+}
+
+function renderTopDevices(){
+  let html = '<thead><tr><th>Rank</th><th>Device</th><th>Type</th><th>Total tickets</th><th>Top criticality</th><th>Top categories</th></tr></thead><tbody>';
+  TOP_DEVICES_TICKETS.forEach(function(d, idx){
+    html += '<tr>';
+    html += '<td><div style="width:18px;height:18px;border-radius:50%;background:#f3f4f6;color:#6b7280;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500">' + (idx+1) + '</div></td>';
+    html += '<td style="font-weight:500;color:#111827">' + d.name + '</td>';
+    html += '<td><span class="chip c-blue">' + d.type + '</span></td>';
+    html += '<td><span style="font-weight:500;color:#111827">' + d.tickets + '</span></td>';
+    html += '<td><span style="display:inline-flex;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:500;background:' + CRIT_BG_TICKETS[d.topCrit] + ';color:' + CRIT_TXT_TICKETS[d.topCrit] + '">' + d.topCrit + '</span></td>';
+    html += '<td style="color:#6b7280;font-size:11px">' + d.top + '</td>';
+    html += '</tr>';
+  });
+  document.getElementById('topDevicesTable').innerHTML = html + '</tbody>';
+}
+
+function renderActiveTickets(){
+  const status = document.getElementById('ticketStatusFilter').value;
+  const origin = document.getElementById('ticketTypeFilter').value;
+  const data = ACTIVE_TICKETS.filter(function(t){
+    return (status==='all' || t.status===status) && (origin==='all' || t.origin===origin);
+  });
+  let html = '<thead><tr><th>Ticket</th><th>Origin</th><th>Description</th><th>Criticality</th><th>Status</th><th>Opened</th></tr></thead><tbody>';
+  data.forEach(function(t){
+    const obg = t.origin==='proactive' ? '#d1fae5' : '#fef3c7';
+    const ocol = t.origin==='proactive' ? '#10b981' : '#f59e0b';
+    const statusMap = {open:{l:'Open',bg:'#fee2e2',c:'#ef4444'}, inprogress:{l:'In progress',bg:'#dbeafe',c:'#2563eb'}, dispatched:{l:'Dispatched',bg:'#fef3c7',c:'#92400e'}};
+    const s = statusMap[t.status];
+    html += '<tr>';
+    html += '<td style="font-weight:500;color:#111827">' + t.id + '</td>';
+    html += '<td><span style="display:inline-flex;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:500;background:' + obg + ';color:' + ocol + '">' + t.origin + '</span></td>';
+    html += '<td style="color:#374151;font-size:11px;max-width:280px;white-space:normal">' + t.desc + '</td>';
+    html += '<td><span style="display:inline-flex;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:500;background:' + CRIT_BG_TICKETS[t.crit] + ';color:' + CRIT_TXT_TICKETS[t.crit] + '">' + t.crit + '</span></td>';
+    html += '<td><span style="display:inline-flex;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:500;background:' + s.bg + ';color:' + s.c + '">' + s.l + '</span></td>';
+    html += '<td style="color:#6b7280;font-size:11px">' + t.opened + '</td>';
+    html += '</tr>';
+  });
+  document.getElementById('activeTicketsTable').innerHTML = html + '</tbody>';
+}
+
+function buildAlarmsTab(){
+  // 1. Alarms vs tickets — bars (left) + line (right)
+  new Chart(document.getElementById('alarmsTicketsChart'), {
+    data: {
+      labels: MONTHS13,
+      datasets: [
+        {type:'bar',  label:'Alarms', data:[542,591,634,581,524,595,569,625,672,608,651,684,612], backgroundColor:'#bfdbfe', borderColor:'#3b82f6', borderWidth:1, yAxisID:'yA', order:2},
+        {type:'line', label:'Tickets',data:[14,15,17,16,14,17,16,18,19,17,18,19,17],              borderColor:'#ef4444', backgroundColor:'transparent', borderWidth:2, pointRadius:3, tension:0.3, yAxisID:'yT', order:1}
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
+      plugins: {legend:{display:false}, tooltip:{callbacks:{label:function(ctx){return ' '+ctx.dataset.label+': '+ctx.parsed.y}}}},
+      scales: {
+        x:  {grid:{display:false}, ticks:{font:{size:9},color:'#6b7280',maxRotation:0,autoSkip:true,maxTicksLimit:13}, border:{display:false}},
+        yA: {type:'linear',position:'left',min:0, grid:{color:'rgba(0,0,0,0.04)'}, ticks:{font:{size:9},color:'#3b82f6'}, border:{display:false}, title:{display:true,text:'Alarms',font:{size:9},color:'#3b82f6'}},
+        yT: {type:'linear',position:'right',min:0,max:25, grid:{display:false}, ticks:{font:{size:9},color:'#ef4444'}, border:{display:false}, title:{display:true,text:'Tickets',font:{size:9},color:'#ef4444'}}
+      }
+    }
+  });
+
+  // 2. Proactive vs Reactive
+  new Chart(document.getElementById('proactiveReactiveChart'), {
+    type:'bar',
+    data: {
+      labels: MONTHS13,
+      datasets: [
+        {label:'Proactive',data:[10,11,13,12,10,12,11,13,14,12,13,14,12], backgroundColor:'#10b981', stack:'s'},
+        {label:'Reactive', data:[4,4,4,4,4,5,5,5,5,5,5,5,5],              backgroundColor:'#f59e0b', stack:'s'}
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:function(ctx){return ' '+ctx.dataset.label+': '+ctx.parsed.y}}}},
+      scales: {
+        x:{grid:{display:false}, ticks:{font:{size:9},color:'#6b7280',maxRotation:0,autoSkip:true,maxTicksLimit:13}, border:{display:false}, stacked:true},
+        y:{grid:{color:'rgba(0,0,0,0.04)'}, ticks:{font:{size:9},color:'#6b7280'}, border:{display:false}, stacked:true}
+      }
+    }
+  });
+
+  // 3. Tickets by resolution
+  new Chart(document.getElementById('resolutionChart'), {
+    type:'bar',
+    data: {
+      labels: MONTHS13,
+      datasets: [
+        {label:'Avoided truck roll',data:[7,8,9,8,7,9,8,10,10,9,9,10,9], backgroundColor:'#10b981', stack:'s'},
+        {label:'Dispatched',         data:[3,4,4,4,3,4,4,4,5,4,5,4,3],    backgroundColor:'#f59e0b', stack:'s'},
+        {label:'Consolidated',       data:[2,2,3,2,2,3,2,3,3,3,3,3,3],    backgroundColor:'#3b82f6', stack:'s'},
+        {label:'Discarded',          data:[2,1,1,2,2,1,2,1,1,1,1,2,2],    backgroundColor:'#9ca3af', stack:'s'}
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:function(ctx){return ' '+ctx.dataset.label+': '+ctx.parsed.y}}}},
+      scales: {
+        x:{grid:{display:false}, ticks:{font:{size:9},color:'#6b7280',maxRotation:0,autoSkip:true,maxTicksLimit:13}, border:{display:false}, stacked:true},
+        y:{grid:{color:'rgba(0,0,0,0.04)'}, ticks:{font:{size:9},color:'#6b7280'}, border:{display:false}, stacked:true}
+      }
+    }
+  });
+
+  // 4. Tickets by criticality
+  new Chart(document.getElementById('criticalityChart'), {
+    type:'bar',
+    data: {
+      labels: MONTHS13,
+      datasets: [
+        {label:'Critical',data:[1,1,2,1,1,2,1,2,2,2,2,3,2], backgroundColor:'#ef4444', stack:'s'},
+        {label:'High',    data:[3,4,5,4,3,5,4,5,6,5,5,6,5], backgroundColor:'#f59e0b', stack:'s'},
+        {label:'Medium',  data:[6,6,6,7,6,6,7,7,7,6,7,6,7], backgroundColor:'#3b82f6', stack:'s'},
+        {label:'Low',     data:[4,4,4,4,4,4,4,4,4,4,4,4,3], backgroundColor:'#9ca3af', stack:'s'}
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:function(ctx){return ' '+ctx.dataset.label+': '+ctx.parsed.y}}}},
+      scales: {
+        x:{grid:{display:false}, ticks:{font:{size:9},color:'#6b7280',maxRotation:0,autoSkip:true,maxTicksLimit:13}, border:{display:false}, stacked:true},
+        y:{grid:{color:'rgba(0,0,0,0.04)'}, ticks:{font:{size:9},color:'#6b7280'}, border:{display:false}, stacked:true}
+      }
+    }
+  });
+
+  renderTopTickets('7d');
+  renderTopDevices();
+  renderActiveTickets();
+}
+
+
+
+// ── Device selection wrappers — HVAC and Refrigeration tabs ─────────────────
+function selectDevHvac(dev, btn){
+  var bar = document.getElementById('hvacDevSelBar');
+  if(bar){
+    bar.querySelectorAll('.dev-btn').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');
+  }
+  window._currentDev = dev;
+  if(typeof renderDevPanel === 'function'){renderDevPanel();}
+}
+function selectDevRef(dev, btn){
+  var bar = document.getElementById('refDevSelBar');
+  if(bar){
+    bar.querySelectorAll('.dev-btn').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');
+  }
+  window._currentDev = dev;
+  if(typeof renderDevPanel==='function')renderDevPanel();
+}
+function setPeriodHvac(p, btn){
+  var bar = btn.parentElement;
+  bar.querySelectorAll('.date-preset').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  var custom = document.getElementById('customDateRangeHvac');
+  if(custom){custom.style.display = p==='custom'?'flex':'none';}
+  setPeriod(p, btn);
+}
+function setPeriodRef(p, btn){
+  var bar = btn.parentElement;
+  bar.querySelectorAll('.date-preset').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  var custom = document.getElementById('customDateRangeRef');
+  if(custom){custom.style.display = p==='custom'?'flex':'none';}
+  setPeriod(p, btn);
+}
+function applyCustomDateHvac(){applyCustomDate && applyCustomDate();}
+function applyCustomDateRef(){applyCustomDate && applyCustomDate();}
+
+</script>
+</body>
+</html>
