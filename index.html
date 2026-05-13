@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portfolio View</title>
-<link rel="stylesheet" href="keedian-ui.css?v=5">
+<link rel="stylesheet" href="keedian-ui.css?v=6">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#e5e7eb;padding:20px;font-family:sans-serif}
@@ -122,16 +122,13 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 
     <!-- EXECUTIVE SUMMARY -->
     <div class="content" id="tab-exec">
-      <div class="k-section-hdr">
-        <div class="slabel">Fleet status</div>
-        <span class="k-badge k-badge-live" title="Current snapshot — does not respond to period selector">Live</span>
-      </div>
+      <div class="slabel">Fleet status</div>
       <div class="g5">
         <div class="fcard"><div class="fval">87</div><div class="flbl">Total stores</div><div class="fsub arr-fl" style="color:#6b7280">ACME Corp portfolio</div></div>
-        <div class="fcard"><div class="fval" style="color:#10b981">71</div><div class="flbl">Full data availability</div><div class="fsub" style="color:#6b7280">100% uptime this month</div></div>
-        <div class="fcard"><div class="fval" style="color:#f59e0b">11</div><div class="flbl">Connectivity issues</div><div class="fsub" style="color:#6b7280">≥1 outage event this month</div></div>
-        <div class="fcard"><div class="fval">94.2<span style="font-size:14px;color:#6b7280">%</span></div><div class="flbl">Avg data availability</div><div class="fsub arr-up">▲ 1.1% vs March</div></div>
-        <div class="fcard" style="border-color:#fecaca;background:#fef9f9"><div class="fval" style="color:#ef4444">5</div><div class="flbl" style="color:#991b1b">Currently unreachable</div><div class="fsub" style="color:#991b1b">GW offline or lost conn. now</div></div>
+        <div class="fcard"><div class="fval" style="color:#10b981"><span data-kpi="fleet.fullAvail">71</span></div><div class="flbl">Full data availability</div><div class="fsub" style="color:#6b7280">100% uptime during period</div></div>
+        <div class="fcard"><div class="fval" style="color:#f59e0b"><span data-kpi="fleet.connIssues">11</span></div><div class="flbl">Connectivity issues</div><div class="fsub" style="color:#6b7280">≥1 outage event during period</div></div>
+        <div class="fcard"><div class="fval"><span data-kpi="fleet.avgDataAvail">94.2</span><span style="font-size:14px;color:#6b7280">%</span></div><div class="flbl">Avg data availability</div><div class="fsub arr-up">▲ 1.1% <span data-kpi-vs>vs March</span></div></div>
+        <div class="fcard" style="border-color:#fecaca;background:#fef9f9"><div class="fval" style="color:#ef4444"><span data-kpi="fleet.unreachable">5</span></div><div class="flbl" style="color:#991b1b">Sites with outage events</div><div class="fsub" style="color:#991b1b">GW offline or lost conn.</div></div>
       </div>
       <div class="slabel">Site locations — status overview</div>
       <div style="background:#fff;border-radius:8px;border:1px solid #e5e7eb;overflow:hidden;margin-bottom:10px">
@@ -592,7 +589,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css"/>
-<script src="keedian-ui.js?v=5"></script>
+<script src="keedian-ui.js?v=6"></script>
 <script>
 function showTab(name,el){document.querySelectorAll('.tab:not(.soon)').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.querySelectorAll('.content').forEach(c=>c.classList.add('hidden'));document.getElementById('tab-'+name).classList.remove('hidden');if(name==='hvac'&&!window.hvacBuilt){buildHvacData();renderSites();window.hvacBuilt=true;}if(name==='perf'&&!window.perfBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderPerf();window.perfBuilt=true;}if(name==='roi'&&!window.roiBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderRoi();buildRoiCharts();window.roiBuilt=true;}if(name==='refrig'&&!window.refrigBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderRefrig();window.refrigBuilt=true;}if(name==='lighting'&&!window.ltBuilt){buildLightingCharts();window.ltBuilt=true;}if(name==='alarms'&&!window.alarmsBuilt){buildAlarmCharts();window.alarmsBuilt=true;}}
 
@@ -1316,36 +1313,42 @@ document.addEventListener('DOMContentLoaded',()=>setTimeout(initLeafletMap,500))
 // Mock data — real implementation: aggregate per period from the API.
 const PORTFOLIO_KPI_BY_PERIOD = {
   D: {
+    fleet:    { fullAvail: '78', connIssues: '6',  avgDataAvail: '96.4', unreachable: '3' },
     hvac:     { rt: '83', dt: '95', sp: '74', tc: '92' },
     refrig:   { cooler: '89', freezer: '82' },
     lighting: { sched: '89', util: '82', burn: '87' },
     alarms:   { total: '1,724' }
   },
   W: {
+    fleet:    { fullAvail: '74', connIssues: '8',  avgDataAvail: '95.3', unreachable: '4' },
     hvac:     { rt: '82', dt: '94', sp: '73', tc: '92' },
     refrig:   { cooler: '88', freezer: '82' },
     lighting: { sched: '88', util: '82', burn: '86' },
     alarms:   { total: '12,358' }
   },
   M: {
+    fleet:    { fullAvail: '71', connIssues: '11', avgDataAvail: '94.2', unreachable: '5' },
     hvac:     { rt: '81', dt: '94', sp: '72', tc: '91' },
     refrig:   { cooler: '88', freezer: '81' },
     lighting: { sched: '88', util: '81', burn: '86' },
     alarms:   { total: '53,244' }
   },
   Q: {
+    fleet:    { fullAvail: '67', connIssues: '14', avgDataAvail: '93.1', unreachable: '7' },
     hvac:     { rt: '80', dt: '93', sp: '74', tc: '91' },
     refrig:   { cooler: '87', freezer: '81' },
     lighting: { sched: '86', util: '82', burn: '85' },
     alarms:   { total: '158,920' }
   },
   YTD: {
+    fleet:    { fullAvail: '63', connIssues: '17', avgDataAvail: '91.8', unreachable: '9' },
     hvac:     { rt: '80', dt: '93', sp: '74', tc: '90' },
     refrig:   { cooler: '87', freezer: '81' },
     lighting: { sched: '86', util: '82', burn: '85' },
     alarms:   { total: '212,488' }
   },
   custom: {
+    fleet:    { fullAvail: '71', connIssues: '11', avgDataAvail: '94.2', unreachable: '5' },
     hvac:     { rt: '81', dt: '94', sp: '72', tc: '91' },
     refrig:   { cooler: '88', freezer: '81' },
     lighting: { sched: '88', util: '81', burn: '86' },
