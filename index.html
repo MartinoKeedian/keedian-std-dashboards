@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portfolio View</title>
-<link rel="stylesheet" href="keedian-ui.css?v=4">
+<link rel="stylesheet" href="keedian-ui.css?v=5">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#e5e7eb;padding:20px;font-family:sans-serif}
@@ -592,7 +592,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css"/>
-<script src="keedian-ui.js?v=4"></script>
+<script src="keedian-ui.js?v=5"></script>
 <script>
 function showTab(name,el){document.querySelectorAll('.tab:not(.soon)').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.querySelectorAll('.content').forEach(c=>c.classList.add('hidden'));document.getElementById('tab-'+name).classList.remove('hidden');if(name==='hvac'&&!window.hvacBuilt){buildHvacData();renderSites();window.hvacBuilt=true;}if(name==='perf'&&!window.perfBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderPerf();window.perfBuilt=true;}if(name==='roi'&&!window.roiBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderRoi();buildRoiCharts();window.roiBuilt=true;}if(name==='refrig'&&!window.refrigBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderRefrig();window.refrigBuilt=true;}if(name==='lighting'&&!window.ltBuilt){buildLightingCharts();window.ltBuilt=true;}if(name==='alarms'&&!window.alarmsBuilt){buildAlarmCharts();window.alarmsBuilt=true;}}
 
@@ -1312,32 +1312,38 @@ window.showTab=function(name,el){
 document.addEventListener('DOMContentLoaded',()=>setTimeout(initLeafletMap,500));
 
 // ── Keedian UI module wiring ─────────────────────────────────────────────────
-// Period presets: MTD / lastMonth / YTD / lastYear / custom
+// Period presets: D / W / M / Q / YTD / custom (same as Site dashboard)
 // Mock data — real implementation: aggregate per period from the API.
 const PORTFOLIO_KPI_BY_PERIOD = {
-  MTD: {
+  D: {
+    hvac:     { rt: '83', dt: '95', sp: '74', tc: '92' },
+    refrig:   { cooler: '89', freezer: '82' },
+    lighting: { sched: '89', util: '82', burn: '87' },
+    alarms:   { total: '1,724' }
+  },
+  W: {
+    hvac:     { rt: '82', dt: '94', sp: '73', tc: '92' },
+    refrig:   { cooler: '88', freezer: '82' },
+    lighting: { sched: '88', util: '82', burn: '86' },
+    alarms:   { total: '12,358' }
+  },
+  M: {
     hvac:     { rt: '81', dt: '94', sp: '72', tc: '91' },
     refrig:   { cooler: '88', freezer: '81' },
     lighting: { sched: '88', util: '81', burn: '86' },
     alarms:   { total: '53,244' }
   },
-  lastMonth: {
-    hvac:     { rt: '79', dt: '93', sp: '76', tc: '90' },
-    refrig:   { cooler: '86', freezer: '82' },
-    lighting: { sched: '85', util: '83', burn: '85' },
-    alarms:   { total: '51,012' }
+  Q: {
+    hvac:     { rt: '80', dt: '93', sp: '74', tc: '91' },
+    refrig:   { cooler: '87', freezer: '81' },
+    lighting: { sched: '86', util: '82', burn: '85' },
+    alarms:   { total: '158,920' }
   },
   YTD: {
     hvac:     { rt: '80', dt: '93', sp: '74', tc: '90' },
     refrig:   { cooler: '87', freezer: '81' },
     lighting: { sched: '86', util: '82', burn: '85' },
     alarms:   { total: '212,488' }
-  },
-  lastYear: {
-    hvac:     { rt: '76', dt: '91', sp: '69', tc: '88' },
-    refrig:   { cooler: '84', freezer: '78' },
-    lighting: { sched: '82', util: '79', burn: '83' },
-    alarms:   { total: '628,950' }
   },
   custom: {
     hvac:     { rt: '81', dt: '94', sp: '72', tc: '91' },
@@ -1348,8 +1354,8 @@ const PORTFOLIO_KPI_BY_PERIOD = {
 };
 
 function applyPortfolioPeriod(){
-  var key = (K && K.period && K.period.portfolio) || 'MTD';
-  var data = PORTFOLIO_KPI_BY_PERIOD[key] || PORTFOLIO_KPI_BY_PERIOD.MTD;
+  var key = (K && K.period && K.period.portfolio) || 'M';
+  var data = PORTFOLIO_KPI_BY_PERIOD[key] || PORTFOLIO_KPI_BY_PERIOD.M;
   if (typeof K !== 'undefined' && K.applyKpiSwap) K.applyKpiSwap(data);
 }
 
