@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Site Dashboard — Store #214</title>
-<link rel="stylesheet" href="keedian-ui.css">
+<link rel="stylesheet" href="keedian-ui.css?v=3">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#e5e7eb;padding:20px;font-family:sans-serif}
@@ -781,7 +781,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
   </div>
 </div>
 
-<script src="keedian-ui.js"></script>
+<script src="keedian-ui.js?v=3"></script>
 <script>
 // Core navigation — runs independently of Chart.js
 function showTab(name,el){
@@ -1547,9 +1547,6 @@ function applySitePeriod(){
   }
 }
 
-window.addEventListener('k-periodchange', function(e){
-  if (e.detail && e.detail.scope === 'site') applySitePeriod();
-});
 window.addEventListener('k-prefschange', function(){
   // Re-render dev panel so DEV_CONFIG values pass through K.fmt
   if (typeof renderDevPanel === 'function') {
@@ -1559,7 +1556,15 @@ window.addEventListener('k-prefschange', function(){
 
 document.addEventListener('DOMContentLoaded', function(){
   if (typeof K !== 'undefined') {
-    K.init({ scope: 'site', sitePicker: true, siteId: '214', crossHref: 'index.html' });
+    K.init({
+      scope: 'site',
+      sitePicker: true,
+      siteId: '214',
+      crossHref: 'index.html',
+      onPeriodChange: function(detail){
+        if (detail.scope === 'site') applySitePeriod();
+      }
+    });
     K.ensureBadgeLegend(document.querySelector('.content:not(.hidden)'));
     applySitePeriod();
   }
