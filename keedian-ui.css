@@ -86,6 +86,34 @@
 .k-btn-ghost{padding:7px 12px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;color:#6b7280;font-size:11px;cursor:pointer}
 .k-btn-ghost:hover{background:#f3f4f6;color:#111827}
 
+/* Info tooltip — used on every chart and KPI to explain what it is */
+.k-info{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:#e5e7eb;color:#6b7280;font-size:9px;font-weight:600;cursor:help;margin-left:4px;font-style:normal;line-height:1;vertical-align:middle;position:relative;flex-shrink:0;border:none;font-family:sans-serif}
+.k-info:hover{background:#3b82f6;color:#fff}
+.k-info::before{content:'?';display:block;line-height:1}
+.k-tip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#111827;color:#fff;padding:8px 11px;border-radius:6px;font-size:11px;font-weight:400;line-height:1.5;width:280px;white-space:normal;text-align:left;letter-spacing:0;text-transform:none;z-index:1000;opacity:0;pointer-events:none;transition:opacity 0.12s;box-shadow:0 4px 12px rgba(0,0,0,0.15)}
+.k-tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#111827}
+.k-tip b{color:#a5f3fc;font-weight:500;display:inline-block;min-width:60px}
+.k-tip .k-tip-src{display:inline-block;background:rgba(59,130,246,0.3);color:#bfdbfe;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px}
+.k-info:hover .k-tip,.k-info:focus .k-tip{opacity:1}
+.k-info{outline:none}
+
+/* Heat map for Energy tab */
+.k-heatmap{display:inline-grid;grid-template-columns:auto repeat(24, minmax(18px, 1fr));gap:2px;width:100%;font-size:9px;color:#6b7280}
+.k-heatmap .hm-corner,.k-heatmap .hm-hour,.k-heatmap .hm-day{display:flex;align-items:center;justify-content:center;padding:2px 0}
+.k-heatmap .hm-hour{font-size:8px;color:#9ca3af}
+.k-heatmap .hm-day{justify-content:flex-end;padding-right:6px;color:#374151;font-weight:500;font-size:10px}
+.k-heatmap .hm-cell{aspect-ratio:1;border-radius:2px;cursor:default;position:relative;min-height:14px;border:1px solid rgba(0,0,0,0.02)}
+.k-heatmap .hm-cell:hover{outline:2px solid #2563eb;outline-offset:-1px}
+.k-heatmap-legend{display:flex;align-items:center;gap:6px;font-size:10px;color:#6b7280;margin-top:8px}
+.k-heatmap-legend .hm-scale{display:flex;height:8px;width:160px;border-radius:2px;overflow:hidden}
+.k-heatmap-legend .hm-scale > div{flex:1}
+
+/* Peer ranking strip — used in Energy KPI card */
+.k-rank-bar{position:relative;height:6px;background:#e5e7eb;border-radius:3px;margin:6px 0 4px;overflow:visible}
+.k-rank-fill{position:absolute;height:100%;background:linear-gradient(90deg,#10b981 0%,#f59e0b 60%,#ef4444 100%);border-radius:3px;opacity:0.35}
+.k-rank-marker{position:absolute;top:-3px;width:12px;height:12px;border-radius:50%;background:#111827;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,0.3);transform:translateX(-50%)}
+.k-rank-meta{display:flex;justify-content:space-between;font-size:9px;color:#9ca3af;margin-top:2px}
+
 /* Topbar layout helpers used by both dashboards */
 .k-topbar-extras{display:flex;align-items:center;gap:10px;margin-left:auto}
 .k-topbar-extras > *{flex-shrink:0}

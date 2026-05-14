@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Site Dashboard — Store #214</title>
-<link rel="stylesheet" href="keedian-ui.css?v=6">
+<link rel="stylesheet" href="keedian-ui.css?v=7">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#e5e7eb;padding:20px;font-family:sans-serif}
@@ -179,7 +179,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
       <div class="tab" onclick="showTab('refrig',this)">Refrigeration</div>
       <div class="tab" onclick="showTab('roi',this)">ROI & savings</div>
       <div class="tab" onclick="showTab('lighting',this)">Lighting</div>
-      <div class="tab soon">Energy</div>
+      <div class="tab" onclick="showTab('energy',this)">Energy</div>
       <div class="tab" onclick="showTab('alarms',this)">Alarms</div>
     </div>
 
@@ -559,6 +559,178 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
       </div>
     </div>
 
+    <!-- ENERGY TAB -->
+    <div class="content hidden" id="tab-energy">
+
+      <!-- Source toggle -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap">
+        <span style="font-size:11px;font-weight:500;color:#374151">Source:</span>
+        <div class="k-seg" id="energySource">
+          <button class="active" data-src="meter">Meter</button>
+          <button data-src="bill">Bill</button>
+        </div>
+        <span id="energySourceNote" style="font-size:10px;color:#9ca3af;display:none">Bill data is available only for Month / Quarter / YTD.</span>
+        <span style="margin-left:auto;font-size:11px;color:#6b7280">Site type: <b style="color:#111827">Conv+Fuel</b> · Cluster: <b style="color:#111827">37 sites</b></span>
+      </div>
+
+      <!-- KPI STRIP -->
+      <div class="g4">
+        <div class="kcard">
+          <div class="ktop">
+            <div class="kttl">Consumption
+              <span class="k-info" tabindex="0">
+                <span class="k-tip">
+                  <span class="k-tip-src">Source: Meter</span><br>
+                  <b>What:</b> Total energy consumed during the selected period.<br>
+                  <b>Calc:</b> Sum of 15-min kWh readings from the main meter.<br>
+                  <b>Note:</b> Bill source may differ 2–5% due to billing cut-off timing.
+                </span>
+              </span>
+            </div>
+            <span class="pill p-ok">Below baseline</span>
+          </div>
+          <div class="kval"><span data-kpi="energy.cons" data-fmt-number="2847">2,847</span> <span style="font-size:13px;color:#6b7280">kWh</span></div>
+          <div class="ksub">Selected period</div>
+          <div class="kchg arr-up">▼ 6.2% <span data-kpi-vs>vs March</span></div>
+        </div>
+
+        <div class="kcard">
+          <div class="ktop">
+            <div class="kttl">Peak demand
+              <span class="k-info" tabindex="0">
+                <span class="k-tip">
+                  <span class="k-tip-src">Source: Meter</span><br>
+                  <b>What:</b> Maximum instantaneous power drawn during the period.<br>
+                  <b>Calc:</b> Max of 15-min averaged kW readings.<br>
+                  <b>Why it matters:</b> Demand charges on the bill are often 30–40% of total cost.
+                </span>
+              </span>
+            </div>
+            <span class="pill p-ok">Normal</span>
+          </div>
+          <div class="kval"><span data-kpi="energy.peak">27.4</span> <span style="font-size:13px;color:#6b7280">kW</span></div>
+          <div class="ksub">Reached on <span data-kpi="energy.peakTs">Apr 15 · 14:32</span></div>
+          <div class="kchg arr-up">▼ 3.1% <span data-kpi-vs>vs prior period</span></div>
+        </div>
+
+        <div class="kcard">
+          <div class="ktop">
+            <div class="kttl">Estimated cost
+              <span class="k-info" tabindex="0">
+                <span class="k-tip">
+                  <span class="k-tip-src">Source: Bill</span><br>
+                  <b>What:</b> Total billed cost from the utility for the selected period.<br>
+                  <b>Includes:</b> Energy charges + demand charges + taxes.<br>
+                  <b>Note:</b> Bill is finalized 5–10 days after month close.
+                </span>
+              </span>
+            </div>
+            <span class="pill p-blue">From bill</span>
+          </div>
+          <div class="kval"><span data-kpi="energy.cost" data-fmt-money="568">$568</span></div>
+          <div class="ksub">Energy + demand + taxes</div>
+          <div class="kchg arr-up">▼ 4.8% <span data-kpi-vs>vs March</span></div>
+        </div>
+
+        <div class="kcard">
+          <div class="ktop">
+            <div class="kttl">Energy intensity (EUI)
+              <span class="k-info" tabindex="0">
+                <span class="k-tip">
+                  <span class="k-tip-src">Source: Meter + Site metadata</span><br>
+                  <b>What:</b> Energy use per unit of conditioned floor area.<br>
+                  <b>Calc:</b> Total kWh during period ÷ site sq ft.<br>
+                  <b>Use:</b> Compare across sites of different sizes in the same cluster.
+                </span>
+              </span>
+            </div>
+          </div>
+          <div class="kval"><span data-kpi="energy.eui">24.3</span> <span style="font-size:13px;color:#6b7280">kWh/sq ft</span></div>
+          <div class="k-rank-bar"><div class="k-rank-fill" style="width:100%"></div><div class="k-rank-marker" id="energyRankMarker" style="left:38%"></div></div>
+          <div class="k-rank-meta"><span>Best</span><span>Worst</span></div>
+          <div class="ksub" style="margin-top:6px">Position <b style="color:#111827"><span data-kpi="energy.rank">14</span> of 37</b> · cluster Conv+Fuel · <span style="color:#10b981">9% below median</span></div>
+        </div>
+      </div>
+
+      <!-- TREND 13mo -->
+      <div class="chart-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div class="chart-ttl" style="margin-bottom:0">Monthly evolution — consumption &amp; peak
+            <span class="k-info" tabindex="0">
+              <span class="k-tip">
+                <span class="k-tip-src">Source: Meter</span><br>
+                <b>What:</b> Monthly totals over the last 13 months.<br>
+                <b>kWh bars:</b> total consumption per month (left axis).<br>
+                <b>Peak line:</b> max kW reached each month (right axis).<br>
+                <b>Cluster median:</b> dashed line shows the median kWh of the 37 Conv+Fuel sites in your portfolio.
+              </span>
+            </span>
+          </div>
+          <span class="k-badge k-badge-trend">Trend · 13mo</span>
+        </div>
+        <div class="legend">
+          <div class="li"><span class="ls" style="background:#bfdbfe;height:10px;width:14px"></span>kWh consumption</div>
+          <div class="li"><span class="ls" style="background:#ef4444"></span>Peak demand (kW)</div>
+          <div class="li"><span class="ls" style="background:#9ca3af;border-top:2px dashed #9ca3af;background:transparent"></span>Cluster median (kWh)</div>
+        </div>
+        <div style="position:relative;height:200px"><canvas id="energyTrendChart"></canvas></div>
+      </div>
+
+      <!-- HEAT MAP -->
+      <div class="chart-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:8px">
+          <div class="chart-ttl" style="margin-bottom:0">Hourly pattern — <span id="heatmapModeLbl">consumption</span>
+            <span class="k-info" tabindex="0">
+              <span class="k-tip">
+                <span class="k-tip-src">Source: Meter</span><br>
+                <b>What:</b> Average kWh (or kW peak) per day-of-week and hour-of-day, aggregated over the selected period.<br>
+                <b>Read it:</b> rows = days, columns = hours. Darker = higher value.<br>
+                <b>Use:</b> spot after-hours consumption, weekend vs weekday differences, start-up spikes.
+              </span>
+            </span>
+          </div>
+          <div class="k-seg" id="heatmapMode">
+            <button class="active" data-mode="kwh">Consumption (kWh)</button>
+            <button data-mode="kw">Peak demand (kW)</button>
+          </div>
+        </div>
+        <div id="energyHeatmap" class="k-heatmap"></div>
+        <div class="k-heatmap-legend">
+          <span id="hmLegendMin">low</span>
+          <div class="hm-scale" id="hmScale"></div>
+          <span id="hmLegendMax">high</span>
+        </div>
+      </div>
+
+      <!-- DETAILED TELEMETRY -->
+      <div class="chart-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:8px">
+          <div class="chart-ttl" style="margin-bottom:0">Detailed telemetry
+            <span class="k-info" tabindex="0">
+              <span class="k-tip">
+                <span class="k-tip-src">Source: Meter</span><br>
+                <b>What:</b> 15-min interval readings from the selected meter over the selected period.<br>
+                <b>kW:</b> instantaneous power at each interval.<br>
+                <b>kWh:</b> cumulative energy delivered (resets per interval).
+              </span>
+            </span>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            <select class="fsel" id="energyMeterSel">
+              <option value="main">Main meter (revenue)</option>
+              <option value="bill">Billed total</option>
+            </select>
+            <div class="k-seg" id="telemetryUnit">
+              <button class="active" data-u="kw">kW</button>
+              <button data-u="kwh">kWh</button>
+            </div>
+          </div>
+        </div>
+        <div style="position:relative;height:220px"><canvas id="energyTelemetryChart"></canvas></div>
+      </div>
+
+    </div>
+
     <!-- ALARMS TAB -->
     <div class="content hidden" id="tab-alarms">
 
@@ -743,7 +915,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
   </div>
 </div>
 
-<script src="keedian-ui.js?v=6"></script>
+<script src="keedian-ui.js?v=7"></script>
 <script>
 // Core navigation — runs independently of Chart.js
 function showTab(name,el){
@@ -790,6 +962,7 @@ function initTabCharts(name){
   }
   if(name==='roi'&&!window.roiBuilt){buildRoiTab();window.roiBuilt=true;}
   if(name==='lighting'&&!window.ltBuilt&&typeof buildLightingTab==='function'){buildLightingTab();window.ltBuilt=true;}
+  if(name==='energy'&&!window.energyBuilt&&typeof buildEnergyTab==='function'){buildEnergyTab();window.energyBuilt=true;}
   if(name==='alarms'&&!window.alarmsBuilt&&typeof buildAlarmsTab==='function'){buildAlarmsTab();window.alarmsBuilt=true;}
 }
 
@@ -1452,46 +1625,290 @@ const SITE_KPI_BY_PERIOD = {
   D: {
     hvac:     { runtime: '11.8', dt: 17.6, sp: '94.1', tc: '94.3' },
     refrig:   { wicComp: '99.2', frzComp: '99.5' },
-    energy:   { cons: '94',    peak: '28.1', mv: 16 },
+    energy:   { cons: '94',    peak: '28.1', mv: 16,   cost: 19,    eui: '0.80', rank: '11', peakTs: 'Apr 24 · 14:32', rankPctLeft: '30%' },
     lighting: { sched: '93.8', util: '77.2', burn: '15.4' },
     alarms:   { total: '24', tickets: '1' }
   },
   W: {
     hvac:     { runtime: '12.1', dt: 17.4, sp: '93.6', tc: '94.0' },
     refrig:   { wicComp: '99.0', frzComp: '99.3' },
-    energy:   { cons: '653',   peak: '28.4', mv: 112 },
+    energy:   { cons: '653',   peak: '28.4', mv: 112,  cost: 131,   eui: '5.6',  rank: '13', peakTs: 'Apr 22 · 15:18', rankPctLeft: '35%' },
     lighting: { sched: '93.5', util: '76.9', burn: '15.3' },
     alarms:   { total: '147', tickets: '4' }
   },
   M: {
     hvac:     { runtime: '12.3', dt: 17.2, sp: '93.3', tc: '93.9' },
     refrig:   { wicComp: '99.1', frzComp: '99.4' },
-    energy:   { cons: '2847', peak: '27.4', mv: 480 },
+    energy:   { cons: '2847',  peak: '27.4', mv: 480,  cost: 568,   eui: '24.3', rank: '14', peakTs: 'Apr 15 · 14:32', rankPctLeft: '38%' },
     lighting: { sched: '93.4', util: '76.8', burn: '15.2' },
     alarms:   { total: '612', tickets: '17' }
   },
   Q: {
     hvac:     { runtime: '12.0', dt: 17.3, sp: '93.7', tc: '94.2' },
     refrig:   { wicComp: '99.0', frzComp: '99.4' },
-    energy:   { cons: '8512', peak: '28.6', mv: 1380 },
+    energy:   { cons: '8512',  peak: '28.6', mv: 1380, cost: 1700,  eui: '72.8', rank: '15', peakTs: 'Apr 15 · 14:32', rankPctLeft: '40%' },
     lighting: { sched: '93.6', util: '76.5', burn: '15.1' },
     alarms:   { total: '1,824', tickets: '48' }
   },
   YTD: {
     hvac:     { runtime: '11.9', dt: 17.5, sp: '93.8', tc: '94.5' },
     refrig:   { wicComp: '99.2', frzComp: '99.5' },
-    energy:   { cons: '11280', peak: '28.9', mv: 1840 },
+    energy:   { cons: '11280', peak: '28.9', mv: 1840, cost: 2256,  eui: '96.4', rank: '16', peakTs: 'Mar 12 · 13:45', rankPctLeft: '43%' },
     lighting: { sched: '93.7', util: '76.3', burn: '15.0' },
     alarms:   { total: '2,436', tickets: '67' }
   },
   custom: {
     hvac:     { runtime: '12.3', dt: 17.2, sp: '93.3', tc: '93.9' },
     refrig:   { wicComp: '99.1', frzComp: '99.4' },
-    energy:   { cons: '2847', peak: '27.4', mv: 480 },
+    energy:   { cons: '2847',  peak: '27.4', mv: 480,  cost: 568,   eui: '24.3', rank: '14', peakTs: 'Apr 15 · 14:32', rankPctLeft: '38%' },
     lighting: { sched: '93.4', util: '76.8', burn: '15.2' },
     alarms:   { total: '612', tickets: '17' }
   }
 };
+
+// Energy 13-month trend (Trend · 13mo — does not respond to period)
+const ENERGY_TREND_13MO = {
+  labels: ['Apr\'25','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan\'26','Feb','Mar','Apr\'26'],
+  kwh:           [3120, 3340, 3680, 3920, 4010, 3850, 3520, 3210, 3060, 2980, 2890, 3010, 2847],
+  peakKw:        [28.4, 29.1, 30.6, 31.8, 32.2, 31.5, 29.8, 28.7, 28.2, 27.6, 27.4, 27.5, 27.4],
+  clusterMedian: [3450, 3620, 3940, 4180, 4280, 4080, 3760, 3460, 3320, 3240, 3180, 3260, 3100]
+};
+
+// Energy heat map (7 days × 24 hours · period-responsive)
+// Values are illustrative — real impl: aggregate meter readings per (dow, hour) cell
+function buildEnergyHeatmapData(mode){
+  // mode: 'kwh' or 'kw'. Returns 7×24 matrix.
+  var base = mode === 'kw' ? 14 : 4.2;  // base value for low cells
+  var peak = mode === 'kw' ? 28 : 11.5; // value at top cells
+  var rows = [];
+  for (var d = 0; d < 7; d++){
+    var row = [];
+    var isWeekend = d === 0 || d === 6;
+    for (var h = 0; h < 24; h++){
+      // Daytime curve (peak ~14:00), lower at night
+      var dayFactor = Math.max(0, Math.sin((h - 5) * Math.PI / 14));
+      // Weekend dampening
+      var weekendFactor = isWeekend ? 0.65 : 1.0;
+      // Small per-day variance
+      var dayVar = 1 + (Math.sin(d * 1.3 + h * 0.2) * 0.05);
+      var v = base + (peak - base) * dayFactor * weekendFactor * dayVar;
+      row.push(Number(v.toFixed(2)));
+    }
+    rows.push(row);
+  }
+  return rows;
+}
+
+// Energy detailed telemetry (period-responsive)
+// 15-min interval data for the current period
+function buildEnergyTelemetryData(period, unit){
+  var pts;
+  if (period === 'D' || period === 'custom') pts = 96;      // 24h × 4 (15min)
+  else if (period === 'W') pts = 7 * 24;                    // 168 hourly points
+  else if (period === 'M') pts = 30 * 8;                    // 30d × 8 (3hr buckets)
+  else if (period === 'Q') pts = 90;                        // ~daily for 90d
+  else pts = 120;                                            // ytd-ish
+  var base = unit === 'kw' ? 14 : 3.2;
+  var amp  = unit === 'kw' ? 13 : 5.5;
+  return Array.from({length: pts}, function(_, i){
+    var t = i / pts * Math.PI * (pts > 60 ? 8 : 2);
+    var v = base + amp * Math.max(0, Math.sin(t)) + (Math.sin(i * 0.4) * (unit==='kw' ? 1.6 : 0.4));
+    return Number(v.toFixed(2));
+  });
+}
+function buildEnergyTelemetryLabels(period){
+  if (period === 'D' || period === 'custom') return Array.from({length: 96}, function(_, i){ var h = Math.floor(i/4); var m = (i%4)*15; return (h<10?'0':'')+h+':'+(m<10?'0':'')+m; });
+  if (period === 'W') return Array.from({length: 7*24}, function(_, i){ return 'D'+(Math.floor(i/24)+1)+' '+(i%24)+'h'; });
+  if (period === 'M') return Array.from({length: 30*8}, function(_, i){ return 'd'+(Math.floor(i/8)+1); });
+  if (period === 'Q') return Array.from({length: 90}, function(_, i){ return 'd'+(i+1); });
+  return Array.from({length: 120}, function(_, i){ return 'd'+(i+1); });
+}
+
+// ── Energy tab build ─────────────────────────────────────────────────────────
+var energyTrendChart = null, energyTelemetryChart = null;
+var heatmapMode = 'kwh';
+var telemetryUnit = 'kw';
+var energySource = 'meter';
+
+function colorForHeatmap(v, min, max, mode){
+  var t = max === min ? 0 : (v - min) / (max - min);
+  // Blue→green→yellow→red gradient
+  var stops = [
+    {p: 0,    r: 219, g: 234, b: 254},
+    {p: 0.33, r: 167, g: 243, b: 208},
+    {p: 0.66, r: 253, g: 230, b: 138},
+    {p: 1,    r: 252, g: 165, b: 165}
+  ];
+  for (var i = 0; i < stops.length - 1; i++){
+    if (t <= stops[i+1].p){
+      var lo = stops[i], hi = stops[i+1];
+      var f = (t - lo.p) / (hi.p - lo.p || 1);
+      var r = Math.round(lo.r + (hi.r - lo.r) * f);
+      var g = Math.round(lo.g + (hi.g - lo.g) * f);
+      var b = Math.round(lo.b + (hi.b - lo.b) * f);
+      return 'rgb('+r+','+g+','+b+')';
+    }
+  }
+  return 'rgb(252,165,165)';
+}
+
+function renderEnergyHeatmap(){
+  var host = document.getElementById('energyHeatmap');
+  if (!host) return;
+  var data = buildEnergyHeatmapData(heatmapMode);
+  var flat = [].concat.apply([], data);
+  var min = Math.min.apply(null, flat), max = Math.max.apply(null, flat);
+  var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var unit = heatmapMode === 'kw' ? 'kW' : 'kWh';
+  var html = '<div class="hm-corner"></div>';
+  // Header row: hours
+  for (var h = 0; h < 24; h++){
+    html += '<div class="hm-hour">' + (h%3===0 ? h+'h' : '') + '</div>';
+  }
+  // Body rows
+  for (var d = 0; d < 7; d++){
+    html += '<div class="hm-day">'+days[d]+'</div>';
+    for (var h = 0; h < 24; h++){
+      var v = data[d][h];
+      var color = colorForHeatmap(v, min, max, heatmapMode);
+      html += '<div class="hm-cell" style="background:'+color+'" title="'+days[d]+' '+h+':00 — '+v+' '+unit+'"></div>';
+    }
+  }
+  host.innerHTML = html;
+  // Update legend
+  document.getElementById('hmLegendMin').textContent = min.toFixed(1) + ' ' + unit;
+  document.getElementById('hmLegendMax').textContent = max.toFixed(1) + ' ' + unit;
+  var scale = document.getElementById('hmScale');
+  if (scale){
+    var steps = 10, sh = '';
+    for (var i = 0; i < steps; i++){
+      var sv = min + (max - min) * (i / (steps - 1));
+      sh += '<div style="background:'+colorForHeatmap(sv, min, max, heatmapMode)+'"></div>';
+    }
+    scale.innerHTML = sh;
+  }
+  var lbl = document.getElementById('heatmapModeLbl');
+  if (lbl) lbl.textContent = heatmapMode === 'kw' ? 'peak demand' : 'consumption';
+}
+
+function renderEnergyTrendChart(){
+  var canvas = document.getElementById('energyTrendChart');
+  if (!canvas) return;
+  if (energyTrendChart) energyTrendChart.destroy();
+  energyTrendChart = new Chart(canvas, {
+    data: {
+      labels: ENERGY_TREND_13MO.labels,
+      datasets: [
+        { type:'bar', label:'kWh', data: ENERGY_TREND_13MO.kwh, backgroundColor:'#bfdbfe', borderColor:'#3b82f6', borderWidth:1, yAxisID:'yKwh', order:2 },
+        { type:'line', label:'Peak (kW)', data: ENERGY_TREND_13MO.peakKw, borderColor:'#ef4444', backgroundColor:'transparent', borderWidth:2, pointRadius:2, tension:0.3, yAxisID:'yKw', order:1 },
+        { type:'line', label:'Cluster median (kWh)', data: ENERGY_TREND_13MO.clusterMedian, borderColor:'#9ca3af', backgroundColor:'transparent', borderWidth:2, borderDash:[4,4], pointRadius:0, tension:0.3, yAxisID:'yKwh', order:0 }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      interaction:{ mode:'index', intersect:false },
+      plugins:{
+        legend:{ display:false },
+        tooltip:{ callbacks:{ label: function(ctx){
+          var v = ctx.parsed.y;
+          if (ctx.dataset.label === 'kWh') return ' kWh: ' + v.toLocaleString();
+          if (ctx.dataset.label === 'Peak (kW)') return ' Peak: ' + v.toFixed(1) + ' kW';
+          return ' Cluster median: ' + v.toLocaleString() + ' kWh';
+        }}}
+      },
+      scales:{
+        x:{ grid:{ color:'rgba(0,0,0,0.04)' }, ticks:{ font:{size:9}, color:'#6b7280' }, border:{display:false} },
+        yKwh:{ type:'linear', position:'left', grid:{color:'rgba(0,0,0,0.04)'}, ticks:{font:{size:9},color:'#3b82f6',callback:function(v){return v.toLocaleString()+' kWh'}}, border:{display:false}, beginAtZero:true },
+        yKw:{ type:'linear', position:'right', grid:{display:false}, ticks:{font:{size:9},color:'#ef4444',callback:function(v){return v+' kW'}}, border:{display:false}, beginAtZero:false }
+      }
+    }
+  });
+}
+
+function renderEnergyTelemetryChart(){
+  var canvas = document.getElementById('energyTelemetryChart');
+  if (!canvas) return;
+  if (energyTelemetryChart) energyTelemetryChart.destroy();
+  var period = (K && K.period && K.period.site) || 'M';
+  var data = buildEnergyTelemetryData(period, telemetryUnit);
+  var labels = buildEnergyTelemetryLabels(period);
+  var unit = telemetryUnit === 'kw' ? 'kW' : 'kWh';
+  energyTelemetryChart = new Chart(canvas, {
+    type:'line',
+    data:{ labels: labels, datasets: [{
+      label: unit, data: data,
+      borderColor: telemetryUnit === 'kw' ? '#ef4444' : '#3b82f6',
+      backgroundColor: telemetryUnit === 'kw' ? 'rgba(239,68,68,0.08)' : 'rgba(59,130,246,0.08)',
+      fill: true, tension: 0.25, pointRadius: 0, borderWidth: 1.5
+    }]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:function(ctx){ return ' '+ctx.parsed.y.toFixed(2)+' '+unit }}}},
+      scales:{
+        x:{ grid:{display:false}, ticks:{ font:{size:9}, color:'#9ca3af', autoSkip:true, maxTicksLimit:12 }, border:{display:false} },
+        y:{ grid:{ color:'rgba(0,0,0,0.04)' }, ticks:{ font:{size:9}, color:'#6b7280', callback:function(v){ return v+' '+unit }}, border:{display:false}, beginAtZero:true }
+      }
+    }
+  });
+}
+
+function buildEnergyTab(){
+  renderEnergyTrendChart();
+  renderEnergyHeatmap();
+  renderEnergyTelemetryChart();
+
+  // Wire heat map toggle
+  var hmSeg = document.getElementById('heatmapMode');
+  if (hmSeg){
+    hmSeg.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click', function(){
+        hmSeg.querySelectorAll('button').forEach(function(x){x.classList.remove('active')});
+        b.classList.add('active');
+        heatmapMode = b.dataset.mode;
+        renderEnergyHeatmap();
+      });
+    });
+  }
+  // Wire telemetry unit toggle
+  var tuSeg = document.getElementById('telemetryUnit');
+  if (tuSeg){
+    tuSeg.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click', function(){
+        tuSeg.querySelectorAll('button').forEach(function(x){x.classList.remove('active')});
+        b.classList.add('active');
+        telemetryUnit = b.dataset.u;
+        renderEnergyTelemetryChart();
+      });
+    });
+  }
+  // Wire source toggle
+  var srcSeg = document.getElementById('energySource');
+  if (srcSeg){
+    srcSeg.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click', function(){
+        srcSeg.querySelectorAll('button').forEach(function(x){x.classList.remove('active')});
+        b.classList.add('active');
+        energySource = b.dataset.src;
+        var note = document.getElementById('energySourceNote');
+        if (note) note.style.display = energySource === 'bill' ? 'inline' : 'none';
+        // If Bill and period is Day/Week, force to Month
+        if (energySource === 'bill'){
+          var cur = (K && K.period && K.period.site) || 'M';
+          if (cur === 'D' || cur === 'W') K.setPeriod && K.setPeriod('site','M');
+        }
+      });
+    });
+  }
+}
+
+// Update EUI rank marker position whenever applySitePeriod runs
+function updateEnergyRankMarker(){
+  var key = (K && K.period && K.period.site) || 'M';
+  var data = SITE_KPI_BY_PERIOD[key];
+  if (!data || !data.energy) return;
+  var marker = document.getElementById('energyRankMarker');
+  if (marker) marker.style.left = data.energy.rankPctLeft || '38%';
+}
 
 function applySitePeriod(){
   var key = (K && K.period && K.period.site) || 'M';
@@ -1506,6 +1923,12 @@ function applySitePeriod(){
   window._currentPeriod = K_TO_LOCAL_PERIOD[key] || 'today';
   if (typeof renderDevPanel === 'function') {
     try { renderDevPanel(); } catch(e){}
+  }
+  // Energy tab: re-render rank marker, heatmap and telemetry on period change
+  if (typeof updateEnergyRankMarker === 'function') updateEnergyRankMarker();
+  if (window.energyBuilt){
+    if (typeof renderEnergyHeatmap === 'function') renderEnergyHeatmap();
+    if (typeof renderEnergyTelemetryChart === 'function') renderEnergyTelemetryChart();
   }
 }
 
