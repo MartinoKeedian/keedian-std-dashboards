@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portfolio View</title>
-<link rel="stylesheet" href="keedian-ui.css?v=13">
+<link rel="stylesheet" href="keedian-ui.css?v=14">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#e5e7eb;padding:20px;font-family:sans-serif}
@@ -201,7 +201,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
     <div class="content hidden" id="tab-hvac">
       <div class="subtab-bar">
         <div class="subtab active" onclick="showSub('sites',this)">By site</div>
-        <div class="subtab" onclick="showSub('devices',this)">By device</div>
+        <div class="subtab" onclick="showSub('devices',this)">By asset</div>
       </div>
       <div class="filter-bar">
         <span class="fltr-lbl">Filters:</span>
@@ -216,7 +216,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
           <div class="tbl-hdr-bar">
             <div>
               <div class="tbl-ttl">HVAC performance by site — current month</div>
-              <div style="font-size:10px;color:#6b7280;margin-top:2px">KPI values are averages across all HVAC devices · ⚠ indicates at least one device outside expected range</div>
+              <div style="font-size:10px;color:#6b7280;margin-top:2px">KPI values are averages across all HVAC assets · ⚠ indicates at least one asset outside expected range</div>
             </div>
             <div class="tbl-cnt" id="siteCount">87 sites</div>
           </div>
@@ -227,10 +227,10 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
         <div class="tbl-wrap">
           <div class="tbl-hdr-bar">
             <div>
-              <div class="tbl-ttl">HVAC performance by device — current month</div>
-              <div style="font-size:10px;color:#6b7280;margin-top:2px">Individual device readings · includes all HVAC equipment types</div>
+              <div class="tbl-ttl">HVAC performance by asset — current month</div>
+              <div style="font-size:10px;color:#6b7280;margin-top:2px">Individual asset readings · includes all HVAC equipment types</div>
             </div>
-            <div class="tbl-cnt" id="devCount">204 devices</div>
+            <div class="tbl-cnt" id="devCount">204 assets</div>
           </div>
           <div style="overflow-x:auto"><table class="dtbl" id="devTbl"></table></div>
         </div>
@@ -291,7 +291,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
     <div class="content hidden" id="tab-refrig">
       <div class="subtab-bar">
         <div class="subtab active" onclick="showRefSub('sites',this)">By site</div>
-        <div class="subtab" onclick="showRefSub('devices',this)">By device</div>
+        <div class="subtab" onclick="showRefSub('devices',this)">By asset</div>
       </div>
       <div class="filter-bar">
         <span class="fltr-lbl">Filters:</span>
@@ -320,7 +320,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
         <div class="tbl-wrap">
           <div class="tbl-hdr-bar">
             <div>
-              <div class="tbl-ttl">Refrigeration compliance by device — current month</div>
+              <div class="tbl-ttl">Refrigeration compliance by asset — current month</div>
               <div style="font-size:10px;color:#6b7280;margin-top:2px">Individual unit readings with current temperature</div>
             </div>
             <div class="tbl-cnt" id="refDevCount">156 units</div>
@@ -826,7 +826,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css"/>
-<script src="keedian-ui.js?v=13"></script>
+<script src="keedian-ui.js?v=14"></script>
 <script>
 function showTab(name,el){document.querySelectorAll('.tab:not(.soon)').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.querySelectorAll('.content').forEach(c=>c.classList.add('hidden'));document.getElementById('tab-'+name).classList.remove('hidden');if(name==='hvac'&&!window.hvacBuilt){buildHvacData();renderSites();window.hvacBuilt=true;}if(name==='perf'&&!window.perfBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderPerf();window.perfBuilt=true;}if(name==='roi'&&!window.roiBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderRoi();buildRoiCharts();window.roiBuilt=true;}if(name==='refrig'&&!window.refrigBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderRefrig();window.refrigBuilt=true;}if(name==='lighting'&&!window.ltBuilt){buildLightingCharts();window.ltBuilt=true;}if(name==='alarms'&&!window.alarmsBuilt){buildAlarmCharts();window.alarmsBuilt=true;}if(name==='energy'&&!window.pfEnergyBuilt&&typeof buildPfEnergyTab==='function'){buildPfEnergyTab();window.pfEnergyBuilt=true;}}
 
@@ -940,7 +940,7 @@ function renderSites(){
   let data=allSites.filter(s=>(f.type==='all'||s.type===f.type)&&(f.hours==='all'||s.hours===f.hours)&&(f.conn==='all'||(f.conn==='ok'&&s.connMonth==='ok')||(f.conn==='issues'&&s.connMonth!=='ok'))&&(f.compliance==='all'||(f.compliance==='ok'&&!s.hasAnyWarn)||(f.compliance==='issues'&&s.hasAnyWarn)));
   data.sort((a,b)=>(a[siteSort.col]>b[siteSort.col]?1:-1)*siteSort.dir);
   document.getElementById('siteCount').textContent=data.length+' sites';
-  const cols=[{k:'siteName',l:'Store'},{k:'connMonth',l:'Connectivity'},{k:'dataAvail',l:'Data avail. ↕'},{k:'type',l:'Type'},{k:'hours',l:'Schedule'},{k:'nDevices',l:'HVAC devices ↕'},{k:'avgRt',l:'Runtime ↕'},{k:'avgDt',l:'Cooling ΔT ↕'},{k:'avgSp',l:'Setpoint compl. ↕'},{k:'avgTc',l:'Temp compl. ↕'}];
+  const cols=[{k:'siteName',l:'Store'},{k:'connMonth',l:'Connectivity'},{k:'dataAvail',l:'Data avail. ↕'},{k:'type',l:'Type'},{k:'hours',l:'Schedule'},{k:'nDevices',l:'HVAC assets ↕'},{k:'avgRt',l:'Runtime ↕'},{k:'avgDt',l:'Cooling ΔT ↕'},{k:'avgSp',l:'Setpoint compl. ↕'},{k:'avgTc',l:'Temp compl. ↕'}];
   let html='<thead><tr>'+cols.map(c=>`<th class="${siteSort.col===c.k?'sorted':''}" onclick="sortSites('${c.k}')">${c.l}</th>`).join('')+'</tr></thead><tbody>';
   data.forEach(s=>{
     const tl=s.type==='conv'?'Conv. only':s.type==='fuel'?'Conv. + fuel':'Conv.+fuel+CW';
@@ -954,8 +954,8 @@ function renderDevices(){
   const f=getF();
   let data=allDevices.filter(d=>(f.type==='all'||d.type===f.type)&&(f.hours==='all'||d.hours===f.hours)&&(f.conn==='all'||(f.conn==='ok'&&d.connMonth==='ok')||(f.conn==='issues'&&d.connMonth!=='ok'))&&(f.compliance==='all'||(f.compliance==='ok'&&kpiColor(d.runtime,'rt')==='ok'&&kpiColor(d.dt,'dt')==='ok'&&kpiColor(d.sp,'sp')==='ok'&&kpiColor(d.tc,'tc')==='ok')||(f.compliance==='issues'&&(kpiColor(d.runtime,'rt')!=='ok'||kpiColor(d.dt,'dt')!=='ok'||kpiColor(d.sp,'sp')!=='ok'||kpiColor(d.tc,'tc')!=='ok'))));
   data.sort((a,b)=>(a[devSort.col]>b[devSort.col]?1:-1)*devSort.dir);
-  document.getElementById('devCount').textContent=data.length+' devices';
-  const cols=[{k:'siteName',l:'Store'},{k:'device',l:'Device ↕'},{k:'eqType',l:'Eq. type ↕'},{k:'connMonth',l:'Connectivity'},{k:'dataAvail',l:'Data avail. ↕'},{k:'runtime',l:'Runtime ↕'},{k:'dt',l:'Cooling ΔT ↕'},{k:'sp',l:'Setpoint compl. ↕'},{k:'tc',l:'Temp compl. ↕'}];
+  document.getElementById('devCount').textContent=data.length+' assets';
+  const cols=[{k:'siteName',l:'Store'},{k:'device',l:'Asset ↕'},{k:'eqType',l:'Type ↕'},{k:'connMonth',l:'Connectivity'},{k:'dataAvail',l:'Data avail. ↕'},{k:'runtime',l:'Runtime ↕'},{k:'dt',l:'Cooling ΔT ↕'},{k:'sp',l:'Setpoint compl. ↕'},{k:'tc',l:'Temp compl. ↕'}];
   let html='<thead><tr>'+cols.map(c=>`<th class="${devSort.col===c.k?'sorted':''}" onclick="sortDevs('${c.k}')">${c.l}</th>`).join('')+'</tr></thead><tbody>';
   data.forEach(d=>{
     const ac=d.dataAvail===100?'#065f46':d.dataAvail>=90?'#92400e':'#991b1b';
@@ -1040,7 +1040,7 @@ function renderRefrigDevices(){
   let data=allRefrigDevices.filter(d=>(t==='all'||d.type===t)&&(h==='all'||d.hours===h)&&(s==='all'||(s==='ok'&&d.compOk)||(s==='issues'&&!d.compOk)));
   data.sort((a,b)=>(a[refDevSort.col]>b[refDevSort.col]?1:-1)*refDevSort.dir);
   document.getElementById('refDevCount').textContent=data.length+' units';
-  const cols=[{k:'siteName',l:'Store'},{k:'device',l:'Device ↕'},{k:'eqType',l:'Type ↕'},{k:'connMonth',l:'Connectivity'},{k:'dataAvail',l:'Data avail. ↕'},{k:'currentTemp',l:'Current temp ↕'},{k:'comp',l:'Monthly compliance ↕'},{k:'compOk',l:'Status'}];
+  const cols=[{k:'siteName',l:'Store'},{k:'device',l:'Asset ↕'},{k:'eqType',l:'Type ↕'},{k:'connMonth',l:'Connectivity'},{k:'dataAvail',l:'Data avail. ↕'},{k:'currentTemp',l:'Current temp ↕'},{k:'comp',l:'Monthly compliance ↕'},{k:'compOk',l:'Status'}];
   let html='<thead><tr>'+cols.map(c=>`<th class="${refDevSort.col===c.k?'sorted':''}" onclick="sortRefDev('${c.k}')">${c.l}</th>`).join('')+'</tr></thead><tbody>';
   data.forEach(d=>{
     const ac=d.dataAvail===100?'#065f46':d.dataAvail>=90?'#92400e':'#991b1b';
