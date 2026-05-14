@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portfolio View</title>
-<link rel="stylesheet" href="keedian-ui.css?v=9">
+<link rel="stylesheet" href="keedian-ui.css?v=10">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#e5e7eb;padding:20px;font-family:sans-serif}
@@ -115,7 +115,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
       <div class="tab" onclick="showTab('perf',this)">Top / worst performers</div>
       <div class="tab" onclick="showTab('roi',this)">ROI & savings</div>
       <div class="tab" onclick="showTab('refrig',this)">Refrigeration</div>
-      <div class="tab soon">Energy</div>
+      <div class="tab" onclick="showTab('energy',this)">Energy</div>
       <div class="tab" onclick="showTab('lighting',this)">Lighting</div>
       <div class="tab" onclick="showTab('alarms',this)">Alarms</div>
     </div>
@@ -363,6 +363,223 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
       </div>
     </div>
 
+    <!-- ENERGY TAB -->
+    <div class="content hidden" id="tab-energy">
+
+      <!-- Source toggle -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap">
+        <span style="font-size:11px;font-weight:500;color:#374151">Source:</span>
+        <div class="k-seg" id="pfEnergySource">
+          <button class="active" data-src="meter">Meter</button>
+          <button data-src="bill">Bill</button>
+        </div>
+        <span id="pfEnergySourceNote" style="font-size:10px;color:#9ca3af;display:none">Bill data is available only for Month / Quarter / YTD.</span>
+        <span style="margin-left:auto;font-size:11px;color:#6b7280">EUI target: <b style="color:#111827">≤ 30 kWh/sq ft</b> · monthly</span>
+      </div>
+
+      <!-- KPI STRIP -->
+      <div class="g4">
+        <div class="kcard">
+          <div class="ktop">
+            <div class="kttl">Total consumption
+              <span class="k-info" tabindex="0">
+                <span class="k-tip">
+                  <span class="k-tip-src">Source: Meter</span><br>
+                  <b>What:</b> Sum of kWh across all monitored sites during the selected period.<br>
+                  <b>Note:</b> Absolute total — grows when new sites are added. See trend chart for the normalized EUI view.
+                </span>
+              </span>
+            </div>
+            <span class="pill p-gray">Period</span>
+          </div>
+          <div class="kval"><span data-kpi="energy.totalKwh" data-fmt-number="248320">248,320</span> <span style="font-size:13px;color:#6b7280">kWh</span></div>
+          <div class="ksub">87 sites monitored</div>
+          <div class="kchg arr-up">▼ 3.4% <span data-kpi-vs>vs March</span></div>
+        </div>
+
+        <div class="kcard">
+          <div class="ktop">
+            <div class="kttl">Total cost
+              <span class="k-info" tabindex="0">
+                <span class="k-tip">
+                  <span class="k-tip-src">Source: Bill</span><br>
+                  <b>What:</b> Sum of billed cost across all sites during the selected period.<br>
+                  <b>Includes:</b> energy + demand charges + taxes for every site.<br>
+                  <b>Note:</b> Bill is finalized 5–10 days after month close.
+                </span>
+              </span>
+            </div>
+            <span class="pill p-blue">From bill</span>
+          </div>
+          <div class="kval"><span data-kpi="energy.totalCost" data-fmt-money="49664">$49,664</span></div>
+          <div class="ksub">Across 87 sites</div>
+          <div class="kchg arr-up">▼ 4.2% <span data-kpi-vs>vs March</span></div>
+        </div>
+
+        <div class="kcard">
+          <div class="ktop">
+            <div class="kttl">Avg EUI
+              <span class="k-info" tabindex="0">
+                <span class="k-tip">
+                  <span class="k-tip-src">Source: Meter + Site metadata (sq ft)</span><br>
+                  <b>What:</b> Average energy intensity across the portfolio.<br>
+                  <b>Calc:</b> Total kWh ÷ Total sq ft monitored, during the selected period.<br>
+                  <b>Why normalized:</b> Adding new sites does not inflate this metric — it is the cleanest portfolio-level trend.
+                </span>
+              </span>
+            </div>
+            <span class="pill p-ok">Below target</span>
+          </div>
+          <div class="kval"><span data-kpi="energy.avgEui">25.8</span> <span style="font-size:13px;color:#6b7280">kWh/sq ft</span></div>
+          <div class="ksub">Target ≤ 30 · monthly</div>
+          <div class="kchg arr-up">▼ 0.6 <span data-kpi-vs>vs March</span></div>
+        </div>
+
+        <div class="kcard">
+          <div class="ktop">
+            <div class="kttl">Sites within EUI target
+              <span class="k-info" tabindex="0">
+                <span class="k-tip">
+                  <span class="k-tip-src">Source: Meter + sq ft</span><br>
+                  <b>What:</b> Count of sites with EUI ≤ 30 kWh/sq ft during the selected period.<br>
+                  <b>Read it:</b> "62 of 87 sites = 71%". Higher is better.<br>
+                  <b>Use:</b> Executive summary metric for energy efficiency program performance.
+                </span>
+              </span>
+            </div>
+            <span class="pill p-ok">Period</span>
+          </div>
+          <div class="kval"><span data-kpi="energy.sitesInTarget">62</span> <span style="font-size:13px;color:#6b7280">of 87</span></div>
+          <div class="ksub"><span data-kpi="energy.sitesInTargetPct">71</span>% within target</div>
+          <div class="kchg arr-up">▲ 3 sites <span data-kpi-vs>vs March</span></div>
+        </div>
+      </div>
+
+      <!-- TREND 13mo -->
+      <div class="chart-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div class="chart-ttl" style="margin-bottom:0">Portfolio efficiency trend
+            <span class="k-info" tabindex="0">
+              <span class="k-tip">
+                <span class="k-tip-src">Source: Meter + sq ft</span><br>
+                <b>kWh bars:</b> total portfolio consumption per month (left axis). Grows naturally as sites are added.<br>
+                <b>EUI line:</b> total kWh ÷ total sq ft (right axis). Normalized — does not inflate from portfolio growth.<br>
+                <b>Sites count:</b> small overlay at top shows how many sites were monitored each month.
+              </span>
+            </span>
+          </div>
+          <span class="k-badge k-badge-trend">Trend · 13mo</span>
+        </div>
+        <div class="legend">
+          <div class="li"><span class="ls" style="background:#bfdbfe;height:10px;width:14px"></span>Total kWh (absolute)</div>
+          <div class="li"><span class="ls" style="background:#10b981"></span>Avg EUI (normalized · kWh/sq ft)</div>
+          <div class="li"><span class="ls" style="background:#9ca3af;border-top:2px dashed #9ca3af;background:transparent"></span>EUI target (30)</div>
+        </div>
+        <div style="position:relative;height:200px"><canvas id="pfEnergyTrendChart"></canvas></div>
+        <div id="pfEnergySitesOverlay" style="margin-top:6px;font-size:10px;color:#9ca3af;display:flex;justify-content:space-between"></div>
+      </div>
+
+      <!-- EUI DISTRIBUTION -->
+      <div class="chart-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:8px">
+          <div class="chart-ttl" style="margin-bottom:0">EUI distribution — selected period
+            <span class="k-info" tabindex="0">
+              <span class="k-tip">
+                <span class="k-tip-src">Source: Meter + sq ft</span><br>
+                <b>What:</b> Number of sites in each EUI bucket (kWh/sq ft) for the selected period.<br>
+                <b>Read it:</b> taller bars to the left = more efficient sites. The target band (≤30) is shaded green.<br>
+                <b>Use:</b> spot outliers and clusters of inefficient stores.
+              </span>
+            </span>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            <span style="font-size:11px;color:#6b7280">Cluster:</span>
+            <select class="fsel" id="pfEuiClusterFilter">
+              <option value="all">All clusters</option>
+              <option value="conv">Conv only</option>
+              <option value="fuel">Conv + fuel</option>
+              <option value="carwash">+ Car wash</option>
+            </select>
+          </div>
+        </div>
+        <div style="position:relative;height:200px"><canvas id="pfEuiHistChart"></canvas></div>
+        <div id="pfEuiHistStats" style="display:flex;gap:14px;font-size:11px;color:#6b7280;margin-top:8px;flex-wrap:wrap"></div>
+      </div>
+
+      <!-- TOP / WORST BY EUI -->
+      <div class="g2">
+        <div class="tbl-wrap" style="margin-bottom:0">
+          <div class="tbl-hdr-bar">
+            <div>
+              <div class="tbl-ttl">Top 5 — most efficient
+                <span class="k-info" tabindex="0">
+                  <span class="k-tip">
+                    <span class="k-tip-src">Source: Meter + sq ft</span><br>
+                    <b>What:</b> 5 sites with the lowest EUI (kWh/sq ft) during the selected period.<br>
+                    <b>Use:</b> identify reference sites for best-practice sharing.
+                  </span>
+                </span>
+              </div>
+              <div style="font-size:10px;color:#6b7280;margin-top:2px">Lowest EUI (kWh/sq ft) in the selected period</div>
+            </div>
+          </div>
+          <div style="overflow-x:auto"><table class="dtbl" id="pfEnergyTopTbl"></table></div>
+        </div>
+        <div class="tbl-wrap" style="margin-bottom:0">
+          <div class="tbl-hdr-bar">
+            <div>
+              <div class="tbl-ttl">Worst 5 — least efficient
+                <span class="k-info" tabindex="0">
+                  <span class="k-tip">
+                    <span class="k-tip-src">Source: Meter + sq ft</span><br>
+                    <b>What:</b> 5 sites with the highest EUI during the selected period.<br>
+                    <b>Use:</b> prioritize audits and intervention.
+                  </span>
+                </span>
+              </div>
+              <div style="font-size:10px;color:#6b7280;margin-top:2px">Highest EUI (kWh/sq ft) in the selected period</div>
+            </div>
+          </div>
+          <div style="overflow-x:auto"><table class="dtbl" id="pfEnergyWorstTbl"></table></div>
+        </div>
+      </div>
+
+      <!-- DETAILED TABLE -->
+      <div class="tbl-wrap" style="margin-top:10px">
+        <div class="tbl-hdr-bar">
+          <div>
+            <div class="tbl-ttl">Site-level detail
+              <span class="k-info" tabindex="0">
+                <span class="k-tip">
+                  <span class="k-tip-src">Source: Meter + Bill + sq ft</span><br>
+                  <b>What:</b> Per-site consumption, EUI, cost and position vs cluster median for the selected period.<br>
+                  <b>Sort:</b> click any column header. <b>Filter:</b> by cluster type and EUI band.
+                </span>
+              </span>
+            </div>
+            <div style="font-size:10px;color:#6b7280;margin-top:2px">Click column headers to sort</div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <select class="fsel" id="pfEnergyTblCluster">
+              <option value="all">All clusters</option>
+              <option value="conv">Conv only</option>
+              <option value="fuel">Conv + fuel</option>
+              <option value="carwash">+ Car wash</option>
+            </select>
+            <select class="fsel" id="pfEnergyTblBand">
+              <option value="all">All EUI bands</option>
+              <option value="ok">Within target (≤30)</option>
+              <option value="watch">Watch (30–40)</option>
+              <option value="bad">Above (&gt;40)</option>
+            </select>
+            <div class="tbl-cnt" id="pfEnergyTblCount">87 sites</div>
+          </div>
+        </div>
+        <div style="overflow-x:auto"><table class="dtbl" id="pfEnergyTbl"></table></div>
+      </div>
+
+    </div>
+
     <!-- ALARMS TAB -->
     <div class="content hidden" id="tab-alarms">
 
@@ -589,9 +806,9 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css"/>
-<script src="keedian-ui.js?v=9"></script>
+<script src="keedian-ui.js?v=10"></script>
 <script>
-function showTab(name,el){document.querySelectorAll('.tab:not(.soon)').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.querySelectorAll('.content').forEach(c=>c.classList.add('hidden'));document.getElementById('tab-'+name).classList.remove('hidden');if(name==='hvac'&&!window.hvacBuilt){buildHvacData();renderSites();window.hvacBuilt=true;}if(name==='perf'&&!window.perfBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderPerf();window.perfBuilt=true;}if(name==='roi'&&!window.roiBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderRoi();buildRoiCharts();window.roiBuilt=true;}if(name==='refrig'&&!window.refrigBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderRefrig();window.refrigBuilt=true;}if(name==='lighting'&&!window.ltBuilt){buildLightingCharts();window.ltBuilt=true;}if(name==='alarms'&&!window.alarmsBuilt){buildAlarmCharts();window.alarmsBuilt=true;}}
+function showTab(name,el){document.querySelectorAll('.tab:not(.soon)').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.querySelectorAll('.content').forEach(c=>c.classList.add('hidden'));document.getElementById('tab-'+name).classList.remove('hidden');if(name==='hvac'&&!window.hvacBuilt){buildHvacData();renderSites();window.hvacBuilt=true;}if(name==='perf'&&!window.perfBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderPerf();window.perfBuilt=true;}if(name==='roi'&&!window.roiBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderRoi();buildRoiCharts();window.roiBuilt=true;}if(name==='refrig'&&!window.refrigBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderRefrig();window.refrigBuilt=true;}if(name==='lighting'&&!window.ltBuilt){buildLightingCharts();window.ltBuilt=true;}if(name==='alarms'&&!window.alarmsBuilt){buildAlarmCharts();window.alarmsBuilt=true;}if(name==='energy'&&!window.pfEnergyBuilt&&typeof buildPfEnergyTab==='function'){buildPfEnergyTab();window.pfEnergyBuilt=true;}}
 
 const MONTHS13=['Apr\'25','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan\'26','Feb','Mar','Apr\'26'];
 const TARGETS={runtime:85,dt:85,setpoint:85,temp:85,cooler:85,freezer:85};
@@ -1299,6 +1516,327 @@ function initLeafletMap(){
 
   map.addLayer(markers);
 }
+
+// ── PORTFOLIO ENERGY TAB ────────────────────────────────────────────────────
+// Per-site mock dataset (87 sites with sq ft, base efficiency factor)
+// EUI = total kWh ÷ sq ft for the period. Real impl: aggregate per-site
+// meter readings + read sq ft from site config.
+const PF_ENERGY_STORES = (function(){
+  var TYPES = ['conv','fuel','fuel','carwash','conv','fuel','carwash','conv','fuel','conv'];
+  var NAMES = ['Store #214 — San Diego','Store #117 — Los Angeles','Store #355 — Bakersfield','Store #212 — Fresno','Store #275 — Sacramento','Store #683 — Riverside','Store #191 — Stockton','Store #236 — Oakland','Store #249 — Long Beach','Store #277 — San Jose','Store #256 — Anaheim','Store #219 — Irvine','Store #233 — Chula Vista','Store #625 — Modesto','Store #696 — Oxnard'];
+  var sites = [];
+  for (var i = 0; i < 87; i++){
+    var type = TYPES[i % TYPES.length];
+    var name = i < NAMES.length ? NAMES[i] : 'Store #' + (500 + i) + ' — CA';
+    // sq ft band per type — convenience (small), conv+fuel (medium), +carwash (large)
+    var sqFtBase = type === 'conv' ? 2400 : type === 'fuel' ? 3200 : 4100;
+    var sqFt = sqFtBase + Math.round(Math.abs(Math.sin(i * 1.7)) * 800);
+    // Efficiency factor — fluctuates around target 26 kWh/sq ft (target is 30 for compliance)
+    var effFactor = 22 + Math.abs(Math.sin(i * 2.3)) * 20;  // EUI: 22..42 kWh/sq ft monthly
+    // A few outliers
+    if (i % 11 === 0) effFactor += 12;
+    if (i % 13 === 0) effFactor -= 5;
+    sites.push({
+      id: i,
+      name: name,
+      type: type,
+      typeLabel: type === 'conv' ? 'Conv only' : type === 'fuel' ? 'Conv + fuel' : '+ Car wash',
+      sqFt: sqFt,
+      euiMonthly: parseFloat(effFactor.toFixed(1))  // baseline monthly EUI
+    });
+  }
+  return sites;
+})();
+
+// Period multipliers — what fraction of the monthly EUI to display per period bucket
+// (mock — real implementation will sum actual meter data over the period)
+const PF_ENERGY_PERIOD_MULT = {
+  D:   { eui: 1/30, label: 'daily' },
+  W:   { eui: 7/30, label: 'weekly' },
+  M:   { eui: 1,    label: 'monthly' },
+  Q:   { eui: 3,    label: 'quarterly' },
+  YTD: { eui: 4,    label: 'YTD (4 months)' },
+  custom: { eui: 1, label: 'period' }
+};
+
+const PF_ENERGY_TARGET = 30;  // kWh/sq ft monthly target
+
+function pfEnergyComputePeriod(period){
+  var mult = (PF_ENERGY_PERIOD_MULT[period] || PF_ENERGY_PERIOD_MULT.M).eui;
+  var totalKwh = 0, totalSqFt = 0, sitesInTarget = 0;
+  var perSite = PF_ENERGY_STORES.map(function(s){
+    var eui = s.euiMonthly;             // monthly EUI used for compliance band
+    var kwhPeriod = s.sqFt * eui * mult; // total kWh for the period
+    totalKwh  += kwhPeriod;
+    totalSqFt += s.sqFt;
+    if (eui <= PF_ENERGY_TARGET) sitesInTarget++;
+    return {
+      id: s.id, name: s.name, type: s.type, typeLabel: s.typeLabel, sqFt: s.sqFt,
+      eui: eui, kwh: Math.round(kwhPeriod), cost: Math.round(kwhPeriod * 0.20)  // $0.20/kWh blended
+    };
+  });
+  var avgEui = totalKwh / totalSqFt / mult;  // normalize back to monthly EUI scale
+  return {
+    perSite: perSite,
+    totalKwh: Math.round(totalKwh),
+    totalCost: Math.round(totalKwh * 0.20),
+    avgEui: parseFloat(avgEui.toFixed(1)),
+    sitesInTarget: sitesInTarget,
+    sitesInTargetPct: Math.round(sitesInTarget / PF_ENERGY_STORES.length * 100)
+  };
+}
+
+// 13-month trend — sites monitored grew from 71 to 87 over the last year
+const PF_ENERGY_TREND_13MO = (function(){
+  var labels = ['Apr\'25','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan\'26','Feb','Mar','Apr\'26'];
+  var sitesMonitored = [71, 73, 75, 76, 78, 79, 81, 82, 84, 85, 86, 86, 87];
+  var avgEui          = [27.4, 27.8, 28.6, 29.2, 29.5, 28.9, 27.3, 26.6, 26.2, 26.0, 25.9, 26.0, 25.8];
+  // total kWh = sites × avg sqft per site (3200) × avg EUI
+  var avgSqFt = 3200;
+  var totalKwh = sitesMonitored.map(function(n, i){ return Math.round(n * avgSqFt * avgEui[i]); });
+  return { labels: labels, sitesMonitored: sitesMonitored, avgEui: avgEui, totalKwh: totalKwh };
+})();
+
+var pfEnergyTrendChart = null, pfEuiHistChart = null;
+var pfEnergyTblSort = { col: 'eui', dir: 1 };
+
+function pfEnergyApplyKpis(){
+  var period = (K && K.period && K.period.portfolio) || 'M';
+  var agg = pfEnergyComputePeriod(period);
+  // Update KPI values via K.applyKpiSwap
+  var swap = {
+    energy: {
+      totalKwh: agg.totalKwh.toLocaleString(),
+      totalCost: agg.totalCost,
+      avgEui: agg.avgEui.toFixed(1),
+      sitesInTarget: agg.sitesInTarget,
+      sitesInTargetPct: agg.sitesInTargetPct
+    }
+  };
+  if (typeof K !== 'undefined' && K.applyKpiSwap) K.applyKpiSwap(swap);
+  return agg;
+}
+
+function buildPfEnergyTrend(){
+  var canvas = document.getElementById('pfEnergyTrendChart');
+  if (!canvas) return;
+  if (pfEnergyTrendChart) pfEnergyTrendChart.destroy();
+  var t = PF_ENERGY_TREND_13MO;
+  pfEnergyTrendChart = new Chart(canvas, {
+    data:{
+      labels: t.labels,
+      datasets: [
+        { type:'bar',  label:'Total kWh', data: t.totalKwh, backgroundColor:'#bfdbfe', borderColor:'#3b82f6', borderWidth:1, yAxisID:'yKwh', order:3 },
+        { type:'line', label:'Avg EUI',   data: t.avgEui,   borderColor:'#10b981', backgroundColor:'transparent', borderWidth:2, pointRadius:2.5, tension:0.3, yAxisID:'yEui', order:1 },
+        { type:'line', label:'Target',    data: t.avgEui.map(function(){return 30}), borderColor:'#9ca3af', borderDash:[4,4], borderWidth:1.5, pointRadius:0, yAxisID:'yEui', order:2 }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{ mode:'index', intersect:false },
+      plugins:{
+        legend:{ display:false },
+        tooltip:{ callbacks:{ label:function(ctx){
+          if (ctx.dataset.label === 'Total kWh') return ' Total: ' + ctx.parsed.y.toLocaleString() + ' kWh · ' + t.sitesMonitored[ctx.dataIndex] + ' sites';
+          if (ctx.dataset.label === 'Avg EUI')   return ' EUI: ' + ctx.parsed.y.toFixed(1) + ' kWh/sq ft';
+          if (ctx.dataset.label === 'Target')    return ' Target: 30 kWh/sq ft';
+          return null;
+        }}}
+      },
+      scales:{
+        x:{ grid:{color:'rgba(0,0,0,0.04)'}, ticks:{font:{size:9},color:'#6b7280'}, border:{display:false} },
+        yKwh:{ type:'linear', position:'left',  grid:{color:'rgba(0,0,0,0.04)'}, ticks:{font:{size:9},color:'#3b82f6',callback:function(v){return (v/1000).toFixed(0)+'k'}}, border:{display:false}, beginAtZero:true },
+        yEui:{ type:'linear', position:'right', grid:{display:false}, ticks:{font:{size:9},color:'#10b981',callback:function(v){return v+''}}, border:{display:false}, suggestedMin:20, suggestedMax:35 }
+      }
+    }
+  });
+  // Sites count overlay strip
+  var overlay = document.getElementById('pfEnergySitesOverlay');
+  if (overlay){
+    overlay.innerHTML = t.labels.map(function(l, i){
+      return '<span>'+l+': <b style="color:#374151">'+t.sitesMonitored[i]+'</b></span>';
+    }).join('');
+  }
+}
+
+function buildPfEuiHist(){
+  var canvas = document.getElementById('pfEuiHistChart');
+  if (!canvas) return;
+  var filter = document.getElementById('pfEuiClusterFilter');
+  var cluster = filter ? filter.value : 'all';
+  var period = (K && K.period && K.period.portfolio) || 'M';
+  var agg = pfEnergyComputePeriod(period);
+  var data = agg.perSite.filter(function(s){ return cluster === 'all' || s.type === cluster; });
+  // Buckets: 0-20, 20-25, 25-30, 30-35, 35-40, 40-45, 45+
+  var buckets = [
+    { lbl:'<20',   lo: 0,  hi: 20 },
+    { lbl:'20–25', lo: 20, hi: 25 },
+    { lbl:'25–30', lo: 25, hi: 30 },
+    { lbl:'30–35', lo: 30, hi: 35 },
+    { lbl:'35–40', lo: 35, hi: 40 },
+    { lbl:'40–45', lo: 40, hi: 45 },
+    { lbl:'45+',   lo: 45, hi: 999 }
+  ];
+  var counts = buckets.map(function(b){ return data.filter(function(s){ return s.eui >= b.lo && s.eui < b.hi; }).length; });
+  var colors = buckets.map(function(b){ return b.hi <= 30 ? '#86efac' : b.hi <= 40 ? '#fde68a' : '#fca5a5'; });
+  if (pfEuiHistChart) pfEuiHistChart.destroy();
+  pfEuiHistChart = new Chart(canvas, {
+    type:'bar',
+    data:{ labels: buckets.map(function(b){return b.lbl}), datasets:[{ label:'Sites', data: counts, backgroundColor: colors, borderColor:'#374151', borderWidth:0.5 }]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:function(ctx){ return ' '+ctx.parsed.y+' sites · EUI '+buckets[ctx.dataIndex].lbl+' kWh/sq ft'; } } } },
+      scales:{
+        x:{ grid:{display:false}, ticks:{font:{size:10},color:'#6b7280'}, border:{display:false}, title:{display:true,text:'EUI (kWh/sq ft) · monthly equivalent',font:{size:10},color:'#6b7280'} },
+        y:{ grid:{color:'rgba(0,0,0,0.04)'}, ticks:{font:{size:9},color:'#6b7280',stepSize:5}, border:{display:false}, beginAtZero:true, title:{display:true,text:'Sites',font:{size:10},color:'#6b7280'} }
+      }
+    }
+  });
+  // Stats line
+  var stats = document.getElementById('pfEuiHistStats');
+  if (stats){
+    var sortedE = data.map(function(s){return s.eui}).sort(function(a,b){return a-b});
+    var median = sortedE.length ? sortedE[Math.floor(sortedE.length/2)] : 0;
+    var minE = sortedE[0] || 0, maxE = sortedE[sortedE.length-1] || 0;
+    var withinTarget = data.filter(function(s){return s.eui <= 30}).length;
+    stats.innerHTML =
+      '<span><b style="color:#111827">'+data.length+'</b> sites</span>' +
+      '<span>Median: <b style="color:#111827">'+median.toFixed(1)+'</b></span>' +
+      '<span>Range: <b style="color:#111827">'+minE.toFixed(1)+'–'+maxE.toFixed(1)+'</b></span>' +
+      '<span>Within target (≤30): <b style="color:#10b981">'+withinTarget+' / '+data.length+'</b></span>';
+  }
+}
+
+function buildPfEnergyTopWorst(){
+  var period = (K && K.period && K.period.portfolio) || 'M';
+  var agg = pfEnergyComputePeriod(period);
+  var sorted = agg.perSite.slice().sort(function(a,b){return a.eui - b.eui;});
+  var top = sorted.slice(0, 5), worst = sorted.slice(-5).reverse();
+
+  function build(list, isTop){
+    var cols = '<thead><tr><th>#</th><th>Store</th><th>Type</th><th>Sq ft</th><th>EUI</th><th>kWh</th></tr></thead><tbody>';
+    var bgFill = isTop ? '#d1fae5' : '#fee2e2';
+    var color = isTop ? '#065f46' : '#991b1b';
+    list.forEach(function(s, idx){
+      cols += '<tr>' +
+        '<td><div style="width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;background:'+bgFill+';color:'+color+'">'+(idx+1)+'</div></td>' +
+        '<td style="font-weight:500;color:#111827">'+s.name+'</td>' +
+        '<td style="color:#6b7280;font-size:10px">'+s.typeLabel+'</td>' +
+        '<td>'+s.sqFt.toLocaleString()+'</td>' +
+        '<td><b style="color:'+color+'">'+s.eui.toFixed(1)+'</b> <span style="font-size:9px;color:#9ca3af">kWh/sq ft</span></td>' +
+        '<td>'+s.kwh.toLocaleString()+'</td>' +
+      '</tr>';
+    });
+    return cols + '</tbody>';
+  }
+  document.getElementById('pfEnergyTopTbl').innerHTML = build(top, true);
+  document.getElementById('pfEnergyWorstTbl').innerHTML = build(worst, false);
+}
+
+function buildPfEnergyDetailTable(){
+  var period = (K && K.period && K.period.portfolio) || 'M';
+  var agg = pfEnergyComputePeriod(period);
+  var clusterFilter = document.getElementById('pfEnergyTblCluster').value;
+  var bandFilter = document.getElementById('pfEnergyTblBand').value;
+  // Compute cluster median for delta column
+  var clusterMedians = {};
+  ['conv','fuel','carwash'].forEach(function(t){
+    var arr = agg.perSite.filter(function(s){return s.type === t}).map(function(s){return s.eui}).sort(function(a,b){return a-b});
+    clusterMedians[t] = arr.length ? arr[Math.floor(arr.length/2)] : 0;
+  });
+  var rows = agg.perSite.filter(function(s){
+    if (clusterFilter !== 'all' && s.type !== clusterFilter) return false;
+    if (bandFilter === 'ok' && s.eui > 30) return false;
+    if (bandFilter === 'watch' && (s.eui <= 30 || s.eui > 40)) return false;
+    if (bandFilter === 'bad' && s.eui <= 40) return false;
+    return true;
+  });
+  // Augment with delta vs cluster median
+  rows.forEach(function(s){ s.deltaVsCluster = parseFloat((s.eui - clusterMedians[s.type]).toFixed(1)); });
+  // Sort
+  var col = pfEnergyTblSort.col, dir = pfEnergyTblSort.dir;
+  rows.sort(function(a,b){
+    var av = a[col], bv = b[col];
+    if (typeof av === 'string') return av.localeCompare(bv) * dir;
+    return (av - bv) * dir;
+  });
+  document.getElementById('pfEnergyTblCount').textContent = rows.length + ' sites';
+  var cols = [
+    { k:'name',  l:'Store' },
+    { k:'typeLabel', l:'Type' },
+    { k:'sqFt', l:'Sq ft ↕' },
+    { k:'kwh',  l:'kWh ↕' },
+    { k:'eui',  l:'EUI (kWh/sq ft) ↕' },
+    { k:'deltaVsCluster', l:'Δ vs cluster median ↕' },
+    { k:'cost', l:'$ cost ↕' }
+  ];
+  var html = '<thead><tr>' + cols.map(function(c){ return '<th class="' + (col===c.k?'sorted':'') + '" onclick="pfEnergyTblSortCol(\''+c.k+'\')">'+c.l+'</th>'; }).join('') + '</tr></thead><tbody>';
+  rows.forEach(function(s){
+    var band = s.eui <= 30 ? 'c-ok' : s.eui <= 40 ? 'c-warn' : 'c-err';
+    var deltaTxt = (s.deltaVsCluster >= 0 ? '+' : '') + s.deltaVsCluster.toFixed(1);
+    var deltaCol = s.deltaVsCluster <= 0 ? '#10b981' : '#ef4444';
+    html += '<tr>' +
+      '<td style="font-weight:500;color:#111827">'+s.name+'</td>' +
+      '<td style="color:#6b7280;font-size:11px">'+s.typeLabel+'</td>' +
+      '<td>'+s.sqFt.toLocaleString()+'</td>' +
+      '<td>'+s.kwh.toLocaleString()+'</td>' +
+      '<td><span class="chip '+band+'">'+s.eui.toFixed(1)+'</span></td>' +
+      '<td style="color:'+deltaCol+';font-weight:500">'+deltaTxt+'</td>' +
+      '<td>'+fmtMoney(s.cost)+'</td>' +
+    '</tr>';
+  });
+  document.getElementById('pfEnergyTbl').innerHTML = html + '</tbody>';
+}
+function pfEnergyTblSortCol(col){
+  if (pfEnergyTblSort.col === col) pfEnergyTblSort.dir *= -1;
+  else { pfEnergyTblSort.col = col; pfEnergyTblSort.dir = 1; }
+  buildPfEnergyDetailTable();
+}
+
+function buildPfEnergyTab(){
+  pfEnergyApplyKpis();
+  buildPfEnergyTrend();
+  buildPfEuiHist();
+  buildPfEnergyTopWorst();
+  buildPfEnergyDetailTable();
+  // Wire source toggle
+  var srcSeg = document.getElementById('pfEnergySource');
+  if (srcSeg){
+    srcSeg.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click', function(){
+        srcSeg.querySelectorAll('button').forEach(function(x){x.classList.remove('active')});
+        b.classList.add('active');
+        var src = b.dataset.src;
+        var note = document.getElementById('pfEnergySourceNote');
+        if (note) note.style.display = src === 'bill' ? 'inline' : 'none';
+        if (src === 'bill'){
+          var cur = (K && K.period && K.period.portfolio) || 'M';
+          if (cur === 'D' || cur === 'W') K.setPeriod && K.setPeriod('portfolio','M');
+        }
+      });
+    });
+  }
+  // Wire histogram cluster filter
+  var euiFilter = document.getElementById('pfEuiClusterFilter');
+  if (euiFilter) euiFilter.addEventListener('change', buildPfEuiHist);
+  // Wire detail table filters
+  var tblClu = document.getElementById('pfEnergyTblCluster');
+  var tblBand = document.getElementById('pfEnergyTblBand');
+  if (tblClu) tblClu.addEventListener('change', buildPfEnergyDetailTable);
+  if (tblBand) tblBand.addEventListener('change', buildPfEnergyDetailTable);
+}
+
+// Hook applyPortfolioPeriod so changing the period re-renders Energy KPIs
+var _origApplyPortfolioPeriod = applyPortfolioPeriod;
+applyPortfolioPeriod = function(){
+  _origApplyPortfolioPeriod();
+  if (window.pfEnergyBuilt){
+    pfEnergyApplyKpis();
+    buildPfEuiHist();
+    buildPfEnergyTopWorst();
+    buildPfEnergyDetailTable();
+  }
+};
 
 // Init map when exec tab becomes visible
 const origShowTab=showTab;
