@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Site Dashboard — Store #214</title>
-<link rel="stylesheet" href="keedian-ui.css?v=10">
+<link rel="stylesheet" href="keedian-ui.css?v=11">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#e5e7eb;padding:20px;font-family:sans-serif}
@@ -676,8 +676,28 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
         <div style="position:relative;height:200px"><canvas id="energyTrendChart"></canvas></div>
       </div>
 
+      <!-- DOMAIN BREAKDOWN -->
+      <div class="chart-card" id="energyDomainCard">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div class="chart-ttl" style="margin-bottom:0">Consumption by domain
+            <span class="k-info" tabindex="0">
+              <span class="k-tip">
+                <span class="k-tip-src">Source: Submeters</span><br>
+                <b>What:</b> Share of total consumption per domain during the selected period.<br>
+                <b>Calc:</b> HVAC and Lighting from their dedicated submeters; "Other" is the main meter minus the submeters (refrigeration, plug loads, etc.).<br>
+                <b>Note:</b> Only available at sites where submeters are installed. Without submeters this card would be hidden.
+              </span>
+            </span>
+          </div>
+        </div>
+        <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+          <div style="position:relative;width:160px;height:160px;flex-shrink:0"><canvas id="energyDomainChart"></canvas></div>
+          <div id="energyDomainLegend" style="flex:1;min-width:220px;display:flex;flex-direction:column;gap:8px"></div>
+        </div>
+      </div>
+
       <!-- HEAT MAP -->
-      <div class="chart-card">
+      <div class="chart-card" id="energyHeatmapCard">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:8px">
           <div class="chart-ttl" style="margin-bottom:0">Hourly pattern — <span id="heatmapModeLbl">consumption</span>
             <span class="k-info" tabindex="0">
@@ -703,7 +723,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
       </div>
 
       <!-- DETAILED TELEMETRY -->
-      <div class="chart-card">
+      <div class="chart-card" id="energyTelemetryCard">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px">
           <div class="chart-ttl" style="margin-bottom:0">Detailed telemetry
             <span class="k-info" tabindex="0">
@@ -911,7 +931,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
   </div>
 </div>
 
-<script src="keedian-ui.js?v=10"></script>
+<script src="keedian-ui.js?v=11"></script>
 <script>
 // Core navigation — runs independently of Chart.js
 function showTab(name,el){
@@ -1671,23 +1691,36 @@ const ENERGY_TREND_13MO = {
 };
 
 // Energy heat map (7 days × 24 hours · period-responsive)
-// Values are illustrative — real impl: aggregate meter readings per (dow, hour) cell
+// kWh = energy delivered per hour (smooth daytime curve)
+// kW  = peak (max) demand per hour (spikier — start-up, lunch, HVAC cycling)
 function buildEnergyHeatmapData(mode){
-  // mode: 'kwh' or 'kw'. Returns 7×24 matrix.
-  var base = mode === 'kw' ? 14 : 4.2;  // base value for low cells
-  var peak = mode === 'kw' ? 28 : 11.5; // value at top cells
   var rows = [];
   for (var d = 0; d < 7; d++){
     var row = [];
     var isWeekend = d === 0 || d === 6;
     for (var h = 0; h < 24; h++){
-      // Daytime curve (peak ~14:00), lower at night
-      var dayFactor = Math.max(0, Math.sin((h - 5) * Math.PI / 14));
-      // Weekend dampening
-      var weekendFactor = isWeekend ? 0.65 : 1.0;
-      // Small per-day variance
-      var dayVar = 1 + (Math.sin(d * 1.3 + h * 0.2) * 0.05);
-      var v = base + (peak - base) * dayFactor * weekendFactor * dayVar;
+      var v;
+      if (mode === 'kwh'){
+        // Smooth energy curve: rises 6am, peaks 14, drops after 22
+        var base = 3.5;
+        var peak = 11.8;
+        var dayFactor = Math.max(0, Math.sin((h - 5) * Math.PI / 14));
+        var weekendFactor = isWeekend ? 0.62 : 1.0;
+        var noise = 1 + (Math.sin(d * 1.3 + h * 0.2) * 0.04);
+        v = base + (peak - base) * dayFactor * weekendFactor * noise;
+      } else {
+        // Peak demand: spikier. Big startup spike 7-9am, lunch peak 11-13, HVAC cycling all day
+        var b = 14;
+        var instSpike = 0;
+        if (h >= 7 && h <= 9 && !isWeekend) instSpike += 9 * (1 - Math.abs(h - 8) / 2);  // morning startup
+        if (h >= 11 && h <= 13) instSpike += 7 * (1 - Math.abs(h - 12) / 2);              // lunch peak
+        if (h >= 14 && h <= 19) instSpike += 6 - Math.abs(h - 16) * 0.8;                   // afternoon HVAC plateau
+        // High-frequency noise to look like peak data
+        var hfNoise = Math.sin(h * 1.7 + d * 2.1) * 2.2 + Math.sin(h * 3.3 + d) * 1.4;
+        var weekendDampen = isWeekend ? 0.55 : 1.0;
+        v = b + Math.max(0, instSpike + hfNoise) * weekendDampen;
+        if (h >= 22 || h <= 5) v = b + Math.sin(h * 0.5 + d) * 0.6;  // overnight near base
+      }
       row.push(Number(v.toFixed(2)));
     }
     rows.push(row);
@@ -1744,9 +1777,102 @@ function buildEnergyTelemetryLabels(period){
 }
 
 // ── Energy tab build ─────────────────────────────────────────────────────────
-var energyTrendChart = null, energyTelemetryChart = null;
+var energyTrendChart = null, energyTelemetryChart = null, energyDomainChart = null;
 var heatmapMode = 'kwh';
 var energySource = 'meter';
+
+// Domain mix at this site — derived from submeter scales (HVAC 62%, Lighting 18%, Other 20%)
+const ENERGY_DOMAIN_MIX = [
+  { key:'hvac',   label:'HVAC',          pct:62, color:'#2563eb', src:'M-002 submeter' },
+  { key:'lit',    label:'Lighting',      pct:18, color:'#f59e0b', src:'M-003 submeter' },
+  { key:'other',  label:'Other (refrig + plug)', pct:20, color:'#9ca3af', src:'Main meter − submeters' }
+];
+
+function renderEnergyDomainPie(){
+  var canvas = document.getElementById('energyDomainChart');
+  if (!canvas) return;
+  if (energyDomainChart) energyDomainChart.destroy();
+  // Compute absolute kWh per domain from current period total
+  var period = (K && K.period && K.period.site) || 'M';
+  var totalKwh = parseFloat(String((SITE_KPI_BY_PERIOD[period]||SITE_KPI_BY_PERIOD.M).energy.cons).replace(/,/g,''));
+  energyDomainChart = new Chart(canvas, {
+    type:'doughnut',
+    data:{
+      labels: ENERGY_DOMAIN_MIX.map(function(d){return d.label}),
+      datasets: [{ data: ENERGY_DOMAIN_MIX.map(function(d){return d.pct}), backgroundColor: ENERGY_DOMAIN_MIX.map(function(d){return d.color}), borderColor:'#fff', borderWidth:2 }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false, cutout:'62%',
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:function(ctx){
+        var d = ENERGY_DOMAIN_MIX[ctx.dataIndex];
+        var kwh = Math.round(totalKwh * d.pct / 100);
+        return ' ' + d.label + ': ' + d.pct + '% · ' + kwh.toLocaleString() + ' kWh';
+      }}}}
+    }
+  });
+  // Build legend list
+  var legend = document.getElementById('energyDomainLegend');
+  if (legend){
+    legend.innerHTML = ENERGY_DOMAIN_MIX.map(function(d){
+      var kwh = Math.round(totalKwh * d.pct / 100);
+      return '<div style="display:flex;align-items:center;gap:8px;font-size:12px">' +
+        '<span style="width:10px;height:10px;border-radius:2px;background:'+d.color+';flex-shrink:0"></span>' +
+        '<div style="flex:1"><b style="color:#111827">'+d.label+'</b><div style="font-size:10px;color:#6b7280;margin-top:1px">'+d.src+'</div></div>' +
+        '<div style="text-align:right"><div style="font-weight:500;color:#111827">'+d.pct+'%</div><div style="font-size:10px;color:#6b7280">'+kwh.toLocaleString()+' kWh</div></div>' +
+      '</div>';
+    }).join('');
+  }
+}
+
+// When Bill source is active, telemetry and heatmap have no granular data — hide cards.
+// Also adjust energy KPI values (bill totals run ~2-3% higher than meter due to billing cycle).
+function applyEnergySource(){
+  var period = (K && K.period && K.period.site) || 'M';
+  var energy = (SITE_KPI_BY_PERIOD[period] || SITE_KPI_BY_PERIOD.M).energy;
+  var consNum = parseFloat(String(energy.cons).replace(/,/g,''));
+  var isBill = energySource === 'bill';
+  // KPI overrides
+  var consEl = document.querySelector('[data-kpi="energy.cons"]');
+  var peakEl = document.querySelector('[data-kpi="energy.peak"]');
+  var peakTsEl = document.querySelector('[data-kpi="energy.peakTs"]');
+  var costEl = document.querySelector('[data-kpi="energy.cost"]');
+  var euiEl  = document.querySelector('[data-kpi="energy.eui"]');
+  if (isBill){
+    var billCons = Math.round(consNum * 1.023);
+    if (consEl) consEl.textContent = billCons.toLocaleString();
+    if (peakEl) peakEl.textContent = 'n/a';
+    if (peakTsEl) peakTsEl.textContent = 'monthly billing peak only';
+    // EUI from bill: bill kWh / sq ft (assume site = 3200 sq ft for the demo)
+    var billEui = (billCons / 3200).toFixed(1);
+    if (euiEl && period === 'M') euiEl.textContent = billEui;
+    // Cost stays from bill
+  } else {
+    // Meter values — let applySitePeriod refresh them
+    if (consEl)  consEl.textContent  = (typeof energy.cons === 'string' ? energy.cons : energy.cons.toLocaleString());
+    if (peakEl)  peakEl.textContent  = energy.peak;
+    if (peakTsEl) peakTsEl.textContent = energy.peakTs;
+    if (euiEl)   euiEl.textContent   = energy.eui;
+  }
+  // Show/hide telemetry and heatmap based on source
+  var heatmapCard = document.getElementById('energyHeatmapCard');
+  var telemetryCard = document.getElementById('energyTelemetryCard');
+  if (heatmapCard) heatmapCard.style.display = isBill ? 'none' : 'block';
+  if (telemetryCard) telemetryCard.style.display = isBill ? 'none' : 'block';
+  // Insert / remove a "Bill source notice" between trend and domain pie
+  var notice = document.getElementById('energyBillNotice');
+  if (isBill){
+    if (!notice){
+      notice = document.createElement('div');
+      notice.id = 'energyBillNotice';
+      notice.style.cssText = 'background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:11px;color:#1e40af';
+      notice.innerHTML = '<b>Bill source active:</b> hourly heat map and 15-min telemetry are not shown — utility bills only contain monthly totals. Switch to Meter to see granular data.';
+      var domainCard = document.getElementById('energyDomainCard');
+      if (domainCard && domainCard.parentNode) domainCard.parentNode.insertBefore(notice, domainCard);
+    }
+  } else if (notice){
+    notice.remove();
+  }
+}
 
 function colorForHeatmap(v, min, max, mode){
   var t = max === min ? 0 : (v - min) / (max - min);
@@ -1963,10 +2089,12 @@ function renderEnergyMeterBar(){
 
 function buildEnergyTab(){
   renderEnergyTrendChart();
+  renderEnergyDomainPie();
   renderEnergyHeatmap();
   renderEnergyMeterBar();
   renderEnergySignalChips();
   renderEnergyTelemetryChart();
+  applyEnergySource();  // initial source layout
 
   // Wire heat map toggle
   var hmSeg = document.getElementById('heatmapMode');
@@ -1993,8 +2121,9 @@ function buildEnergyTab(){
         // If Bill and period is Day/Week, force to Month
         if (energySource === 'bill'){
           var cur = (K && K.period && K.period.site) || 'M';
-          if (cur === 'D' || cur === 'W') K.setPeriod && K.setPeriod('site','M');
+          if (cur === 'D' || cur === 'W'){ K.setPeriod && K.setPeriod('site','M'); }
         }
+        applyEnergySource();
       });
     });
   }
@@ -2023,11 +2152,13 @@ function applySitePeriod(){
   if (typeof renderDevPanel === 'function') {
     try { renderDevPanel(); } catch(e){}
   }
-  // Energy tab: re-render rank marker, heatmap and telemetry on period change
+  // Energy tab: re-render rank marker, heatmap, telemetry and pie on period change
   if (typeof updateEnergyRankMarker === 'function') updateEnergyRankMarker();
   if (window.energyBuilt){
     if (typeof renderEnergyHeatmap === 'function') renderEnergyHeatmap();
     if (typeof renderEnergyTelemetryChart === 'function') renderEnergyTelemetryChart();
+    if (typeof renderEnergyDomainPie === 'function') renderEnergyDomainPie();
+    if (typeof applyEnergySource === 'function') applyEnergySource();
   }
 }
 

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portfolio View</title>
-<link rel="stylesheet" href="keedian-ui.css?v=10">
+<link rel="stylesheet" href="keedian-ui.css?v=11">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#e5e7eb;padding:20px;font-family:sans-serif}
@@ -455,6 +455,26 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
         </div>
       </div>
 
+      <!-- DOMAIN BREAKDOWN -->
+      <div class="chart-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div class="chart-ttl" style="margin-bottom:0">Portfolio consumption by domain
+            <span class="k-info" tabindex="0">
+              <span class="k-tip">
+                <span class="k-tip-src">Source: Submeters (where installed)</span><br>
+                <b>What:</b> Share of total kWh per domain, aggregated across all monitored sites for the selected period.<br>
+                <b>Calc:</b> Sum of each domain's submeters. "Other" = main meter − HVAC + Lighting submeters (refrigeration, plug loads).<br>
+                <b>Coverage:</b> 71 of 87 sites have HVAC submeters; 64 have Lighting submeters. For sites without submeters, only the main meter total is counted in "Total" (not split).
+              </span>
+            </span>
+          </div>
+        </div>
+        <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+          <div style="position:relative;width:170px;height:170px;flex-shrink:0"><canvas id="pfEnergyDomainChart"></canvas></div>
+          <div id="pfEnergyDomainLegend" style="flex:1;min-width:240px;display:flex;flex-direction:column;gap:8px"></div>
+        </div>
+      </div>
+
       <!-- TREND 13mo -->
       <div class="chart-card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
@@ -806,7 +826,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css"/>
-<script src="keedian-ui.js?v=10"></script>
+<script src="keedian-ui.js?v=11"></script>
 <script>
 function showTab(name,el){document.querySelectorAll('.tab:not(.soon)').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.querySelectorAll('.content').forEach(c=>c.classList.add('hidden'));document.getElementById('tab-'+name).classList.remove('hidden');if(name==='hvac'&&!window.hvacBuilt){buildHvacData();renderSites();window.hvacBuilt=true;}if(name==='perf'&&!window.perfBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderPerf();window.perfBuilt=true;}if(name==='roi'&&!window.roiBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderRoi();buildRoiCharts();window.roiBuilt=true;}if(name==='refrig'&&!window.refrigBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderRefrig();window.refrigBuilt=true;}if(name==='lighting'&&!window.ltBuilt){buildLightingCharts();window.ltBuilt=true;}if(name==='alarms'&&!window.alarmsBuilt){buildAlarmCharts();window.alarmsBuilt=true;}if(name==='energy'&&!window.pfEnergyBuilt&&typeof buildPfEnergyTab==='function'){buildPfEnergyTab();window.pfEnergyBuilt=true;}}
 
@@ -1597,8 +1617,50 @@ const PF_ENERGY_TREND_13MO = (function(){
   return { labels: labels, sitesMonitored: sitesMonitored, avgEui: avgEui, totalKwh: totalKwh };
 })();
 
-var pfEnergyTrendChart = null, pfEuiHistChart = null;
+var pfEnergyTrendChart = null, pfEuiHistChart = null, pfEnergyDomainChart = null;
 var pfEnergyTblSort = { col: 'eui', dir: 1 };
+
+// Portfolio domain mix — aggregate of submeter coverage across 87 sites
+const PF_ENERGY_DOMAIN_MIX = [
+  { key:'hvac',     label:'HVAC',           pct: 58, color:'#2563eb', src:'HVAC submeters · 71 of 87 sites' },
+  { key:'refrig',   label:'Refrigeration',  pct: 16, color:'#0891b2', src:'Refrigeration submeters · 48 of 87 sites' },
+  { key:'lit',      label:'Lighting',       pct: 14, color:'#f59e0b', src:'Lighting submeters · 64 of 87 sites' },
+  { key:'other',    label:'Other (plug + misc)', pct: 12, color:'#9ca3af', src:'Main meter − domain submeters' }
+];
+
+function buildPfEnergyDomainPie(){
+  var canvas = document.getElementById('pfEnergyDomainChart');
+  if (!canvas) return;
+  if (pfEnergyDomainChart) pfEnergyDomainChart.destroy();
+  var period = (K && K.period && K.period.portfolio) || 'M';
+  var agg = pfEnergyComputePeriod(period);
+  pfEnergyDomainChart = new Chart(canvas, {
+    type:'doughnut',
+    data:{
+      labels: PF_ENERGY_DOMAIN_MIX.map(function(d){return d.label}),
+      datasets:[{ data: PF_ENERGY_DOMAIN_MIX.map(function(d){return d.pct}), backgroundColor: PF_ENERGY_DOMAIN_MIX.map(function(d){return d.color}), borderColor:'#fff', borderWidth:2 }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false, cutout:'62%',
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:function(ctx){
+        var d = PF_ENERGY_DOMAIN_MIX[ctx.dataIndex];
+        var kwh = Math.round(agg.totalKwh * d.pct / 100);
+        return ' ' + d.label + ': ' + d.pct + '% · ' + kwh.toLocaleString() + ' kWh';
+      }}}}
+    }
+  });
+  var legend = document.getElementById('pfEnergyDomainLegend');
+  if (legend){
+    legend.innerHTML = PF_ENERGY_DOMAIN_MIX.map(function(d){
+      var kwh = Math.round(agg.totalKwh * d.pct / 100);
+      return '<div style="display:flex;align-items:center;gap:8px;font-size:12px">' +
+        '<span style="width:10px;height:10px;border-radius:2px;background:'+d.color+';flex-shrink:0"></span>' +
+        '<div style="flex:1"><b style="color:#111827">'+d.label+'</b><div style="font-size:10px;color:#6b7280;margin-top:1px">'+d.src+'</div></div>' +
+        '<div style="text-align:right"><div style="font-weight:500;color:#111827">'+d.pct+'%</div><div style="font-size:10px;color:#6b7280">'+kwh.toLocaleString()+' kWh</div></div>' +
+      '</div>';
+    }).join('');
+  }
+}
 
 function pfEnergyApplyKpis(){
   var period = (K && K.period && K.period.portfolio) || 'M';
@@ -1795,6 +1857,7 @@ function pfEnergyTblSortCol(col){
 
 function buildPfEnergyTab(){
   pfEnergyApplyKpis();
+  buildPfEnergyDomainPie();
   buildPfEnergyTrend();
   buildPfEuiHist();
   buildPfEnergyTopWorst();
@@ -1832,6 +1895,7 @@ applyPortfolioPeriod = function(){
   _origApplyPortfolioPeriod();
   if (window.pfEnergyBuilt){
     pfEnergyApplyKpis();
+    buildPfEnergyDomainPie();
     buildPfEuiHist();
     buildPfEnergyTopWorst();
     buildPfEnergyDetailTable();
