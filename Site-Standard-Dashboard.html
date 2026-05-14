@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Site Dashboard — Store #214</title>
-<link rel="stylesheet" href="keedian-ui.css?v=8">
+<link rel="stylesheet" href="keedian-ui.css?v=9">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#e5e7eb;padding:20px;font-family:sans-serif}
@@ -715,11 +715,9 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
               </span>
             </span>
           </div>
-          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-            <span style="font-size:11px;color:#6b7280">Meter:</span>
-            <select class="fsel" id="energyMeterSel"></select>
-          </div>
         </div>
+        <div class="slabel" style="margin:0 0 6px">Select meter</div>
+        <div class="dev-sel-bar" id="energyMeterBar"></div>
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
           <span style="font-size:11px;color:#6b7280;font-weight:500">Signals:</span>
           <div id="energySignals" class="k-sig-bar"></div>
@@ -913,7 +911,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
   </div>
 </div>
 
-<script src="keedian-ui.js?v=8"></script>
+<script src="keedian-ui.js?v=9"></script>
 <script>
 // Core navigation — runs independently of Chart.js
 function showTab(name,el){
@@ -1710,9 +1708,9 @@ const ENERGY_SIGNALS = [
 
 // Meters available at this site (mock — in production: from site config)
 const ENERGY_METERS = [
-  { id:'main',   label:'Main meter — utility revenue',   scale:1.00 },
-  { id:'sub-hvac', label:'Submeter — HVAC panel',         scale:0.62 },
-  { id:'sub-lit',  label:'Submeter — Lighting panel',     scale:0.18 }
+  { id:'main',     label:'M-001 · Main',     sub:'Utility revenue',   badgeLbl:'MAIN', badgeCls:'c-blue',   scale:1.00 },
+  { id:'sub-hvac', label:'M-002 · HVAC',     sub:'Submeter — HVAC panel',     badgeLbl:'SUB',  badgeCls:'c-purple', scale:0.62 },
+  { id:'sub-lit',  label:'M-003 · Lighting', sub:'Submeter — Lighting panel', badgeLbl:'SUB',  badgeCls:'c-purple', scale:0.18 }
 ];
 
 var energySelectedSignals = new Set(ENERGY_SIGNALS.filter(function(s){return s.defaultOn;}).map(function(s){return s.key;}));
@@ -1943,22 +1941,30 @@ function renderEnergySignalChips(){
   });
 }
 
-function renderEnergyMeterSelect(){
-  var sel = document.getElementById('energyMeterSel');
-  if (!sel) return;
-  sel.innerHTML = ENERGY_METERS.map(function(m){
-    return '<option value="'+m.id+'"'+(m.id===energySelectedMeter?' selected':'')+'>'+m.label+'</option>';
+function renderEnergyMeterBar(){
+  var bar = document.getElementById('energyMeterBar');
+  if (!bar) return;
+  bar.innerHTML = ENERGY_METERS.map(function(m){
+    var active = m.id === energySelectedMeter;
+    return '<div class="dev-btn' + (active ? ' active' : '') + '" data-meter="'+m.id+'">' +
+      '<span class="chip '+m.badgeCls+'" style="font-size:9px">'+m.badgeLbl+'</span> ' +
+      m.label +
+    '</div>';
   }).join('');
-  sel.addEventListener('change', function(){
-    energySelectedMeter = sel.value;
-    renderEnergyTelemetryChart();
+  bar.querySelectorAll('.dev-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      bar.querySelectorAll('.dev-btn').forEach(function(b){b.classList.remove('active');});
+      btn.classList.add('active');
+      energySelectedMeter = btn.dataset.meter;
+      renderEnergyTelemetryChart();
+    });
   });
 }
 
 function buildEnergyTab(){
   renderEnergyTrendChart();
   renderEnergyHeatmap();
-  renderEnergyMeterSelect();
+  renderEnergyMeterBar();
   renderEnergySignalChips();
   renderEnergyTelemetryChart();
 
