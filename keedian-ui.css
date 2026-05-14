@@ -108,6 +108,14 @@
 .k-heatmap-legend .hm-scale{display:flex;height:8px;width:160px;border-radius:2px;overflow:hidden}
 .k-heatmap-legend .hm-scale > div{flex:1}
 
+/* Signal toggle chips — telemetry chart */
+.k-sig-bar{display:flex;flex-wrap:wrap;gap:5px}
+.k-sig{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:14px;border:1px solid #e5e7eb;background:#fff;font-size:11px;color:#9ca3af;cursor:pointer;user-select:none;font-weight:500;transition:all 0.12s}
+.k-sig:hover{background:#f9fafb;color:#374151}
+.k-sig.active{background:#fff;color:#111827;border-color:transparent;box-shadow:0 0 0 1.5px var(--k-sig-color)}
+.k-sig .k-sig-dot{width:8px;height:8px;border-radius:50%;background:#d1d5db;flex-shrink:0;transition:background 0.12s}
+.k-sig.active .k-sig-dot{background:var(--k-sig-color)}
+
 /* Peer ranking strip — used in Energy KPI card */
 .k-rank-bar{position:relative;height:6px;background:#e5e7eb;border-radius:3px;margin:6px 0 4px;overflow:visible}
 .k-rank-fill{position:absolute;height:100%;background:linear-gradient(90deg,#10b981 0%,#f59e0b 60%,#ef4444 100%);border-radius:3px;opacity:0.35}

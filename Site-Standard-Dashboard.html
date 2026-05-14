@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Site Dashboard — Store #214</title>
-<link rel="stylesheet" href="keedian-ui.css?v=7">
+<link rel="stylesheet" href="keedian-ui.css?v=8">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#e5e7eb;padding:20px;font-family:sans-serif}
@@ -704,29 +704,27 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 
       <!-- DETAILED TELEMETRY -->
       <div class="chart-card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:8px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px">
           <div class="chart-ttl" style="margin-bottom:0">Detailed telemetry
             <span class="k-info" tabindex="0">
               <span class="k-tip">
                 <span class="k-tip-src">Source: Meter</span><br>
                 <b>What:</b> 15-min interval readings from the selected meter over the selected period.<br>
-                <b>kW:</b> instantaneous power at each interval.<br>
-                <b>kWh:</b> cumulative energy delivered (resets per interval).
+                <b>Signals:</b> click chips to show/hide. Each signal renders on the axis matching its units (left = kW/kVAR/kWh, right = A/V/PF).<br>
+                <b>Meter:</b> if the site has multiple meters (e.g., revenue + submeters), pick which stream to view.
               </span>
             </span>
           </div>
           <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-            <select class="fsel" id="energyMeterSel">
-              <option value="main">Main meter (revenue)</option>
-              <option value="bill">Billed total</option>
-            </select>
-            <div class="k-seg" id="telemetryUnit">
-              <button class="active" data-u="kw">kW</button>
-              <button data-u="kwh">kWh</button>
-            </div>
+            <span style="font-size:11px;color:#6b7280">Meter:</span>
+            <select class="fsel" id="energyMeterSel"></select>
           </div>
         </div>
-        <div style="position:relative;height:220px"><canvas id="energyTelemetryChart"></canvas></div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
+          <span style="font-size:11px;color:#6b7280;font-weight:500">Signals:</span>
+          <div id="energySignals" class="k-sig-bar"></div>
+        </div>
+        <div style="position:relative;height:240px"><canvas id="energyTelemetryChart"></canvas></div>
       </div>
 
     </div>
@@ -915,7 +913,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
   </div>
 </div>
 
-<script src="keedian-ui.js?v=7"></script>
+<script src="keedian-ui.js?v=8"></script>
 <script>
 // Core navigation — runs independently of Chart.js
 function showTab(name,el){
@@ -1699,23 +1697,46 @@ function buildEnergyHeatmapData(mode){
   return rows;
 }
 
-// Energy detailed telemetry (period-responsive)
-// 15-min interval data for the current period
-function buildEnergyTelemetryData(period, unit){
-  var pts;
-  if (period === 'D' || period === 'custom') pts = 96;      // 24h × 4 (15min)
-  else if (period === 'W') pts = 7 * 24;                    // 168 hourly points
-  else if (period === 'M') pts = 30 * 8;                    // 30d × 8 (3hr buckets)
-  else if (period === 'Q') pts = 90;                        // ~daily for 90d
-  else pts = 120;                                            // ytd-ish
-  var base = unit === 'kw' ? 14 : 3.2;
-  var amp  = unit === 'kw' ? 13 : 5.5;
+// ── Telemetry signals catalog ───────────────────────────────────────────────
+// Each signal: unit, axis it lives on (left/right), color, default visibility
+const ENERGY_SIGNALS = [
+  { key:'kw',   label:'kW',           unit:'kW',   axis:'left',  color:'#ef4444', defaultOn:true,  base:14,   amp:13,   noise:1.5 },
+  { key:'kwh',  label:'kWh',          unit:'kWh',  axis:'left',  color:'#3b82f6', defaultOn:false, base:3.5,  amp:3.2,  noise:0.4 },
+  { key:'a',    label:'A',            unit:'A',    axis:'right', color:'#f59e0b', defaultOn:true,  base:64,   amp:58,   noise:6   },
+  { key:'v',    label:'V',            unit:'V',    axis:'right', color:'#8b5cf6', defaultOn:false, base:208,  amp:4,    noise:1.5 },
+  { key:'pf',   label:'Power factor', unit:'',     axis:'right', color:'#10b981', defaultOn:false, base:0.92, amp:0.06, noise:0.02, scale:100 /* multiply for display on V axis */ },
+  { key:'kvar', label:'kVAR',         unit:'kVAR', axis:'left',  color:'#0891b2', defaultOn:false, base:3.2,  amp:2.8,  noise:0.4 }
+];
+
+// Meters available at this site (mock — in production: from site config)
+const ENERGY_METERS = [
+  { id:'main',   label:'Main meter — utility revenue',   scale:1.00 },
+  { id:'sub-hvac', label:'Submeter — HVAC panel',         scale:0.62 },
+  { id:'sub-lit',  label:'Submeter — Lighting panel',     scale:0.18 }
+];
+
+var energySelectedSignals = new Set(ENERGY_SIGNALS.filter(function(s){return s.defaultOn;}).map(function(s){return s.key;}));
+var energySelectedMeter = 'main';
+
+function pointsForPeriod(period){
+  if (period === 'D' || period === 'custom') return 96;      // 24h × 4 (15-min)
+  if (period === 'W') return 7 * 24;                          // 168 hourly
+  if (period === 'M') return 30 * 8;                          // 240 (3hr buckets)
+  if (period === 'Q') return 90;                              // ~daily
+  return 120;                                                  // YTD-ish
+}
+
+function buildSignalSeries(sig, pts, meterScale){
+  var base = sig.base * meterScale;
+  var amp  = sig.amp  * meterScale;
   return Array.from({length: pts}, function(_, i){
     var t = i / pts * Math.PI * (pts > 60 ? 8 : 2);
-    var v = base + amp * Math.max(0, Math.sin(t)) + (Math.sin(i * 0.4) * (unit==='kw' ? 1.6 : 0.4));
+    var diurnal = Math.max(0, Math.sin(t));
+    var v = base + amp * diurnal + (Math.sin(i * 0.4 + sig.base) * sig.noise * meterScale);
     return Number(v.toFixed(2));
   });
 }
+
 function buildEnergyTelemetryLabels(period){
   if (period === 'D' || period === 'custom') return Array.from({length: 96}, function(_, i){ var h = Math.floor(i/4); var m = (i%4)*15; return (h<10?'0':'')+h+':'+(m<10?'0':'')+m; });
   if (period === 'W') return Array.from({length: 7*24}, function(_, i){ return 'D'+(Math.floor(i/24)+1)+' '+(i%24)+'h'; });
@@ -1727,7 +1748,6 @@ function buildEnergyTelemetryLabels(period){
 // ── Energy tab build ─────────────────────────────────────────────────────────
 var energyTrendChart = null, energyTelemetryChart = null;
 var heatmapMode = 'kwh';
-var telemetryUnit = 'kw';
 var energySource = 'meter';
 
 function colorForHeatmap(v, min, max, mode){
@@ -1830,31 +1850,116 @@ function renderEnergyTelemetryChart(){
   if (!canvas) return;
   if (energyTelemetryChart) energyTelemetryChart.destroy();
   var period = (K && K.period && K.period.site) || 'M';
-  var data = buildEnergyTelemetryData(period, telemetryUnit);
+  var pts = pointsForPeriod(period);
   var labels = buildEnergyTelemetryLabels(period);
-  var unit = telemetryUnit === 'kw' ? 'kW' : 'kWh';
+  var meter = ENERGY_METERS.find(function(m){return m.id === energySelectedMeter;}) || ENERGY_METERS[0];
+
+  // Build a dataset per active signal
+  var datasets = [];
+  ENERGY_SIGNALS.forEach(function(sig){
+    if (!energySelectedSignals.has(sig.key)) return;
+    var series = buildSignalSeries(sig, pts, meter.scale);
+    // PF gets multiplied by 100 to be visible on V axis (right)
+    var displayData = sig.scale ? series.map(function(v){return v * sig.scale;}) : series;
+    datasets.push({
+      label: sig.label,
+      data: displayData,
+      borderColor: sig.color,
+      backgroundColor: hexToRgba(sig.color, 0.06),
+      fill: false,
+      tension: 0.25,
+      pointRadius: 0,
+      borderWidth: 1.5,
+      yAxisID: sig.axis === 'left' ? 'yL' : 'yR',
+      _sigKey: sig.key,
+      _sigUnit: sig.unit,
+      _sigRawScale: sig.scale || 1
+    });
+  });
+
+  // Compute axis presence (only show axis if at least one signal uses it)
+  var hasLeft  = datasets.some(function(d){return d.yAxisID === 'yL';});
+  var hasRight = datasets.some(function(d){return d.yAxisID === 'yR';});
+
+  var scales = {
+    x:{ grid:{display:false}, ticks:{ font:{size:9}, color:'#9ca3af', autoSkip:true, maxTicksLimit:12 }, border:{display:false} }
+  };
+  if (hasLeft){
+    scales.yL = { type:'linear', position:'left',  grid:{color:'rgba(0,0,0,0.04)'}, ticks:{font:{size:9},color:'#6b7280'}, border:{display:false}, beginAtZero:true };
+  }
+  if (hasRight){
+    scales.yR = { type:'linear', position:'right', grid:{display:false},               ticks:{font:{size:9},color:'#6b7280'}, border:{display:false}, beginAtZero:false };
+  }
+
   energyTelemetryChart = new Chart(canvas, {
     type:'line',
-    data:{ labels: labels, datasets: [{
-      label: unit, data: data,
-      borderColor: telemetryUnit === 'kw' ? '#ef4444' : '#3b82f6',
-      backgroundColor: telemetryUnit === 'kw' ? 'rgba(239,68,68,0.08)' : 'rgba(59,130,246,0.08)',
-      fill: true, tension: 0.25, pointRadius: 0, borderWidth: 1.5
-    }]},
+    data:{ labels: labels, datasets: datasets },
     options:{
       responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:function(ctx){ return ' '+ctx.parsed.y.toFixed(2)+' '+unit }}}},
-      scales:{
-        x:{ grid:{display:false}, ticks:{ font:{size:9}, color:'#9ca3af', autoSkip:true, maxTicksLimit:12 }, border:{display:false} },
-        y:{ grid:{ color:'rgba(0,0,0,0.04)' }, ticks:{ font:{size:9}, color:'#6b7280', callback:function(v){ return v+' '+unit }}, border:{display:false}, beginAtZero:true }
-      }
+      interaction:{ mode:'index', intersect:false },
+      plugins:{
+        legend:{ display:false },
+        tooltip:{ callbacks:{ label:function(ctx){
+          var raw = ctx.parsed.y / (ctx.dataset._sigRawScale || 1);
+          var unit = ctx.dataset._sigUnit ? ' ' + ctx.dataset._sigUnit : '';
+          return ' ' + ctx.dataset.label + ': ' + raw.toFixed(2) + unit;
+        }}}
+      },
+      scales: scales
     }
+  });
+}
+
+// Helper: convert hex color to rgba string
+function hexToRgba(hex, a){
+  var h = hex.replace('#','');
+  if (h.length === 3) h = h.split('').map(function(c){return c+c}).join('');
+  var n = parseInt(h, 16);
+  var r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  return 'rgba('+r+','+g+','+b+','+a+')';
+}
+
+function renderEnergySignalChips(){
+  var host = document.getElementById('energySignals');
+  if (!host) return;
+  var html = ENERGY_SIGNALS.map(function(sig){
+    var active = energySelectedSignals.has(sig.key);
+    return '<button class="k-sig' + (active ? ' active' : '') + '" data-sig="'+sig.key+'" style="--k-sig-color:'+sig.color+'"><span class="k-sig-dot"></span>'+sig.label+'</button>';
+  }).join('');
+  host.innerHTML = html;
+  host.querySelectorAll('.k-sig').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var key = btn.dataset.sig;
+      if (energySelectedSignals.has(key)){
+        if (energySelectedSignals.size <= 1) return;  // keep at least one
+        energySelectedSignals.delete(key);
+        btn.classList.remove('active');
+      } else {
+        energySelectedSignals.add(key);
+        btn.classList.add('active');
+      }
+      renderEnergyTelemetryChart();
+    });
+  });
+}
+
+function renderEnergyMeterSelect(){
+  var sel = document.getElementById('energyMeterSel');
+  if (!sel) return;
+  sel.innerHTML = ENERGY_METERS.map(function(m){
+    return '<option value="'+m.id+'"'+(m.id===energySelectedMeter?' selected':'')+'>'+m.label+'</option>';
+  }).join('');
+  sel.addEventListener('change', function(){
+    energySelectedMeter = sel.value;
+    renderEnergyTelemetryChart();
   });
 }
 
 function buildEnergyTab(){
   renderEnergyTrendChart();
   renderEnergyHeatmap();
+  renderEnergyMeterSelect();
+  renderEnergySignalChips();
   renderEnergyTelemetryChart();
 
   // Wire heat map toggle
@@ -1866,18 +1971,6 @@ function buildEnergyTab(){
         b.classList.add('active');
         heatmapMode = b.dataset.mode;
         renderEnergyHeatmap();
-      });
-    });
-  }
-  // Wire telemetry unit toggle
-  var tuSeg = document.getElementById('telemetryUnit');
-  if (tuSeg){
-    tuSeg.querySelectorAll('button').forEach(function(b){
-      b.addEventListener('click', function(){
-        tuSeg.querySelectorAll('button').forEach(function(x){x.classList.remove('active')});
-        b.classList.add('active');
-        telemetryUnit = b.dataset.u;
-        renderEnergyTelemetryChart();
       });
     });
   }
