@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Site Dashboard — Store #214</title>
-<link rel="stylesheet" href="keedian-ui.css?v=15">
+<link rel="stylesheet" href="keedian-ui.css?v=16">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#e5e7eb;padding:20px;font-family:sans-serif}
@@ -316,7 +316,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
         <div class="tbl-hdr-bar"><div><div class="tbl-ttl">Asset detail — current month</div><div class="tbl-sub">Individual readings · last known values shown in gray for assets with lost connection</div></div></div>
         <div style="overflow-x:auto">
           <table class="dtbl">
-            <thead><tr><th>Asset</th><th>Type</th><th>Connection</th><th>Data avail.</th><th>Runtime</th><th>Cooling ΔT</th><th>Setpoint compl.</th><th>Temp compl.</th></tr></thead>
+            <thead><tr><th>Asset</th><th>Type</th><th>Connection</th><th>Data avail.</th><th>Runtime</th><th>Cooling ΔT</th><th>Setpoint compl.</th><th>Temp compl.</th><th></th></tr></thead>
             <tbody>
               <tr>
                 <td style="font-weight:500;color:#111827">RTU-1</td>
@@ -327,6 +327,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
                 <td><div class="mbar"><div class="mb"><div class="mf" style="width:70%;background:#10b981"></div></div><span class="chip c-ok">17.8°F</span></div><div class="sub">target 16–22°F</div></td>
                 <td><span class="chip c-ok">98.7%</span><div class="sub">day 76°F · night 78°F</div></td>
                 <td><span class="chip c-ok">97.2%</span><div class="sub">band 72–79°F</div></td>
+                <td><button class="k-cmd-btn" onclick="K.openCommand('RTU-1')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.07 7.07l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.07-7.07l4.24-4.24"/></svg>Command</button></td>
               </tr>
               <tr>
                 <td style="font-weight:500;color:#111827">RTU-2</td>
@@ -337,6 +338,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
                 <td><div class="mbar"><div class="mb"><div class="mf" style="width:74%;background:#f59e0b"></div></div><span class="chip c-warn">14.8°F</span></div><div class="sub">below 16°F threshold</div></td>
                 <td><span class="chip c-ok">98.4%</span><div class="sub">policy followed</div></td>
                 <td><span class="chip c-err">88.4%</span><div class="sub">below 95% threshold</div></td>
+                <td><button class="k-cmd-btn" onclick="K.openCommand('RTU-2')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.07 7.07l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.07-7.07l4.24-4.24"/></svg>Command</button></td>
               </tr>
               <tr>
                 <td style="font-weight:500;color:#111827">RTU-3</td>
@@ -347,6 +349,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
                 <td><div class="mbar"><div class="mb"><div class="mf" style="width:78%;background:#10b981"></div></div><span class="chip c-ok">18.9°F</span></div><div class="sub">target 16–22°F</div></td>
                 <td><span class="chip c-err">82.7%</span><div class="sub">frequent override</div></td>
                 <td><span class="chip c-ok">96.1%</span><div class="sub">band 72–79°F</div></td>
+                <td><button class="k-cmd-btn" onclick="K.openCommand('RTU-3')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.07 7.07l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.07-7.07l4.24-4.24"/></svg>Command</button></td>
               </tr>
             </tbody>
           </table>
@@ -354,10 +357,13 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
       </div>
 
       <div class="slabel" id="hvacDevSelLabel">Asset telemetry — select asset</div>
-      <div class="dev-sel-bar" id="hvacDevSelBar">
-        <div class="dev-btn active" onclick="selectDevHvac('RTU-1',this)"><span class="chip c-blue" style="font-size:9px">RTU</span> RTU-1</div>
-        <div class="dev-btn" onclick="selectDevHvac('RTU-2',this)"><span class="chip c-blue" style="font-size:9px">RTU</span> RTU-2</div>
-        <div class="dev-btn" onclick="selectDevHvac('RTU-3',this)"><span class="chip c-blue" style="font-size:9px">RTU</span> RTU-3</div>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+        <div class="dev-sel-bar" id="hvacDevSelBar" style="margin-bottom:0">
+          <div class="dev-btn active" onclick="selectDevHvac('RTU-1',this)"><span class="chip c-blue" style="font-size:9px">RTU</span> RTU-1</div>
+          <div class="dev-btn" onclick="selectDevHvac('RTU-2',this)"><span class="chip c-blue" style="font-size:9px">RTU</span> RTU-2</div>
+          <div class="dev-btn" onclick="selectDevHvac('RTU-3',this)"><span class="chip c-blue" style="font-size:9px">RTU</span> RTU-3</div>
+        </div>
+        <button class="k-cmd-btn" id="hvacCmdBtn" onclick="K.openCommand(window._currentDev||'RTU-1')" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.07 7.07l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.07-7.07l4.24-4.24"/></svg>Command this asset</button>
       </div>
 
       <div style="font-size:11px;color:#6b7280;margin-bottom:10px">Period controlled by topbar selector. Showing: <span id="k-hvac-period-echo" style="color:#374151;font-weight:500">Day</span></div>
@@ -390,7 +396,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
           <div class="tbl-hdr-bar"><div><div class="tbl-ttl">Per asset — auxiliary</div><div class="tbl-sub">DOAS + exhaust fans · current period</div></div></div>
           <div style="overflow-x:auto">
             <table class="dtbl">
-              <thead><tr><th>Asset</th><th>Type</th><th>Connection</th><th>Data avail.</th><th>State</th><th>Runtime</th><th>Cycles</th></tr></thead>
+              <thead><tr><th>Asset</th><th>Type</th><th>Connection</th><th>Data avail.</th><th>State</th><th>Runtime</th><th>Cycles</th><th></th></tr></thead>
               <tbody>
                 <tr>
                   <td style="font-weight:500;color:#111827">DOAS-1</td>
@@ -400,6 +406,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
                   <td><span class="chip c-ok">ON</span></td>
                   <td><div class="mbar"><div class="mb"><div class="mf" style="width:74%;background:#10b981"></div></div><span class="chip c-ok">14.2h</span></div><div class="sub">target 8–18h</div></td>
                   <td><span class="chip c-ok">6</span><div class="sub">typical 3–6</div></td>
+                  <td><button class="k-cmd-btn" onclick="K.openCommand('DOAS-1')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.07 7.07l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.07-7.07l4.24-4.24"/></svg>Command</button></td>
                 </tr>
                 <tr>
                   <td style="font-weight:500;color:#111827">EF-1</td>
@@ -409,6 +416,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
                   <td><span class="chip c-ok">ON</span></td>
                   <td><div class="mbar"><div class="mb"><div class="mf" style="width:86%;background:#10b981"></div></div><span class="chip c-ok">15.8h</span></div><div class="sub">target 8–18h</div></td>
                   <td><span class="chip c-ok">4</span><div class="sub">typical 3–6</div></td>
+                  <td><button class="k-cmd-btn" onclick="K.openCommand('EF-1')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.07 7.07l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.07-7.07l4.24-4.24"/></svg>Command</button></td>
                 </tr>
                 <tr>
                   <td style="font-weight:500;color:#111827">EF-2</td>
@@ -418,6 +426,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
                   <td><span class="chip c-gray">OFF</span></td>
                   <td><div class="mbar"><div class="mb"><div class="mf" style="width:62%;background:#10b981"></div></div><span class="chip c-ok">12.4h</span></div><div class="sub">target 8–18h</div></td>
                   <td><span class="chip c-err">24</span><div class="sub" style="color:#991b1b">⚠ short-cycling</div></td>
+                  <td><button class="k-cmd-btn" onclick="K.openCommand('EF-2')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.07 7.07l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.07-7.07l4.24-4.24"/></svg>Command</button></td>
                 </tr>
               </tbody>
             </table>
@@ -426,10 +435,13 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 
         <!-- Asset telemetry — auxiliary -->
         <div class="slabel" id="auxDevSelLabel">Asset telemetry — select asset</div>
-        <div class="dev-sel-bar" id="auxDevSelBar">
-          <div class="dev-btn active" onclick="selectDevAux('DOAS-1',this)"><span class="chip" style="background:#ccfbf1;color:#0f766e;font-size:9px">DOAS</span> DOAS-1</div>
-          <div class="dev-btn" onclick="selectDevAux('EF-1',this)"><span class="chip" style="background:#ffedd5;color:#9a3412;font-size:9px">FAN</span> EF-1</div>
-          <div class="dev-btn" onclick="selectDevAux('EF-2',this)"><span class="chip" style="background:#ffedd5;color:#9a3412;font-size:9px">FAN</span> EF-2</div>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+          <div class="dev-sel-bar" id="auxDevSelBar" style="margin-bottom:0">
+            <div class="dev-btn active" onclick="selectDevAux('DOAS-1',this)"><span class="chip" style="background:#ccfbf1;color:#0f766e;font-size:9px">DOAS</span> DOAS-1</div>
+            <div class="dev-btn" onclick="selectDevAux('EF-1',this)"><span class="chip" style="background:#ffedd5;color:#9a3412;font-size:9px">FAN</span> EF-1</div>
+            <div class="dev-btn" onclick="selectDevAux('EF-2',this)"><span class="chip" style="background:#ffedd5;color:#9a3412;font-size:9px">FAN</span> EF-2</div>
+          </div>
+          <button class="k-cmd-btn" id="auxCmdBtn" onclick="K.openCommand(window.auxCurrentDev||'DOAS-1')" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.07 7.07l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.07-7.07l4.24-4.24"/></svg>Command this asset</button>
         </div>
 
         <div style="font-size:11px;color:#6b7280;margin-bottom:10px">Period controlled by topbar selector. Showing: <span id="k-aux-period-echo" style="color:#374151;font-weight:500">Day</span></div>
@@ -1004,7 +1016,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
   </div>
 </div>
 
-<script src="keedian-ui.js?v=15"></script>
+<script src="keedian-ui.js?v=16"></script>
 <script>
 // Core navigation — runs independently of Chart.js
 function showTab(name,el){
