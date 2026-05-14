@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portfolio View</title>
-<link rel="stylesheet" href="keedian-ui.css?v=14">
+<link rel="stylesheet" href="keedian-ui.css?v=15">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#e5e7eb;padding:20px;font-family:sans-serif}
@@ -208,7 +208,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
         <select class="fsel" id="fType" onchange="renderActive()"><option value="all">All store types</option><option value="conv">Convenience only</option><option value="fuel">Conv. + fuel</option><option value="carwash">+ Car wash</option></select>
         <select class="fsel" id="fHours" onchange="renderActive()"><option value="all">All schedules</option><option value="full">Full time (24h)</option><option value="other">Other hours</option></select>
         <select class="fsel" id="fConn" onchange="renderActive()"><option value="all">All statuses</option><option value="ok">Full availability</option><option value="issues">With issues</option></select>
-        <select class="fsel" id="fCompliance" onchange="renderActive()"><option value="all">All compliance</option><option value="ok">All devices in range</option><option value="issues">At least one device out</option></select>
+        <select class="fsel" id="fCompliance" onchange="renderActive()"><option value="all">All compliance</option><option value="ok">All assets in range</option><option value="issues">At least one asset out</option></select>
         <span style="font-size:10px;color:#9ca3af;margin-left:auto">Click column headers to sort</span>
       </div>
       <div id="view-sites">
@@ -826,7 +826,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css"/>
-<script src="keedian-ui.js?v=14"></script>
+<script src="keedian-ui.js?v=15"></script>
 <script>
 function showTab(name,el){document.querySelectorAll('.tab:not(.soon)').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.querySelectorAll('.content').forEach(c=>c.classList.add('hidden'));document.getElementById('tab-'+name).classList.remove('hidden');if(name==='hvac'&&!window.hvacBuilt){buildHvacData();renderSites();window.hvacBuilt=true;}if(name==='perf'&&!window.perfBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderPerf();window.perfBuilt=true;}if(name==='roi'&&!window.roiBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderRoi();buildRoiCharts();window.roiBuilt=true;}if(name==='refrig'&&!window.refrigBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderRefrig();window.refrigBuilt=true;}if(name==='lighting'&&!window.ltBuilt){buildLightingCharts();window.ltBuilt=true;}if(name==='alarms'&&!window.alarmsBuilt){buildAlarmCharts();window.alarmsBuilt=true;}if(name==='energy'&&!window.pfEnergyBuilt&&typeof buildPfEnergyTab==='function'){buildPfEnergyTab();window.pfEnergyBuilt=true;}}
 
