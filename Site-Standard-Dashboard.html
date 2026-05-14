@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Site Dashboard — Store #214</title>
-<link rel="stylesheet" href="keedian-ui.css?v=11">
+<link rel="stylesheet" href="keedian-ui.css?v=12">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#e5e7eb;padding:20px;font-family:sans-serif}
@@ -372,6 +372,79 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
           <div style="position:relative;height:260px"><canvas id="devMainChart"></canvas></div>
         </div>
       </div>
+
+      <!-- =================== AUXILIARY EQUIPMENT (DOAS + EXHAUST FANS) =================== -->
+      <!-- This section appears only when the site is configured with DOAS / exhaust fans.
+           To hide it entirely, set #auxSection display:none or remove the wrapper below. -->
+      <div id="auxSection" style="margin-top:32px;padding-top:20px;border-top:2px dashed #cbd5e1">
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:4px;flex-wrap:wrap">
+          <div style="font-size:14px;font-weight:600;color:#111827">Auxiliary equipment</div>
+          <span class="pill" style="background:#e0e7ff;color:#3730a3">Optional</span>
+        </div>
+        <div style="font-size:11px;color:#6b7280;margin-bottom:14px;max-width:720px">
+          Optional devices monitored at this site — DOAS and exhaust fans. These appear only when the site is configured with this equipment.
+        </div>
+
+        <!-- Per-device table — auxiliary -->
+        <div class="tbl-wrap">
+          <div class="tbl-hdr-bar"><div><div class="tbl-ttl">Per device — auxiliary</div><div class="tbl-sub">DOAS + exhaust fans · current period</div></div></div>
+          <div style="overflow-x:auto">
+            <table class="dtbl">
+              <thead><tr><th>Device</th><th>Type</th><th>Connection</th><th>Data avail.</th><th>State</th><th>Runtime</th><th>Cycles</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:500;color:#111827">DOAS-1</td>
+                  <td><span class="chip" style="background:#ccfbf1;color:#0f766e">DOAS</span></td>
+                  <td><div class="badge-conn"><span class="cdot cdot-ok"></span><span style="color:#065f46;font-weight:500">Online</span></div><div class="sub">3 min ago · Full availability</div></td>
+                  <td style="font-weight:500;color:#065f46">100%</td>
+                  <td><span class="chip c-ok">ON</span></td>
+                  <td><div class="mbar"><div class="mb"><div class="mf" style="width:74%;background:#10b981"></div></div><span class="chip c-ok">14.2h</span></div><div class="sub">target 8–18h</div></td>
+                  <td><span class="chip c-ok">6</span><div class="sub">typical 3–6</div></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;color:#111827">EF-1</td>
+                  <td><span class="chip" style="background:#ffedd5;color:#9a3412">Exhaust fan</span></td>
+                  <td><div class="badge-conn"><span class="cdot cdot-ok"></span><span style="color:#065f46;font-weight:500">Online</span></div><div class="sub">2 min ago · Full availability</div></td>
+                  <td style="font-weight:500;color:#065f46">100%</td>
+                  <td><span class="chip c-ok">ON</span></td>
+                  <td><div class="mbar"><div class="mb"><div class="mf" style="width:86%;background:#10b981"></div></div><span class="chip c-ok">15.8h</span></div><div class="sub">target 8–18h</div></td>
+                  <td><span class="chip c-ok">4</span><div class="sub">typical 3–6</div></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;color:#111827">EF-2</td>
+                  <td><span class="chip" style="background:#ffedd5;color:#9a3412">Exhaust fan</span></td>
+                  <td><div class="badge-conn"><span class="cdot cdot-ok"></span><span style="color:#065f46;font-weight:500">Online</span></div><div class="sub">4 min ago · Full availability</div></td>
+                  <td style="font-weight:500;color:#065f46">100%</td>
+                  <td><span class="chip c-gray">OFF</span></td>
+                  <td><div class="mbar"><div class="mb"><div class="mf" style="width:62%;background:#10b981"></div></div><span class="chip c-ok">12.4h</span></div><div class="sub">target 8–18h</div></td>
+                  <td><span class="chip c-err">24</span><div class="sub" style="color:#991b1b">⚠ short-cycling</div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Device telemetry — auxiliary -->
+        <div class="slabel" id="auxDevSelLabel">Device telemetry — select device</div>
+        <div class="dev-sel-bar" id="auxDevSelBar">
+          <div class="dev-btn active" onclick="selectDevAux('DOAS-1',this)"><span class="chip" style="background:#ccfbf1;color:#0f766e;font-size:9px">DOAS</span> DOAS-1</div>
+          <div class="dev-btn" onclick="selectDevAux('EF-1',this)"><span class="chip" style="background:#ffedd5;color:#9a3412;font-size:9px">FAN</span> EF-1</div>
+          <div class="dev-btn" onclick="selectDevAux('EF-2',this)"><span class="chip" style="background:#ffedd5;color:#9a3412;font-size:9px">FAN</span> EF-2</div>
+        </div>
+
+        <div style="font-size:11px;color:#6b7280;margin-bottom:10px">Period controlled by topbar selector. Showing: <span id="k-aux-period-echo" style="color:#374151;font-weight:500">Day</span></div>
+
+        <div id="auxDevPanel">
+          <div class="g4" id="auxKpiCards" style="margin-bottom:10px"></div>
+          <div id="auxInsightBox" style="margin-bottom:10px"></div>
+          <div class="chart-card">
+            <div class="chart-ttl" id="auxChartTtl">DOAS-1 — telemetry · Today (10 min intervals)</div>
+            <div class="chart-sub" id="auxChartSub">ON/OFF state (left axis) · outside air temp (right axis)</div>
+            <div style="position:relative;height:260px"><canvas id="auxMainChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <!-- =================== END AUXILIARY EQUIPMENT =================== -->
 
     </div>
 
@@ -931,7 +1004,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
   </div>
 </div>
 
-<script src="keedian-ui.js?v=11"></script>
+<script src="keedian-ui.js?v=12"></script>
 <script>
 // Core navigation — runs independently of Chart.js
 function showTab(name,el){
@@ -962,7 +1035,10 @@ function initTabCharts(name){
         b.classList.toggle('active',b.textContent.trim().indexOf(window._currentDev)>=0);
       });
     }
-    setTimeout(function(){if(typeof renderDevPanel==='function'){renderDevPanel();}},100);
+    setTimeout(function(){
+      if(typeof renderDevPanel==='function'){renderDevPanel();}
+      if(typeof renderAuxPanel==='function'){renderAuxPanel();}
+    },100);
   }
   if(name==='refrig'){
     var curDevR=window._currentDev;
@@ -1630,6 +1706,215 @@ function setPeriodRef(p, btn){
 function applyCustomDateHvac(){applyCustomDate && applyCustomDate();}
 function applyCustomDateRef(){applyCustomDate && applyCustomDate();}
 
+// ── AUXILIARY EQUIPMENT (DOAS + EXHAUST FANS) ────────────────────────────────
+// Config for the auxiliary devices monitored at this site.
+// Real implementation: read from site config / device registry.
+const AUX_CONFIG = {
+  'DOAS-1': {
+    type: 'doas',
+    typeLabel: 'DOAS',
+    color: '#0d9488',
+    scenario: 'normal',
+    kpis: { state: 'ON',  runtime: '14.2h', cycles: '6',  avail: '100%' },
+    showOutsideAirTemp: true   // OAT plotted alongside state for DOAS
+  },
+  'EF-1': {
+    type: 'fan',
+    typeLabel: 'Exhaust fan',
+    color: '#ea580c',
+    scenario: 'normal',
+    kpis: { state: 'ON',  runtime: '15.8h', cycles: '4',  avail: '100%' },
+    showOutsideAirTemp: false
+  },
+  'EF-2': {
+    type: 'fan',
+    typeLabel: 'Exhaust fan',
+    color: '#ea580c',
+    scenario: 'short-cycle',
+    kpis: { state: 'OFF', runtime: '12.4h', cycles: '24', avail: '100%' },
+    showOutsideAirTemp: false
+  }
+};
+
+var auxCurrentDev = 'DOAS-1';
+var auxMainChartInstance = null;
+
+// Generate ON/OFF state pattern as an array of 0s and 1s.
+// pts is the chart length (same convention as makeLabels / getPts).
+function genAuxStateData(dev, pts){
+  var data = new Array(pts).fill(0);
+  // Operating window 6:00 → 21:00 in normalized time
+  var startIdx = Math.floor(pts * 6  / 24);
+  var endIdx   = Math.floor(pts * 21 / 24);
+  if (dev === 'DOAS-1'){
+    // 6 cycles — long continuous ON with brief OFF gaps
+    for (var i = startIdx; i < endIdx; i++) data[i] = 1;
+    var gap6 = Math.floor((endIdx - startIdx) / 6);
+    for (var c = 1; c < 6; c++){
+      var p6 = startIdx + c * gap6;
+      data[p6] = 0;
+      if (data[p6 + 1] != null) data[p6 + 1] = 0;
+    }
+  } else if (dev === 'EF-1'){
+    // 4 cycles — longer continuous runs
+    for (var i = startIdx; i < endIdx; i++) data[i] = 1;
+    var gap4 = Math.floor((endIdx - startIdx) / 4);
+    for (var c = 1; c < 4; c++){
+      var p4 = startIdx + c * gap4;
+      data[p4] = 0;
+      if (data[p4 + 1] != null) data[p4 + 1] = 0;
+    }
+  } else if (dev === 'EF-2'){
+    // 24 cycles — rapid short-cycling
+    var span = endIdx - startIdx;
+    var cycleLen = Math.max(1, Math.floor(span / 24));
+    for (var i = startIdx; i < endIdx; i++){
+      var cyclePos = Math.floor((i - startIdx) / cycleLen);
+      data[i] = (cyclePos % 2 === 0) ? 1 : 0;
+    }
+  }
+  return data;
+}
+
+// Outside air temperature mock curve (diurnal cycle).
+// TODO: integrate with NOAA or another public weather source using the site's geolocation.
+function genOutsideAirTemp(pts){
+  var data = [];
+  for (var i = 0; i < pts; i++){
+    var hourOfDay = ((i + 0.5) * 24 / pts) % 24;
+    // Cosine centered at 14h (peak), trough around 02h
+    var phase = ((hourOfDay - 14) / 24) * 2 * Math.PI;
+    var temp = 73.5 + 11.5 * Math.cos(phase);
+    data.push(parseFloat(temp.toFixed(1)));
+  }
+  return data;
+}
+
+function selectDevAux(name, btn){
+  var bar = document.getElementById('auxDevSelBar');
+  if (bar){
+    bar.querySelectorAll('.dev-btn').forEach(function(b){ b.classList.remove('active'); });
+  }
+  if (btn) btn.classList.add('active');
+  auxCurrentDev = name;
+  if (typeof renderAuxPanel === 'function') renderAuxPanel();
+}
+
+function renderAuxPanel(){
+  var dev = auxCurrentDev || 'DOAS-1';
+  var cfg = AUX_CONFIG[dev];
+  if (!cfg) return;
+  var p = window._currentPeriod || 'today';
+  var periodLabel = {today:'Today (10 min intervals)',yesterday:'Yesterday (10 min intervals)','7d':'Last 7 days','30d':'Last 30 days',custom:'Custom range'}[p] || p;
+
+  // KPI cards
+  var stateColor = cfg.kpis.state === 'ON' ? '#10b981' : '#6b7280';
+  var stateSub   = cfg.kpis.state === 'ON' ? 'Running now' : 'Stopped now';
+  var cyclesCol  = cfg.scenario === 'short-cycle' ? '#ef4444' : '#111827';
+  var cyclesSub  = cfg.scenario === 'short-cycle' ? '⚠ above typical (3–6)' : 'within typical range';
+  var kpiHtml =
+    '<div class="kcard"><div class="ktop"><div class="kttl">Current state</div></div>' +
+      '<div class="kval" style="color:'+stateColor+'">'+cfg.kpis.state+'</div>' +
+      '<div class="ksub">'+stateSub+'</div></div>' +
+    '<div class="kcard"><div class="ktop"><div class="kttl">Runtime</div></div>' +
+      '<div class="kval">'+cfg.kpis.runtime+'</div>' +
+      '<div class="ksub">avg today · target 8–18 h</div></div>' +
+    '<div class="kcard"><div class="ktop"><div class="kttl">Cycles</div></div>' +
+      '<div class="kval" style="color:'+cyclesCol+'">'+cfg.kpis.cycles+'</div>' +
+      '<div class="ksub">'+cyclesSub+'</div></div>' +
+    '<div class="kcard"><div class="ktop"><div class="kttl">Data availability</div></div>' +
+      '<div class="kval">'+cfg.kpis.avail+'</div>' +
+      '<div class="ksub">monitored continuously</div></div>';
+  var kpiEl = document.getElementById('auxKpiCards');
+  if (kpiEl) kpiEl.innerHTML = kpiHtml;
+
+  // Insight box (only for short-cycle scenario)
+  var insightHtml = '';
+  if (cfg.scenario === 'short-cycle'){
+    insightHtml =
+      '<div style="background:#fff7ed;border:1px solid #fed7aa;border-left:4px solid #f59e0b;border-radius:8px;padding:12px 14px">' +
+        '<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px"><span style="font-size:14px;line-height:1">⚠️</span><div style="font-size:12px;font-weight:600;color:#92400e">Anomaly detected — excessive cycling</div></div>' +
+        '<div style="font-size:11px;color:#78350f;line-height:1.5;margin-bottom:8px"><b>'+dev+'</b> has switched ON/OFF <b>'+cfg.kpis.cycles+' times today</b> (typical: 3–6). Frequent short cycles wear out contactors, motors and protection devices.</div>' +
+        '<div style="font-size:11px;color:#78350f;line-height:1.5;margin-bottom:6px"><b>Possible causes:</b></div>' +
+        '<ul style="font-size:11px;color:#78350f;line-height:1.5;margin:0 0 8px 18px;padding:0">' +
+          '<li>Thermal protection trips</li>' +
+          '<li>Control logic issue (oversensitive setpoint or hysteresis too tight)</li>' +
+          '<li>Faulty switch or relay</li>' +
+        '</ul>' +
+        '<div style="font-size:11px;color:#92400e"><b>Recommended action:</b> on-site inspection.</div>' +
+      '</div>';
+  }
+  var insightEl = document.getElementById('auxInsightBox');
+  if (insightEl) insightEl.innerHTML = insightHtml;
+
+  // Chart title / subtitle
+  var titleEl = document.getElementById('auxChartTtl');
+  var subEl   = document.getElementById('auxChartSub');
+  if (titleEl) titleEl.textContent = dev + ' — telemetry · ' + periodLabel;
+  if (subEl)   subEl.textContent   = cfg.showOutsideAirTemp
+    ? 'ON/OFF state (left axis) · outside air temperature (right axis)'
+    : 'ON/OFF state (left axis)';
+
+  // Chart
+  var canvas = document.getElementById('auxMainChart');
+  if (!canvas) return;
+  if (auxMainChartInstance) auxMainChartInstance.destroy();
+  var pts = (typeof getPts === 'function') ? getPts() : 144;
+  var labels = (typeof makeLabels === 'function') ? makeLabels(pts) : Array.from({length: pts}, function(_, i){ return ''+i; });
+  var stateData = genAuxStateData(dev, pts);
+  var datasets = [{
+    label: dev + ' state',
+    data: stateData,
+    borderColor: cfg.color,
+    backgroundColor: (typeof hexToRgba === 'function') ? hexToRgba(cfg.color, 0.14) : 'rgba(13,148,136,0.14)',
+    stepped: true,
+    fill: true,
+    pointRadius: 0,
+    borderWidth: 1.6,
+    yAxisID: 'yState'
+  }];
+  if (cfg.showOutsideAirTemp){
+    datasets.push({
+      label: 'Outside air temp',
+      data: genOutsideAirTemp(pts),
+      borderColor: '#0891b2',
+      backgroundColor: 'transparent',
+      borderWidth: 1.6,
+      pointRadius: 0,
+      tension: 0.3,
+      yAxisID: 'yTemp'
+    });
+  }
+  var scales = {
+    x: { grid:{color:'rgba(0,0,0,0.04)'}, ticks:{font:{size:9},color:'#6b7280',maxRotation:0,autoSkip:true,maxTicksLimit:12}, border:{display:false} },
+    yState: { type:'linear', position:'left', min:-0.1, max:1.1, grid:{color:'rgba(0,0,0,0.04)'},
+      ticks:{font:{size:9},color:cfg.color,stepSize:1,callback:function(v){ return v >= 0.5 ? 'ON' : v <= 0.5 ? 'OFF' : ''; }}, border:{display:false} }
+  };
+  if (cfg.showOutsideAirTemp){
+    scales.yTemp = { type:'linear', position:'right', grid:{display:false},
+      ticks:{font:{size:9},color:'#0891b2',callback:function(v){ return (typeof K !== 'undefined' && K.fmt) ? K.fmt.temp(v, {decimals:0}) : (v + '°F'); }},
+      border:{display:false} };
+  }
+  auxMainChartInstance = new Chart(canvas, {
+    type: 'line',
+    data: { labels: labels, datasets: datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: cfg.showOutsideAirTemp, position: 'top', labels: { font:{size:11}, boxWidth: 18 } },
+        tooltip: { callbacks: { label: function(ctx){
+          if (ctx.dataset.yAxisID === 'yState') return ' State: ' + (ctx.parsed.y >= 0.5 ? 'ON' : 'OFF');
+          if (ctx.dataset.yAxisID === 'yTemp')  return ' OAT: ' + ((typeof K !== 'undefined' && K.fmt) ? K.fmt.temp(ctx.parsed.y, {decimals:1}) : ctx.parsed.y.toFixed(1) + '°F');
+          return '';
+        }}}
+      },
+      scales: scales
+    }
+  });
+}
+
 // ── Keedian UI module wiring ─────────────────────────────────────────────────
 // Map global period (D/W/M/Q/YTD/custom) → existing site internal period (today/yesterday/7d/30d)
 const K_TO_LOCAL_PERIOD={D:'today',W:'7d',M:'30d',Q:'30d',YTD:'30d',custom:'custom'};
@@ -2143,7 +2428,7 @@ function applySitePeriod(){
   var data = SITE_KPI_BY_PERIOD[key] || SITE_KPI_BY_PERIOD.M;
   if (typeof K !== 'undefined' && K.applyKpiSwap) K.applyKpiSwap(data);
   // Echo to the device-panel context label
-  ['k-hvac-period-echo','k-ref-period-echo'].forEach(function(id){
+  ['k-hvac-period-echo','k-ref-period-echo','k-aux-period-echo'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.textContent = K_PERIOD_ECHO[key] || key;
   });
@@ -2151,6 +2436,9 @@ function applySitePeriod(){
   window._currentPeriod = K_TO_LOCAL_PERIOD[key] || 'today';
   if (typeof renderDevPanel === 'function') {
     try { renderDevPanel(); } catch(e){}
+  }
+  if (typeof renderAuxPanel === 'function') {
+    try { renderAuxPanel(); } catch(e){}
   }
   // Energy tab: re-render rank marker, heatmap, telemetry and pie on period change
   if (typeof updateEnergyRankMarker === 'function') updateEnergyRankMarker();
@@ -2166,6 +2454,10 @@ window.addEventListener('k-prefschange', function(){
   // Re-render dev panel so DEV_CONFIG values pass through K.fmt
   if (typeof renderDevPanel === 'function') {
     try { renderDevPanel(); } catch(e){}
+  }
+  // Aux panel uses K.fmt.temp for the outside air temp axis
+  if (typeof renderAuxPanel === 'function') {
+    try { renderAuxPanel(); } catch(e){}
   }
 });
 
