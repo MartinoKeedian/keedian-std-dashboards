@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Site Dashboard — Store #214</title>
-<link rel="stylesheet" href="keedian-ui.css?v=16">
+<link rel="stylesheet" href="keedian-ui.css?v=17">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#e5e7eb;padding:20px;font-family:sans-serif}
@@ -171,7 +171,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
     </div>
     <div class="alert-bar">
       <svg width="13" height="13" fill="none" stroke="#991b1b" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      RTU-2 possible equipment fault — low temp compliance with low runtime &nbsp;|&nbsp; RTU-3 frequent setpoint override — runtime 19.6 h/day above threshold
+      RTU-2 possible equipment fault — low temp compliance with low runtime &nbsp;|&nbsp; RTU-3 below temp compliance target — runtime 19.6 h/day above threshold
     </div>
     <div class="tab-bar">
       <div class="tab active" onclick="showTab('overview',this)">Overview</div>
@@ -238,8 +238,8 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
       <div class="g4">
         <div class="kcard"><div class="ktop"><div class="kttl">Runtime</div><span class="pill p-warn">Watch</span></div><div class="kval"><span data-kpi="hvac.runtime">12.3</span> <span style="font-size:13px;color:#6b7280">h/day</span></div><div class="ksub">site avg · target 8–18 h</div><div class="kchg arr-dn">▼ RTU-3 above threshold</div></div>
         <div class="kcard"><div class="ktop"><div class="kttl">Cooling ΔT</div><span class="pill p-warn">Watch</span></div><div class="kval"><span data-kpi="hvac.dt" data-fmt-temp-f="17.2">17.2°F</span></div><div class="ksub">site avg · target <span data-fmt-temp-range-f="16-22">16–22°F</span></div><div class="kchg arr-dn">▼ RTU-2 below <span data-fmt-temp-f="16" data-fmt-decimals="0">16°F</span></div></div>
-        <div class="kcard"><div class="ktop"><div class="kttl">Setpoint compliance</div><span class="pill p-err">Action needed</span></div><div class="kval"><span data-kpi="hvac.sp">93.3</span> <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">site avg · target ≥ 98%</div><div class="kchg arr-dn">▼ RTU-3 at 82.7%</div></div>
-        <div class="kcard"><div class="ktop"><div class="kttl">Temp compliance</div><span class="pill p-warn">Watch</span></div><div class="kval"><span data-kpi="hvac.tc">93.9</span> <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">site avg · target ≥ 95%</div><div class="kchg arr-dn">▼ RTU-2 at 88.4%</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Setpoint compliance</div><span class="pill p-ok">On target</span></div><div class="kval"><span data-kpi="hvac.sp">98.0</span> <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">site avg · target ≥ 98%</div><div class="kchg arr-up">▲ all 3 RTUs ≥ 96%</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Temp compliance</div><span class="pill p-err">Action needed</span></div><div class="kval"><span data-kpi="hvac.tc">91.2</span> <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">site avg · target ≥ 95%</div><div class="kchg arr-dn">▼ RTU-2 at 88.4% · RTU-3 at 91.8%</div></div>
       </div>
 
       <div class="slabel">Refrigeration — site overview</div>
@@ -308,8 +308,8 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
       <div class="g4">
         <div class="kcard"><div class="ktop"><div class="kttl">Runtime</div><span class="pill p-warn">Watch</span></div><div class="kval"><span data-kpi="hvac.runtime">12.3</span> <span style="font-size:13px;color:#6b7280">h/day</span></div><div class="ksub">site avg · 3 assets · target 8–18 h</div><div class="kchg arr-dn">▼ RTU-3 above threshold</div></div>
         <div class="kcard"><div class="ktop"><div class="kttl">Cooling ΔT</div><span class="pill p-warn">Watch</span></div><div class="kval"><span data-kpi="hvac.dt" data-fmt-temp-f="17.2">17.2°F</span></div><div class="ksub">site avg · compressor-on only</div><div class="kchg arr-dn">▼ RTU-2 below <span data-fmt-temp-f="16" data-fmt-decimals="0">16°F</span></div></div>
-        <div class="kcard"><div class="ktop"><div class="kttl">Setpoint compliance</div><span class="pill p-err">Action needed</span></div><div class="kval"><span data-kpi="hvac.sp">93.3</span> <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">site avg · policy day 76°F / night 78°F</div><div class="kchg arr-dn">▼ RTU-3 at 82.7%</div></div>
-        <div class="kcard"><div class="ktop"><div class="kttl">Temp compliance</div><span class="pill p-warn">Watch</span></div><div class="kval"><span data-kpi="hvac.tc">93.9</span> <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">site avg · band 72–79°F daytime</div><div class="kchg arr-dn">▼ RTU-2 at 88.4%</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Setpoint compliance</div><span class="pill p-ok">On target</span></div><div class="kval"><span data-kpi="hvac.sp">98.0</span> <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">site avg · policy day 76°F / night 78°F</div><div class="kchg arr-up">▲ all 3 RTUs ≥ 96%</div></div>
+        <div class="kcard"><div class="ktop"><div class="kttl">Temp compliance</div><span class="pill p-err">Action needed</span></div><div class="kval"><span data-kpi="hvac.tc">91.2</span> <span style="font-size:13px;color:#6b7280">%</span></div><div class="ksub">site avg · band 72–79°F daytime</div><div class="kchg arr-dn">▼ RTU-2 at 88.4% · RTU-3 at 91.8%</div></div>
       </div>
       <div class="slabel">Per asset — HVAC</div>
       <div class="tbl-wrap">
@@ -326,7 +326,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
                 <td><div class="mbar"><div class="mb"><div class="mf" style="width:58%;background:#10b981"></div></div><span class="chip c-ok">11.2h</span></div><div class="sub">target 8–18h</div></td>
                 <td><div class="mbar"><div class="mb"><div class="mf" style="width:70%;background:#10b981"></div></div><span class="chip c-ok">17.8°F</span></div><div class="sub">target 16–22°F</div></td>
                 <td><span class="chip c-ok">98.7%</span><div class="sub">day 76°F · night 78°F</div></td>
-                <td><span class="chip c-ok">97.2%</span><div class="sub">band 72–79°F</div></td>
+                <td><span class="chip c-warn">93.5%</span><div class="sub">below 95% threshold</div></td>
                 <td><button class="k-cmd-btn" onclick="K.openCommand('RTU-1')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.07 7.07l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.07-7.07l4.24-4.24"/></svg>Command</button></td>
               </tr>
               <tr>
@@ -347,8 +347,8 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
                 <td style="font-weight:500;color:#065f46">100%</td>
                 <td><div class="mbar"><div class="mb"><div class="mf" style="width:98%;background:#ef4444"></div></div><span class="chip c-err">19.6h</span></div><div class="sub">above 18h threshold</div></td>
                 <td><div class="mbar"><div class="mb"><div class="mf" style="width:78%;background:#10b981"></div></div><span class="chip c-ok">18.9°F</span></div><div class="sub">target 16–22°F</div></td>
-                <td><span class="chip c-err">82.7%</span><div class="sub">frequent override</div></td>
-                <td><span class="chip c-ok">96.1%</span><div class="sub">band 72–79°F</div></td>
+                <td><span class="chip c-ok">96.8%</span><div class="sub">policy followed</div></td>
+                <td><span class="chip c-warn">91.8%</span><div class="sub">below 95% threshold</div></td>
                 <td><button class="k-cmd-btn" onclick="K.openCommand('RTU-3')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.07 7.07l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.07-7.07l4.24-4.24"/></svg>Command</button></td>
               </tr>
             </tbody>
@@ -1016,7 +1016,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
   </div>
 </div>
 
-<script src="keedian-ui.js?v=16"></script>
+<script src="keedian-ui.js?v=17"></script>
 <script>
 // Core navigation — runs independently of Chart.js
 function showTab(name,el){
@@ -1108,7 +1108,7 @@ function buildOverviewCharts(){
 const DEV_CONFIG={
   'RTU-1':{type:'hvac',color:'#2563eb',scenario:'normal',signals:['Supply temp (°F)','Return temp (°F)','Space temp (°F)','Setpoint (°F)','kW','Mode'],kpis:{runtime:'11.2h',dt:'17.8°F',sp:'98.7%',tc:'97.2%'}},
   'RTU-2':{type:'hvac',color:'#7c3aed',scenario:'fault',signals:['Supply temp (°F)','Return temp (°F)','Space temp (°F)','Setpoint (°F)','kW','Mode'],kpis:{runtime:'6.2h',dt:'14.8°F',sp:'98.4%',tc:'88.4%'}},
-  'RTU-3':{type:'hvac',color:'#0891b2',scenario:'override',signals:['Supply temp (°F)','Return temp (°F)','Space temp (°F)','Setpoint (°F)','kW','Mode'],kpis:{runtime:'19.6h',dt:'18.9°F',sp:'82.7%',tc:'96.1%'}},
+  'RTU-3':{type:'hvac',color:'#0891b2',scenario:'overrun',signals:['Supply temp (°F)','Return temp (°F)','Space temp (°F)','Setpoint (°F)','kW','Mode'],kpis:{runtime:'19.6h',dt:'18.9°F',sp:'96.8%',tc:'91.8%'}},
   'WIC-1':{type:'refrig',color:'#2563eb',signals:['Unit temp (°F)','Door state'],kpis:{temp:'35.8°F',compliance:'99.1%',range:'34–38°F',status:'In compliance'}},
   'FRZ-1':{type:'refrig',color:'#0f766e',signals:['Unit temp (°F)','Door state'],kpis:{temp:'-4.2°F',compliance:'99.4%',range:'-10°F–0°F',status:'In compliance'}}
 };
@@ -1212,6 +1212,20 @@ function renderDevPanel(){
       '<li>Local conditions not reflected in corporate policy</li>'+
       '</ul>'+
       '<div style="font-size:11px;color:#1e40af"><b>Recommended action:</b> review with site operator. Potential energy savings of ~12% by enforcing policy without affecting comfort.</div>'+
+    '</div>';
+  } else if(scenario==='overrun'){
+    insightHtml='<div style="background:#fff7ed;border:1px solid #fed7aa;border-left:4px solid #f59e0b;border-radius:8px;padding:12px 14px">'+
+      '<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px"><span style="font-size:14px;line-height:1">⚠️</span><div style="font-size:12px;font-weight:600;color:#92400e">Anomaly detected — runtime overrun with low temp compliance</div></div>'+
+      '<div style="font-size:11px;color:#78350f;line-height:1.5;margin-bottom:8px">'+
+      '<b>'+dev+'</b> is running long (19.6 h/day, above the 18 h threshold) but only achieving 91.8% temp compliance. The unit follows setpoint policy correctly (96.8%) yet the space is not consistently within the comfort band.'+
+      '</div>'+
+      '<div style="font-size:11px;color:#78350f;line-height:1.5;margin-bottom:6px"><b>Possible causes:</b></div>'+
+      '<ul style="font-size:11px;color:#78350f;line-height:1.5;margin:0 0 8px 18px;padding:0">'+
+      '<li>Undersized capacity for the actual load (especially at peak hours)</li>'+
+      '<li>Air distribution issue — some zones not reaching setpoint</li>'+
+      '<li>Envelope problem (infiltration, sun load) overpowering the unit</li>'+
+      '</ul>'+
+      '<div style="font-size:11px;color:#92400e"><b>Recommended action:</b> review load calculation and verify air distribution.</div>'+
     '</div>';
   }
   if(elInsight)elInsight.innerHTML=insightHtml;
@@ -1936,42 +1950,42 @@ const K_PERIOD_ECHO={D:'Today',W:'Last 7 days',M:'Last 30 days',Q:'Quarter (mock
 // Real implementation: replace with API call that aggregates over the picked range.
 const SITE_KPI_BY_PERIOD = {
   D: {
-    hvac:     { runtime: '11.8', dt: 17.6, sp: '94.1', tc: '94.3' },
+    hvac:     { runtime: '11.8', dt: 17.6, sp: '98.6', tc: '92.4' },
     refrig:   { wicComp: '99.2', frzComp: '99.5' },
     energy:   { cons: '94',    peak: '28.1', mv: 16,   cost: 19,    eui: '0.80', rank: '11', peakTs: 'Apr 24 · 14:32', rankPctLeft: '30%' },
     lighting: { sched: '93.8', util: '77.2', burn: '15.4' },
     alarms:   { total: '24', tickets: '1' }
   },
   W: {
-    hvac:     { runtime: '12.1', dt: 17.4, sp: '93.6', tc: '94.0' },
+    hvac:     { runtime: '12.1', dt: 17.4, sp: '98.3', tc: '91.8' },
     refrig:   { wicComp: '99.0', frzComp: '99.3' },
     energy:   { cons: '653',   peak: '28.4', mv: 112,  cost: 131,   eui: '5.6',  rank: '13', peakTs: 'Apr 22 · 15:18', rankPctLeft: '35%' },
     lighting: { sched: '93.5', util: '76.9', burn: '15.3' },
     alarms:   { total: '147', tickets: '4' }
   },
   M: {
-    hvac:     { runtime: '12.3', dt: 17.2, sp: '93.3', tc: '93.9' },
+    hvac:     { runtime: '12.3', dt: 17.2, sp: '98.0', tc: '91.2' },
     refrig:   { wicComp: '99.1', frzComp: '99.4' },
     energy:   { cons: '2847',  peak: '27.4', mv: 480,  cost: 568,   eui: '24.3', rank: '14', peakTs: 'Apr 15 · 14:32', rankPctLeft: '38%' },
     lighting: { sched: '93.4', util: '76.8', burn: '15.2' },
     alarms:   { total: '612', tickets: '17' }
   },
   Q: {
-    hvac:     { runtime: '12.0', dt: 17.3, sp: '93.7', tc: '94.2' },
+    hvac:     { runtime: '12.0', dt: 17.3, sp: '97.7', tc: '90.9' },
     refrig:   { wicComp: '99.0', frzComp: '99.4' },
     energy:   { cons: '8512',  peak: '28.6', mv: 1380, cost: 1700,  eui: '72.8', rank: '15', peakTs: 'Apr 15 · 14:32', rankPctLeft: '40%' },
     lighting: { sched: '93.6', util: '76.5', burn: '15.1' },
     alarms:   { total: '1,824', tickets: '48' }
   },
   YTD: {
-    hvac:     { runtime: '11.9', dt: 17.5, sp: '93.8', tc: '94.5' },
+    hvac:     { runtime: '11.9', dt: 17.5, sp: '97.4', tc: '90.5' },
     refrig:   { wicComp: '99.2', frzComp: '99.5' },
     energy:   { cons: '11280', peak: '28.9', mv: 1840, cost: 2256,  eui: '96.4', rank: '16', peakTs: 'Mar 12 · 13:45', rankPctLeft: '43%' },
     lighting: { sched: '93.7', util: '76.3', burn: '15.0' },
     alarms:   { total: '2,436', tickets: '67' }
   },
   custom: {
-    hvac:     { runtime: '12.3', dt: 17.2, sp: '93.3', tc: '93.9' },
+    hvac:     { runtime: '12.3', dt: 17.2, sp: '98.0', tc: '91.2' },
     refrig:   { wicComp: '99.1', frzComp: '99.4' },
     energy:   { cons: '2847',  peak: '27.4', mv: 480,  cost: 568,   eui: '24.3', rank: '14', peakTs: 'Apr 15 · 14:32', rankPctLeft: '38%' },
     lighting: { sched: '93.4', util: '76.8', burn: '15.2' },

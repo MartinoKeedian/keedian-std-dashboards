@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portfolio View</title>
-<link rel="stylesheet" href="keedian-ui.css?v=16">
+<link rel="stylesheet" href="keedian-ui.css?v=17">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#e5e7eb;padding:20px;font-family:sans-serif}
@@ -826,7 +826,7 @@ body{background:#e5e7eb;padding:20px;font-family:sans-serif}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css"/>
-<script src="keedian-ui.js?v=16"></script>
+<script src="keedian-ui.js?v=17"></script>
 <script>
 function showTab(name,el){document.querySelectorAll('.tab:not(.soon)').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.querySelectorAll('.content').forEach(c=>c.classList.add('hidden'));document.getElementById('tab-'+name).classList.remove('hidden');if(name==='hvac'&&!window.hvacBuilt){buildHvacData();renderSites();window.hvacBuilt=true;}if(name==='perf'&&!window.perfBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderPerf();window.perfBuilt=true;}if(name==='roi'&&!window.roiBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderRoi();buildRoiCharts();window.roiBuilt=true;}if(name==='refrig'&&!window.refrigBuilt){if(!window.hvacBuilt){buildHvacData();window.hvacBuilt=true;}renderRefrig();window.refrigBuilt=true;}if(name==='lighting'&&!window.ltBuilt){buildLightingCharts();window.ltBuilt=true;}if(name==='alarms'&&!window.alarmsBuilt){buildAlarmCharts();window.alarmsBuilt=true;}if(name==='energy'&&!window.pfEnergyBuilt&&typeof buildPfEnergyTab==='function'){buildPfEnergyTab();window.pfEnergyBuilt=true;}}
 
